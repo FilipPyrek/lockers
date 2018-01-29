@@ -57,3 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
+# Don't check auto-generated stuff into git
+coverage
+build
+node_modules
+stats.json
