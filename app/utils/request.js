@@ -1,4 +1,5 @@
 import 'whatwg-fetch';
+import path from 'path';
 
 /**
  * Parses the JSON returned by a network request
@@ -31,6 +32,11 @@ function checkStatus(response) {
   throw error;
 }
 
+const API_PREFIX = 'http://localhost:3000/api';
+const absolutePathToUrl = (url) => {
+  return path.isAbsolute(url) ? API_PREFIX + url : url;
+};
+
 /**
  * Requests a URL, returning a promise
  *
@@ -40,7 +46,7 @@ function checkStatus(response) {
  * @return {object}           The response data
  */
 export default function request(url, options) {
-  return fetch(url, options)
+  return fetch(absolutePathToUrl(url), options)
     .then(checkStatus)
     .then(parseJSON);
 }
