@@ -1,18 +1,24 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
+const security = require('../middlewares/securityMiddleware');
 
-const app = express();
+const api = express();
 
-app.use(bodyParser.json());
+if (!process.env.API_KEY) {
+  console.log('You have to set "API_KEY" environment variable!'); // eslint-disable-line no-console
+}
 
-app.post('/abc', (req, res) => {
+api.use(bodyParser.json());
+
+api.post('/user/login', (req, res) => {
   res.json({
     token: jwt.sign({
       verified: true,
-      email: req.body.email,
-    }, 'key'),
+    }, process.env.API_KEY),
   });
 });
 
-module.exports = app;
+api.use(security).get('/abcd', (req, res) => res.json({ a: 'b' }));
+
+module.exports = api;

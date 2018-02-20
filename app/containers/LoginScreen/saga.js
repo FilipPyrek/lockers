@@ -8,7 +8,7 @@ export function* fetchData({ payload }) {
   try {
     const data = yield call(
       request,
-      '/abc',
+      '/user/login',
       {
         method: 'POST',
         headers: {
