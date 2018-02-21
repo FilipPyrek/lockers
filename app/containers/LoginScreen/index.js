@@ -18,6 +18,8 @@ class LoginScreen extends React.PureComponent {
 
   static propTypes = {
     login: PropTypes.func.isRequired,
+    inProgress: PropTypes.bool,
+    // error: PropTypes.object,
   }
 
   constructor(props) {
@@ -50,11 +52,14 @@ class LoginScreen extends React.PureComponent {
   }
 
   render() {
+    const { inProgress } = this.props;
+
     return (
       <LoginWrapper>
         <Helmet
           title="Log in"
         />
+        { inProgress ? <div>loading...</div> : null }
         <form onSubmit={this.handleLogin}>
           <table>
             <tbody>
@@ -97,7 +102,7 @@ class LoginScreen extends React.PureComponent {
 
 }
 
-const withConnect = connect(null, actions);
+const withConnect = connect((state) => state.get('login').toJS(), actions);
 
 const withReducer = injectReducer({ key: 'login', reducer });
 

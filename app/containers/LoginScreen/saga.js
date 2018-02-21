@@ -2,6 +2,8 @@ import { takeEvery, call, put } from 'redux-saga/effects';
 import request from 'utils/request';
 import {
   LOGIN,
+  LOGIN_SUCCESS,
+  LOGIN_FAIL,
 } from './constants';
 
 export function* fetchData({ payload }) {
@@ -17,9 +19,9 @@ export function* fetchData({ payload }) {
         body: JSON.stringify(payload),
       }
     );
-    yield put({ type: 'LOGIN_SCCESS', payload: data });
+    yield put({ type: LOGIN_SUCCESS, payload: data });
   } catch (error) {
-    yield put({ type: 'LOGIN_FAIL', error });
+    yield put({ type: LOGIN_FAIL, payload: { error } });
   }
 }
 

@@ -26,7 +26,7 @@ export default function App() {
         <meta name="description" content="Aplikace pro správu skříněk na Purkyňce." />
       </Helmet>
       <Switch>
-        <Route exact path="/" component={LoginScreen} />
+        <Route exact path="/login" component={LoginScreen} />
       </Switch>
     </AppWrapper>
   );
