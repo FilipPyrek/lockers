@@ -28,7 +28,7 @@ api.post('/user/login', (req, res) =>
     .then((conn) =>
       conn.query(
         'SELECT password FROM users WHERE email = $1 LIMIT 1',
-        [req.body.email]
+        [req.body.email.toLowerCase()]
       )
       .then(({ rows }) => {
         if (rows.length === 0) throw new AuthError('User not found.');
@@ -41,22 +41,28 @@ api.post('/user/login', (req, res) =>
           })
           .then(() =>
             res.json({
-              token: jwt.sign({
-                verified: true,
-              }, process.env.API_KEY),
+              code: 200,
+              message: 'Přihlášení proběhlo úspěšně.',
+              response: {
+                token: jwt.sign({
+                  verified: true,
+                }, process.env.API_KEY),
+              },
             })
           )
       )
     )
     .catch((err) => {
       if (err instanceof AuthError) {
-        res.status(401).json({
-          error: 'Wrong email or password.',
+        res.json({
+          code: 401,
+          error: 'Špatný email nebo heslo.',
         });
         return;
       }
       console.log(err); // eslint-disable-line no-console
       res.status(500).json({
+        code: 500,
         error: 'Internal Server Error',
       });
     })

@@ -6,6 +6,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { fromJS } from 'immutable';
 import { routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
+import persistState from 'redux-localstorage';
 import createReducer from './reducers';
 
 const sagaMiddleware = createSagaMiddleware();
@@ -21,6 +22,16 @@ export default function configureStore(initialState = {}, history) {
 
   const enhancers = [
     applyMiddleware(...middlewares),
+    persistState(
+      'global',
+      // Because of Immutable.js
+      {
+        slicer: (paths) => (state) => (paths ? state.filter((v, k) => paths.indexOf(k) > -1) : state),
+        serialize: (subset) => JSON.stringify(subset.toJS()),
+        deserialize: (serializedData) => fromJS(JSON.parse(serializedData)),
+        merge: (initState, persistedState) => initState.mergeDeep(persistedState),
+      }
+    ),
   ];
 
   // If Redux DevTools Extension is installed use it, otherwise use Redux compose

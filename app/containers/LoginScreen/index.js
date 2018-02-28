@@ -19,7 +19,7 @@ class LoginScreen extends React.PureComponent {
   static propTypes = {
     login: PropTypes.func.isRequired,
     inProgress: PropTypes.bool,
-    // error: PropTypes.object,
+    error: PropTypes.string,
   }
 
   constructor(props) {
@@ -52,7 +52,7 @@ class LoginScreen extends React.PureComponent {
   }
 
   render() {
-    const { inProgress } = this.props;
+    const { inProgress, error } = this.props;
 
     return (
       <LoginWrapper>
@@ -93,6 +93,16 @@ class LoginScreen extends React.PureComponent {
                   <input type="submit" />
                 </td>
               </tr>
+              {
+                error
+                ? (
+                  <tr>
+                    <td colSpan="2">
+                      {error}
+                    </td>
+                  </tr>
+                ) : null
+              }
             </tbody>
           </table>
         </form>
