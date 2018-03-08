@@ -8,6 +8,8 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Switch, Route } from 'react-router-dom';
 import LoginScreen from 'containers/LoginScreen';
@@ -16,7 +18,7 @@ const AppWrapper = styled.div`
 
 `;
 
-export default function App() {
+function App(props) {
   return (
     <AppWrapper>
       <Helmet
@@ -26,8 +28,16 @@ export default function App() {
         <meta name="description" content="Aplikace pro správu skříněk na Purkyňce." />
       </Helmet>
       <Switch>
+        <Route exact path="/" component={() => <div>token - {props.token}</div>} />
         <Route exact path="/login" component={LoginScreen} />
+        <Route component={() => <div>not found</div>} />
       </Switch>
     </AppWrapper>
   );
 }
+
+App.propTypes = {
+  token: PropTypes.string,
+};
+
+export default connect((state) => ({ token: state.getIn(['global', 'token']) }), null)(App);

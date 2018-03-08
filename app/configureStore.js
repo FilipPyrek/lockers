@@ -23,7 +23,7 @@ export default function configureStore(initialState = {}, history) {
   const enhancers = [
     applyMiddleware(...middlewares),
     persistState(
-      'global',
+      ['global'],
       // Because of Immutable.js
       {
         slicer: (paths) => (state) => (paths ? state.filter((v, k) => paths.indexOf(k) > -1) : state),
