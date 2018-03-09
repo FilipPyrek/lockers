@@ -16,7 +16,13 @@ if (!process.env.API_KEY) {
 const mongoClient = new MongoClient('mongodb://localhost:27017', { auth: { user: 'lockers', password: 'heslo123' } });
 const connectToMongo = () => mongoClient.connect().then((client) => client.db('lockers'));
 
-api.use(bodyParser.json());
+api.use(bodyParser.json(), (err, req, res, next) => {
+  if (!err) return next();
+  res.json({
+    code: 400,
+    error: 'Nevalidní JSON',
+  });
+});
 
 const loginSchema = Joi.object().keys({
   email: Joi.string().email().required(),
@@ -29,16 +35,16 @@ api.post('/user/login', (req, res) =>
       connectToMongo().then((db) =>
         db.collection('users')
           .findOne({ email: email.toLowerCase() })
-            .catch(() => { throw new AuthError('User not found.'); })
+            .catch(() => { throw new AuthError('User not found'); })
             .then(({ password: hashedPassword }) =>
               bcrypt.compare(password, hashedPassword)
                 .then((isMatching) => {
-                  if (!isMatching) throw new AuthError('Passwords are not matching.');
+                  if (!isMatching) throw new AuthError('Passwords are not matching');
                 })
                 .then(() =>
                   res.json({
                     code: 200,
-                    message: 'Přihlášení proběhlo úspěšně.',
+                    message: 'Přihlášení proběhlo úspěšně',
                     response: {
                       token: jwt.sign({
                         verified: true,
@@ -53,14 +59,14 @@ api.post('/user/login', (req, res) =>
       if (err.name === 'ValidationError') {
         res.json({
           code: 400,
-          error: 'Musíte zadat email a heslo.',
+          error: 'Musíte zadat email a heslo',
         });
         return;
       }
       if (err instanceof AuthError) {
         res.json({
           code: 401,
-          error: 'Špatný email nebo heslo.',
+          error: 'Špatný email nebo heslo',
         });
         return;
       }
