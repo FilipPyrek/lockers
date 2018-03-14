@@ -183,7 +183,7 @@ class ApplicationFrame extends React.Component {
           }
         </Drawer>
         <main className={classes.content}>
-          <div className={classes.toolbar} />
+          {/* <div className={classes.toolbar} /> */}
           {this.props.children}
         </main>
       </div>

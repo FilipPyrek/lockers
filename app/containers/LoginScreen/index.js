@@ -1,25 +1,52 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
+import Paper from 'material-ui/Paper';
+import TextField from 'material-ui/TextField';
+import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
+import { withStyles } from 'material-ui/styles';
 import * as actions from './actions';
 import saga from './saga';
 import reducer from './reducer';
 
-const LoginWrapper = styled.div`
-
-`;
+const styles = (theme) => ({
+  wrapper: {
+    textAlign: 'center',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+  },
+  paper: {
+    width: '25%',
+    maxWidth: 400,
+    display: 'inline-block',
+    textAlign: 'left',
+    padding: theme.spacing.unit * 8,
+    paddingTop: theme.spacing.unit * 4,
+    paddingBottom: theme.spacing.unit * 4,
+  },
+  textField: {
+    display: 'block',
+  },
+  buttonContainer: {
+    textAlign: 'right',
+    marginTop: theme.spacing.unit * 4,
+  },
+});
 
 class LoginScreen extends React.PureComponent {
 
   static propTypes = {
     login: PropTypes.func.isRequired,
     inProgress: PropTypes.bool,
-    error: PropTypes.string,
+    error: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+    classes: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -35,6 +62,10 @@ class LoginScreen extends React.PureComponent {
     const { login } = this.props;
     event.preventDefault();
     login(this.state.email, this.state.password);
+    this.setState({
+      ...this.state,
+      password: '',
+    });
   }
 
   handleEmail(event) {
@@ -52,61 +83,56 @@ class LoginScreen extends React.PureComponent {
   }
 
   render() {
-    const { inProgress, error } = this.props;
+    const { inProgress, error, classes } = this.props;
+    const { email, password } = this.state;
+
+    const defaultErrorMessage = typeof error === 'string' ? error : null;
+    const emailError = error && error.email ? error.email : defaultErrorMessage;
+    const passwordError = error && error.password ? error.password : defaultErrorMessage;
 
     return (
-      <LoginWrapper>
-        <Helmet
-          title="Log in"
-        />
-        { inProgress ? <div>loading...</div> : null }
-        <form onSubmit={this.handleLogin}>
-          <table>
-            <tbody>
-              <tr>
-                <td>
-                  Email:
-                </td>
-                <td>
-                  <input
-                    onChange={this.handleEmail}
-                    type="text"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  Password:
-                </td>
-                <td>
-                  <input
-                    onChange={this.handlePassword}
-                    type="password"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  &nbsp;
-                </td>
-                <td>
-                  <input type="submit" />
-                </td>
-              </tr>
-              {
-                error
-                ? (
-                  <tr>
-                    <td colSpan="2">
-                      {error}
-                    </td>
-                  </tr>
-                ) : null
-              }
-            </tbody>
-          </table>
-        </form>
-      </LoginWrapper>
+      <div className={classes.wrapper}>
+        <Paper className={classes.paper}>
+          <Helmet
+            title="Přihlášení"
+          />
+          { inProgress ? <div>loading...</div> : null }
+          <form onSubmit={this.handleLogin}>
+            <Typography variant="headline">Přihlášení</Typography>
+            <TextField
+              autoFocus
+              id="email"
+              label="E-mail"
+              placeholder="karel.polak@sspbrno.cz"
+              value={email}
+              onChange={this.handleEmail}
+              className={classes.textField}
+              margin="normal"
+              fullWidth
+              error={!!error}
+              helperText={emailError}
+            />
+            <TextField
+              id="password"
+              type="password"
+              label="Heslo"
+              placeholder="********"
+              value={password}
+              onChange={this.handlePassword}
+              className={classes.textField}
+              margin="normal"
+              fullWidth
+              error={!!error}
+              helperText={passwordError}
+            />
+            <div className={classes.buttonContainer}>
+              <Button type="submit" color="primary">
+                Přihlásit se
+              </Button>
+            </div>
+          </form>
+        </Paper>
+      </div>
     );
   }
 
@@ -118,4 +144,6 @@ const withReducer = injectReducer({ key: 'login', reducer });
 
 const withSaga = injectSaga({ key: 'login', saga });
 
-export default compose(withReducer, withSaga, withConnect)(LoginScreen);
+const withStyle = withStyles(styles);
+
+export default compose(withStyle, withReducer, withSaga, withConnect)(LoginScreen);

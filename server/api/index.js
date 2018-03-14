@@ -25,8 +25,8 @@ api.use(bodyParser.json(), (err, req, res, next) => {
 });
 
 const loginSchema = Joi.object().keys({
-  email: Joi.string().email().required(),
-  password: Joi.string().required(),
+  email: Joi.string().email().required().error(() => ({ message: 'Musíte zadat email v platném tvaru např. jmeno@domena.com' })),
+  password: Joi.string().required().error(() => ({ message: 'Musíte zadat heslo' })),
 });
 class AuthError extends Error {}
 api.post('/user/login', (req, res) =>
@@ -34,8 +34,14 @@ api.post('/user/login', (req, res) =>
     .then(({ email, password }) =>
       connectToMongo().then((db) =>
         db.collection('users')
-          .findOne({ email: email.toLowerCase() })
-            .catch(() => { throw new AuthError('User not found'); })
+          .find({ email: email.toLowerCase() })
+            .toArray()
+            .then((data) => {
+              if (data.length === 0) {
+                throw new AuthError('User not found');
+              }
+              return data[0];
+            })
             .then(({ password: hashedPassword }) =>
               bcrypt.compare(password, hashedPassword)
                 .then((isMatching) => {
@@ -56,17 +62,24 @@ api.post('/user/login', (req, res) =>
         )
     )
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.isJoi && err.name === 'ValidationError') {
         res.json({
           code: 400,
-          error: 'Musíte zadat email a heslo',
+          error: err.details.reduce(
+            (errors, error) => Object.assign(
+              errors,
+              {
+                [error.path]: error.message,
+              }
+            )
+          , {}),
         });
         return;
       }
       if (err instanceof AuthError) {
         res.json({
           code: 401,
-          error: 'Špatný email nebo heslo',
+          error: 'Zadali jste špatný email nebo heslo. Překontrolujte údaje.',
         });
         return;
       }

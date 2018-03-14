@@ -16,9 +16,10 @@ function loginReducer(state = initialState, action) {
     case LOGIN:
       return state.set('inProgress', true);
     case LOGIN_SUCCESS:
-      return state.set('inProgress', false);
+      return state.set('inProgress', false)
+                  .set('error', null);
     case LOGIN_FAIL:
-      return state.set('error', action.payload.error)
+      return state.set('error', fromJS(action.payload.error))
                    .set('inProgress', false);
     default:
       return state;

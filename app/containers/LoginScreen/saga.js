@@ -22,6 +22,10 @@ export function* fetchData({ payload }) {
       }
     );
     if (data.error) {
+      if (typeof data.error === 'object') {
+        yield put({ type: LOGIN_FAIL, payload: { error: data.error } });
+        return;
+      }
       throw new Error(data.error);
     }
     yield put({ type: LOGIN_SUCCESS, payload: data.response });
