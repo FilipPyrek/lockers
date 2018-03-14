@@ -32,7 +32,6 @@ export function* fetchData({ payload }) {
 
 export function* redirect() {
   yield put(push('/'));
-  yield put(push('/'));
 }
 
 export default function* login() {

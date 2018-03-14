@@ -1,43 +1,42 @@
-/**
- *
- * App
- *
- * This component is the skeleton around the actual pages, and should only
- * contain code that should be seen on all pages. (e.g. navigation bar)
- */
-
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router';
+import ApplicationFrame from 'components/ApplicationFrame';
 import LoginScreen from 'containers/LoginScreen';
-
-const AppWrapper = styled.div`
-
-`;
+import LogoutScreen from 'containers/LogoutScreen';
 
 function App(props) {
   return (
-    <AppWrapper>
+    <div>
       <Helmet
         titleTemplate="%s - Purkyňka Lockers"
         defaultTitle="Purkyňka Lockers"
       >
         <meta name="description" content="Aplikace pro správu skříněk na Purkyňce." />
       </Helmet>
-      <Switch>
-        <Route exact path="/" component={() => <div>token - {props.token}</div>} />
-        <Route exact path="/login" component={LoginScreen} />
-        <Route component={() => <div>not found</div>} />
-      </Switch>
-    </AppWrapper>
+      <ApplicationFrame>
+        <Switch>
+          <Route exact path="/" component={() => <div>{props.isLoggenIn ? 'ANO' : 'NE'}</div>} />
+          <Route exact path="/login" component={(p) => props.isLoggenIn ? <Redirect to="/" /> : <LoginScreen {...p} />} />
+          <Route exact path="/logout" component={LogoutScreen} />
+          <Route component={() => <div>not found</div>} />
+        </Switch>
+      </ApplicationFrame>
+    </div>
   );
 }
 
 App.propTypes = {
-  token: PropTypes.string,
+  isLoggenIn: PropTypes.bool.isRequired,
 };
 
-export default connect((state) => ({ token: state.getIn(['global', 'token']) }), null)(App);
+const ConnectedApp = connect(
+  (state) => ({
+    isLoggenIn: Boolean(state.getIn(['global', 'token'])),
+  })
+  , null)(App);
+
+export default withRouter(ConnectedApp);
