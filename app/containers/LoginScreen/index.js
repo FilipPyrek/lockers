@@ -71,7 +71,6 @@ class LoginScreen extends React.PureComponent {
           <Helmet
             title="Přihlášení"
           />
-          { inProgress ? <div>loading...</div> : null }
           <form onSubmit={this.handleLogin}>
             <Typography variant="headline">Přihlášení</Typography>
             <TextField
@@ -101,7 +100,7 @@ class LoginScreen extends React.PureComponent {
               helperText={passwordError}
             />
             <div className={classes.buttonContainer}>
-              <Button type="submit" color="primary">
+              <Button type="submit" color="primary" disabled={inProgress}>
                 Přihlásit se
               </Button>
             </div>

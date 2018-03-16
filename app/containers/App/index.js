@@ -7,6 +7,7 @@ import { withRouter } from 'react-router';
 import ApplicationFrame from 'components/ApplicationFrame';
 import LoginScreen from 'containers/LoginScreen';
 import LogoutScreen from 'containers/LogoutScreen';
+import CreateGridScreen from 'containers/CreateGridScreen';
 
 function App(props) {
   return (
@@ -20,6 +21,7 @@ function App(props) {
       <ApplicationFrame>
         <Switch>
           <Route exact path="/" component={() => <div>{props.isLoggenIn ? 'ANO' : 'NE'}</div>} />
+          <Route exact path="/create" component={CreateGridScreen} />
           <Route exact path="/login" component={(p) => props.isLoggenIn ? <Redirect to="/" /> : <LoginScreen {...p} />} />
           <Route exact path="/logout" component={LogoutScreen} />
           <Route component={() => <div>not found</div>} />

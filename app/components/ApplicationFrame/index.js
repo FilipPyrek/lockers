@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Link as RawLink } from 'react-router-dom';
+import KeyHandler, { KEYUP } from 'react-key-handler';
 import Drawer from 'material-ui/Drawer';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
@@ -41,6 +42,7 @@ class ApplicationFrame extends React.Component {
 
     return (
       <div className={classes.root}>
+        <KeyHandler keyEventName={KEYUP} keyValue="Escape" onKeyHandle={this.handleDrawerClose} />
         <AppBar
           position="absolute"
           className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
@@ -89,21 +91,20 @@ class ApplicationFrame extends React.Component {
               </div>
             ) : null
           }
-          <Divider />
-          <List>
-            <ListItem button>
-              <ListItemIcon>
-                <BuildIcon />
-              </ListItemIcon>
-              <ListItemText primary="Settings" />
-            </ListItem>
-          </List>
           {
             this.props.isLoggenIn
             ? (
               <div>
                 <Divider />
                 <List>
+                  <Link to="/create">
+                    <ListItem button>
+                      <ListItemIcon>
+                        <BuildIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Vytvořit grid" />
+                    </ListItem>
+                  </Link>
                   <Link to="/logout">
                     <ListItem button>
                       <ListItemIcon>

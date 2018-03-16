@@ -1,0 +1,60 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Helmet } from 'react-helmet';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
+import injectReducer from 'utils/injectReducer';
+import injectSaga from 'utils/injectSaga';
+import Paper from 'material-ui/Paper';
+import Typography from 'material-ui/Typography';
+import { withStyles } from 'material-ui/styles';
+import * as actions from './actions';
+import saga from './saga';
+import reducer from './reducer';
+import styles from './styles';
+
+class CreateGridScreen extends React.PureComponent {
+
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = { email: '', password: '' };
+
+    this.handleSubmission = this.handleSubmission.bind(this);
+  }
+
+  handleSubmission(event) {
+    event.preventDefault();
+  }
+
+  render() {
+    const { classes } = this.props;
+
+    return (
+      <div className={classes.wrapper}>
+        <Paper className={classes.paper}>
+          <Helmet
+            title="Vytvoření rozložení"
+          />
+          <form onSubmit={this.handleSubmission}>
+            <Typography variant="headline">Přihlášení</Typography>
+          </form>
+        </Paper>
+      </div>
+    );
+  }
+
+}
+
+const withConnect = connect(null, actions);
+
+const withReducer = injectReducer({ key: 'createGrid', reducer });
+
+const withSaga = injectSaga({ key: 'createGrid', saga });
+
+const withStyle = withStyles(styles);
+
+export default compose(withStyle, withReducer, withSaga, withConnect)(CreateGridScreen);
