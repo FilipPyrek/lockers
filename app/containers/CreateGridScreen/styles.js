@@ -27,25 +27,4 @@ export default (theme) => ({
     paddingBottom: theme.spacing.unit * 4,
     marginLeft: '5%',
   },
-  container: {
-    position: 'relative',
-    overflow: 'hidden',
-    width: '100%',
-    height: '100%',
-  },
-  box: {
-    position: 'absolute',
-    width: 40,
-    height: 40,
-    border: 'solid black',
-    boxSizing: 'border-box',
-    lineHeight: '40px',
-    textAlign: 'center',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    fontSize: 14,
-  },
-  active: {
-    cursor: 'move',
-  },
 });
