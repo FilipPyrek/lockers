@@ -34,11 +34,15 @@ class CreateGridScreen extends React.Component {
         },
       ],
       active: null,
+      activeOffsetX: 0,
+      activeOffsetY: 0,
       lastActive: null,
       activeMapMovement: false,
       mapOffsetX: 0,
       mapOffsetY: 0,
-      scale: 2,
+      mapWidth: 0,
+      mapHeight: 0,
+      scale: 1,
     };
 
     this.handleSubmission = this.handleSubmission.bind(this);
@@ -68,6 +72,8 @@ class CreateGridScreen extends React.Component {
     this.setState({
       ...this.state,
       active: key,
+      activeOffsetX: event.nativeEvent.offsetX,
+      activeOffsetY: event.nativeEvent.offsetY,
       lastActive: key,
     });
   }
@@ -90,12 +96,21 @@ class CreateGridScreen extends React.Component {
       return;
     }
 
+    const { offsetX, offsetY } = event;
+    const isBox = !!event.target.dataset.key;
+
+    const additionX = isBox ? event.target.offsetLeft : 0;
+    const additionY = isBox ? event.target.offsetTop : 0;
+
+    const x = Math.round((offsetX + additionX - this.state.activeOffsetX - this.state.mapOffsetX * this.state.scale - this.state.mapWidth / 2) / this.state.scale / 40) * 40;
+    const y = Math.round((offsetY + additionY - this.state.activeOffsetY - this.state.mapOffsetY * this.state.scale - this.state.mapHeight / 2) / this.state.scale / 40) * 40;
+
     if (this.state.active === null) {
       return;
     }
     const boxes = [...this.state.boxes];
-    boxes[this.state.active].x += event.movementX / this.state.scale;
-    boxes[this.state.active].y += event.movementY / this.state.scale;
+    boxes[this.state.active].x = x;
+    boxes[this.state.active].y = y;
 
     this.setState({
       ...this.state,
@@ -107,8 +122,8 @@ class CreateGridScreen extends React.Component {
     const boxes = [...this.state.boxes];
     const key = -1 + boxes.push({
       name: `${Math.round(Math.random() * 100)}`,
-      x: 0,
-      y: 0,
+      x: Math.round((-this.state.mapOffsetX * this.state.scale) / 40) * 40,
+      y: Math.round((-this.state.mapOffsetY * this.state.scale) / 40) * 40,
       color: Math.round(Math.random() * 360),
     });
     this.setState({
@@ -141,12 +156,19 @@ class CreateGridScreen extends React.Component {
           <Button color="primary" onClick={this.addBox}>
             Přidat skříňku
           </Button>
+          <Button color="primary" onClick={() => this.setState({ ...this.state, scale: this.state.scale * 1.1 })}>
+            +
+          </Button>
+          <Button color="primary" onClick={() => this.setState({ ...this.state, scale: this.state.scale / 1.1 })}>
+            -
+          </Button>
           <div
             className={classNames(classes.container, { [classes.active]: this.state.active !== null || this.state.activeMapMovement })}
             onMouseDown={this.mouseDown}
             onMouseUp={this.mouseUp}
             onMouseMove={this.mouseMove}
             role="presentation"
+            ref={(div) => div && (div.clientWidth !== this.state.mapWidth || div.clientHeight !== this.state.mapHeight) ? this.setState({ ...this.state, mapWidth: div.clientWidth, mapHeight: div.clientHeight }) : null}
           >
             {boxes.map((box, key) => (
               <div
@@ -155,8 +177,8 @@ class CreateGridScreen extends React.Component {
                 onMouseDown={this.mouseDown}
                 className={classes.box}
                 style={{
-                  left: ((Math.round(box.x / 40) * 40) + this.state.mapOffsetX) * this.state.scale,
-                  top: ((Math.round(box.y / 40) * 40) + this.state.mapOffsetY) * this.state.scale,
+                  left: (box.x + this.state.mapOffsetX) * this.state.scale + this.state.mapWidth / 2,
+                  top: (box.y + this.state.mapOffsetY) * this.state.scale + this.state.mapHeight / 2,
                   background: `hsl(${box.color}, 100%, 50%)`,
                   borderWidth: this.state.lastActive === `${key}` ? '2px' : 0,
                   transform: `scale(${this.state.scale})`,
