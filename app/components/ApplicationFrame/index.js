@@ -102,7 +102,7 @@ class ApplicationFrame extends React.Component {
                       <ListItemIcon>
                         <BuildIcon />
                       </ListItemIcon>
-                      <ListItemText primary="Vytvořit grid" />
+                      <ListItemText primary="Vytvořit nové rozmístění" />
                     </ListItem>
                   </Link>
                   <Link to="/logout">
