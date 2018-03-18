@@ -29,13 +29,15 @@ class CreateGridScreen extends React.Component {
           x: 0,
           y: 0,
           color: 'red',
-          name: 'A123'
+          name: 'A123',
+          isActive: false,
         },
         b: {
           x: 100,
           y: 100,
           color: 'blue',
           name: 'B456',
+          isActive: true,
         },
       },
     };

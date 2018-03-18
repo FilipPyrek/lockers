@@ -154,8 +154,10 @@ class Grid extends React.Component {
         {
           Map(this.props.boxes).map((box, key) => (
             <GridBox
-              data-boxid={key}
               key={key}
+              data-boxid={key}
+              active={box.isActive}
+              moving={boxes.activeMovement || map.activeMovement}
               x={(box.x - map.offsetX) * this.props.scale}
               y={(box.y - map.offsetY) * this.props.scale}
               color={box.color}

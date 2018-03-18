@@ -11,6 +11,7 @@ const GridBox = styled.div.attrs({
     height: `${props.size}px`,
     lineHeight: `${props.size}px`,
     fontSize: `${props.size / 2.85714286}px`,
+    cursor: props.moving ? 'move' : null,
   }),
 })`
   position: absolute;
@@ -19,12 +20,14 @@ const GridBox = styled.div.attrs({
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
+  cursor: pointer;
 `;
 
 
 GridBox.propTypes = {
   color: PropTypes.string.isRequired,
   active: PropTypes.bool,
+  moving: PropTypes.bool,
   size: PropTypes.number.isRequired,
   x: PropTypes.number.isRequired,
   y: PropTypes.number.isRequired,

@@ -10,6 +10,7 @@ const GridContainer = styled.div.attrs({
   overflow: hidden;
   width: 100%;
   height: 100%;
+  cursor: crosshair;
 `;
 
 
