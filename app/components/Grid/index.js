@@ -10,6 +10,8 @@ class Grid extends React.Component {
   static propTypes = {
     boxes: PropTypes.object,
     scale: PropTypes.number,
+    mapOffsetX: PropTypes.number,
+    mapOffsetY: PropTypes.number,
     disableMapMovement: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
     disableBoxMovement: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
     onBoxMove: PropTypes.func,
@@ -26,7 +28,7 @@ class Grid extends React.Component {
     onBoxDeselect: () => {},
   }
 
-  static boxSize = 40;
+  static boxSize = 60;
 
   constructor(props) {
     super(props);
@@ -111,8 +113,8 @@ class Grid extends React.Component {
       const { movementX, movementY } = event.nativeEvent;
       const { onMapMove } = this.props;
       this.setState((prevState) => {
-        const newOffsetX = prevState.map.get('offsetX') - movementX;
-        const newOffsetY = prevState.map.get('offsetY') - movementY;
+        const newOffsetX = prevState.map.get('offsetX') - (movementX / this.props.scale);
+        const newOffsetY = prevState.map.get('offsetY') - (movementY / this.props.scale);
         onMapMove({ x: newOffsetX, y: newOffsetY });
         return {
           ...prevState,
@@ -131,12 +133,14 @@ class Grid extends React.Component {
       const container = this.state.container.toJS();
       const { scale, onBoxMove } = this.props;
 
+      const { mapOffsetX = map.offsetX, mapOffsetY = map.offsetY } = this.props;
+
       const id = this.state.boxes.get('activeBoxKey');
       onBoxMove(
         id,
         {
-          x: Math.round(((x + (map.offsetX * scale)) - movementOffsetX - container.offsetX) / Grid.boxSize / scale) * Grid.boxSize,
-          y: Math.round(((y + (map.offsetY * scale)) - movementOffsetY - container.offsetY) / Grid.boxSize / scale) * Grid.boxSize,
+          x: Math.round(((x + (mapOffsetX * scale)) - movementOffsetX - container.offsetX) / Grid.boxSize / scale) * Grid.boxSize,
+          y: Math.round(((y + (mapOffsetY * scale)) - movementOffsetY - container.offsetY) / Grid.boxSize / scale) * Grid.boxSize,
         }
       );
     }
@@ -166,15 +170,22 @@ class Grid extends React.Component {
     this.reloadContainerSize();
   }
 
+  contextMenu(event) {
+    event.preventDefault();
+  }
+
   render() {
     const map = this.state.map.toJS();
     const boxes = this.state.boxes.toJS();
     const container = this.state.container.toJS();
 
+    const { mapOffsetX = map.offsetX, mapOffsetY = map.offsetY } = this.props;
+
     return (
       <div
         style={{ wdith: '100%', height: '100%' }}
         ref={this.bindContainer}
+        onContextMenu={this.contextMenu}
       >
         <WindowResizeListener onResize={this.reloadContainerSize} />
         <GridContainer
@@ -184,10 +195,11 @@ class Grid extends React.Component {
           moving={boxes.activeMovement || map.activeMovement}
         >
           <GridBox
-            x={(((-Grid.boxSize / 20) - map.offsetX) * this.props.scale) + container.offsetX}
-            y={(((-Grid.boxSize / 20) - map.offsetY) * this.props.scale) + container.offsetY}
+            data-boxid="-1"
+            x={(((-Grid.boxSize / 20) - mapOffsetX) * this.props.scale) + container.offsetX}
+            y={(((-Grid.boxSize / 20) - mapOffsetY) * this.props.scale) + container.offsetY}
             color="black"
-            size={Grid.boxSize / 10}
+            size={(Grid.boxSize / 10) * this.props.scale}
           />
           {
             Map(this.props.boxes).map((box, key) => (
@@ -196,8 +208,8 @@ class Grid extends React.Component {
                 data-boxid={key}
                 active={box.isActive}
                 moving={boxes.activeMovement || map.activeMovement}
-                x={((box.x - map.offsetX) * this.props.scale) + container.offsetX}
-                y={((box.y - map.offsetY) * this.props.scale) + container.offsetY}
+                x={((box.x - mapOffsetX) * this.props.scale) + container.offsetX}
+                y={((box.y - mapOffsetY) * this.props.scale) + container.offsetY}
                 color={box.color}
                 size={Grid.boxSize * this.props.scale}
                 onMouseDown={this.boxMouseDown}
