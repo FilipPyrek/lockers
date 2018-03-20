@@ -34,14 +34,17 @@ class LayoutsListScreen extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     load: PropTypes.func.isRequired,
+    remove: PropTypes.func.isRequired,
     layouts: PropTypes.array,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      selectRows: Set(),
+      selectedRows: Set(),
     };
+
+    this.removeRows = this.removeRows.bind(this);
   }
 
   componentWillMount() {
@@ -51,16 +54,26 @@ class LayoutsListScreen extends React.Component {
   clickRow(id) {
     this.setState((prevState) => ({
       ...prevState,
-      selectRows: prevState.selectRows
+      selectedRows: prevState.selectedRows
         .includes(id)
-          ? prevState.selectRows.remove(id)
-          : prevState.selectRows.add(id),
+          ? prevState.selectedRows.remove(id)
+          : prevState.selectedRows.add(id),
     }));
+  }
+
+  removeRow(id) {
+    this.props.remove([id]);
+  }
+
+  removeRows() {
+    this.props.remove(
+      this.state.selectedRows.toArray()
+    );
   }
 
   render() {
     const { classes, layouts = [] } = this.props;
-    const { selectRows } = this.state;
+    const { selectedRows } = this.state;
 
     return (
       <div className={classes.wrapper}>
@@ -71,10 +84,13 @@ class LayoutsListScreen extends React.Component {
           <Paper className={classes.toolbar}>
             <div>
               {
-                this.state.selectRows.size > 0
+                this.state.selectedRows.size > 0
                 ? (
                   <Tooltip title="Smazat" placement="top" id="create-new-layout">
-                    <IconButton aria-label="Vytvořit nové rozložení">
+                    <IconButton
+                      onClick={this.removeRows}
+                      aria-label="Vytvořit nové rozložení"
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </Tooltip>
@@ -116,11 +132,11 @@ class LayoutsListScreen extends React.Component {
                       data-id={layout._id}
                       onClick={() => this.clickRow(layout._id)}
                       role="checkbox"
-                      aria-checked={selectRows.contains(layout._id)}
+                      aria-checked={selectedRows.contains(layout._id)}
                       hover
                     >
                       <TableCell padding="checkbox">
-                        <Checkbox checked={selectRows.contains(layout._id)} />
+                        <Checkbox checked={selectedRows.contains(layout._id)} />
                       </TableCell>
                       <TableCell>
                         {layout.name}
@@ -133,7 +149,7 @@ class LayoutsListScreen extends React.Component {
                           <IconButton
                             onClick={(event) => {
                               event.stopPropagation();
-                              console.log(`smazat ${layout._id}`)
+                              this.removeRow(layout._id);
                             }}
                             aria-label="Vytvořit nové rozložení"
                           >

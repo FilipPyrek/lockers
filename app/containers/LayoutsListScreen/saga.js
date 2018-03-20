@@ -4,6 +4,9 @@ import {
   LOAD,
   LOAD_FAIL,
   LOAD_SUCCESS,
+  REMOVE,
+  REMOVE_FAIL,
+  REMOVE_SUCCESS,
 } from './constants';
 
 export function* load() {
@@ -32,7 +35,35 @@ export function* load() {
   }
 }
 
+export function* remove({ payload }) {
+  const token = yield select((state) => state.getIn(['global', 'token']));
+  try {
+    const data = yield call(
+      request,
+      `/locker/layout/remove?token=${token}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+    if (data.error) {
+      if (typeof data.error === 'object') {
+        yield put({ type: REMOVE_FAIL, payload: { error: data.error } });
+        return;
+      }
+      throw new Error(data.error);
+    }
+    yield put({ type: REMOVE_SUCCESS, payload: data.response });
+  } catch (error) {
+    yield put({ type: REMOVE_FAIL, payload: { error: error.message } });
+  }
+}
 
 export default function* defaultSaga() {
   yield takeEvery(LOAD, load);
+  yield takeEvery(REMOVE, remove);
+  yield takeEvery(REMOVE_SUCCESS, load);
 }
