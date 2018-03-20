@@ -97,7 +97,7 @@ class ApplicationFrame extends React.Component {
               <div>
                 <Divider />
                 <List>
-                  <Link to="/create">
+                  <Link to="/layouts">
                     <ListItem button>
                       <ListItemIcon>
                         <GridIcon />

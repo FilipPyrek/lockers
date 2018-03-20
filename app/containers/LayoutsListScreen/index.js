@@ -36,6 +36,11 @@ class LayoutsListScreen extends React.Component {
     load: PropTypes.func.isRequired,
     remove: PropTypes.func.isRequired,
     layouts: PropTypes.array,
+    loading: PropTypes.bool.isRequired,
+  }
+
+  static defaultProps = {
+    layouts: [],
   }
 
   constructor(props) {
@@ -72,8 +77,11 @@ class LayoutsListScreen extends React.Component {
   }
 
   render() {
-    const { classes, layouts = [] } = this.props;
+    const { classes } = this.props;
     const { selectedRows } = this.state;
+    const layouts = this.props.layouts.sort((a, b) =>
+      new Date(b.creationDate) - new Date(a.creationDate)
+    );
 
     return (
       <div className={classes.wrapper}>
@@ -126,39 +134,48 @@ class LayoutsListScreen extends React.Component {
               </TableHead>
               <TableBody>
                 {
-                  layouts.map((layout) => (
-                    <TableRow
-                      key={layout._id}
-                      data-id={layout._id}
-                      onClick={() => this.clickRow(layout._id)}
-                      role="checkbox"
-                      aria-checked={selectedRows.contains(layout._id)}
-                      hover
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox checked={selectedRows.contains(layout._id)} />
-                      </TableCell>
-                      <TableCell>
-                        {layout.name}
-                      </TableCell>
-                      <TableCell>
-                        {moment(layout.creationDate).format('D.M.YYYY HH:mm')}
-                      </TableCell>
-                      <TableCell>
-                        <Tooltip title="Smazat" placement="top" id="create-new-layout">
-                          <IconButton
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              this.removeRow(layout._id);
-                            }}
-                            aria-label="Vytvořit nové rozložení"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
+                  this.props.loading
+                  ? (
+                    <TableRow>
+                      <TableCell colSpan="4" className={classes.loading}>
+                        Načítání...
                       </TableCell>
                     </TableRow>
-                  ))
+                  ) : (
+                    layouts.map((layout) => (
+                      <TableRow
+                        key={layout._id}
+                        data-id={layout._id}
+                        onClick={() => this.clickRow(layout._id)}
+                        role="checkbox"
+                        aria-checked={selectedRows.contains(layout._id)}
+                        hover
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox checked={selectedRows.contains(layout._id)} />
+                        </TableCell>
+                        <TableCell>
+                          {layout.name}
+                        </TableCell>
+                        <TableCell>
+                          {moment(layout.creationDate).format('D.M.YYYY HH:mm')}
+                        </TableCell>
+                        <TableCell>
+                          <Tooltip title="Smazat" placement="top" id="create-new-layout">
+                            <IconButton
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                this.removeRow(layout._id);
+                              }}
+                              aria-label="Vytvořit nové rozložení"
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )
                 }
               </TableBody>
             </Table>

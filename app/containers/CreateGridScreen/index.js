@@ -70,7 +70,7 @@ class CreateGridScreen extends React.Component {
     this.centerMap = this.centerMap.bind(this);
     this.save = this.save.bind(this);
     this.changeLayoutName = this.changeLayoutName.bind(this);
-    this.calcelLayoutNameDialog = this.calcelLayoutNameDialog.bind(this);
+    this.cancelLayoutNameDialog = this.cancelLayoutNameDialog.bind(this);
     this.wheel = this.wheel.bind(this);
   }
 
@@ -169,7 +169,9 @@ class CreateGridScreen extends React.Component {
     }));
   }
 
-  save() {
+  save(event) {
+    event.preventDefault();
+
     if (this.state.layoutName) {
       this.props.save(this.state.layoutName, this.state.boxes.toJS());
       this.setState((prevState) => ({
@@ -193,7 +195,7 @@ class CreateGridScreen extends React.Component {
     }));
   }
 
-  calcelLayoutNameDialog() {
+  cancelLayoutNameDialog() {
     this.setState((prevState) => ({
       ...prevState,
       isLayoutNameDialogOpen: false,
@@ -285,30 +287,33 @@ class CreateGridScreen extends React.Component {
         </Paper>
         <Dialog
           open={this.state.isLayoutNameDialogOpen}
+          onClose={this.cancelLayoutNameDialog}
           aria-labelledby="save-dialog-title"
         >
-          <DialogTitle id="save-dialog-title">Název rozložení</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Zadejte název rozložení:
-            </DialogContentText>
-            <TextField
-              margin="dense"
-              label="Název rozložení"
-              value={this.state.layoutName}
-              onChange={this.changeLayoutName}
-              autoFocus
-              fullWidth
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.calcelLayoutNameDialog} color="primary">
-              Zrušit
-            </Button>
-            <Button onClick={this.save} color="primary" disabled={!this.state.layoutName}>
-              OK
-            </Button>
-          </DialogActions>
+          <form onSubmit={this.save}>
+            <DialogTitle id="save-dialog-title">Název rozložení</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Zadejte název rozložení:
+              </DialogContentText>
+              <TextField
+                margin="dense"
+                label="Název rozložení"
+                value={this.state.layoutName}
+                onChange={this.changeLayoutName}
+                autoFocus
+                fullWidth
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.cancelLayoutNameDialog} color="primary">
+                Zrušit
+              </Button>
+              <Button type="submit" color="primary" disabled={!this.state.layoutName}>
+                OK
+              </Button>
+            </DialogActions>
+          </form>
         </Dialog>
       </div>
     );
