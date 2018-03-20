@@ -18,7 +18,9 @@ const dependencies = { connectToMongo };
 /* eslint-disable global-require */
 const handlers = Map({
   userLogin: require('./lockerLayoutAdd'),
+  lockerLayout: require('./lockerLayout'),
   lockerLayoutAdd: require('./lockerLayoutAdd'),
+  lockerLayoutRemove: require('./lockerLayoutRemove'),
 })
 /* eslint-enable */
 .map((func) => func(dependencies))
@@ -35,6 +37,8 @@ api.use(bodyParser.json(), (err, req, res, next) => {
 
 api.post('/user/login', handlers.userLogin);
 
+api.use(security).get('/locker/layout', handlers.lockerLayout);
 api.use(security).post('/locker/layout/add', handlers.lockerLayoutAdd);
+api.use(security).post('/locker/layout/remove', handlers.lockerLayoutRemove);
 
 module.exports = api;

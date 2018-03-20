@@ -71,6 +71,7 @@ class CreateGridScreen extends React.Component {
     this.save = this.save.bind(this);
     this.changeLayoutName = this.changeLayoutName.bind(this);
     this.calcelLayoutNameDialog = this.calcelLayoutNameDialog.bind(this);
+    this.wheel = this.wheel.bind(this);
   }
 
   boxNameChange(event) {
@@ -199,6 +200,14 @@ class CreateGridScreen extends React.Component {
     }));
   }
 
+  wheel(event) {
+    if (event.nativeEvent.deltaY < 0) {
+      this.zoomOut();
+      return;
+    }
+    this.zoomIn();
+  }
+
   render() {
     const { classes } = this.props;
     const activeBox = this.state.lastUsedBoxId !== null
@@ -220,7 +229,7 @@ class CreateGridScreen extends React.Component {
           </Paper>
           <Paper
             className={classes.grid}
-            onWheel={(event) => event.nativeEvent.deltaY < 0 ? this.zoomOut() : this.zoomIn()}
+            onWheel={this.wheel}
           >
             <Grid
               mapOffsetX={this.state.map.get('x')}

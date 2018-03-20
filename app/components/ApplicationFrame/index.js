@@ -14,7 +14,7 @@ import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui-icons/Menu';
-import BuildIcon from 'material-ui-icons/Build';
+import GridIcon from 'material-ui-icons/GridOn';
 import LoginIcon from 'material-ui-icons/LockOpen';
 import LogoutIcon from 'material-ui-icons/ExitToApp';
 import ChevronLeftIcon from 'material-ui-icons/ChevronLeft';
@@ -100,9 +100,9 @@ class ApplicationFrame extends React.Component {
                   <Link to="/create">
                     <ListItem button>
                       <ListItemIcon>
-                        <BuildIcon />
+                        <GridIcon />
                       </ListItemIcon>
-                      <ListItemText primary="Vytvořit nové rozmístění" />
+                      <ListItemText primary="Seznam rozložení" />
                     </ListItem>
                   </Link>
                   <Link to="/logout">

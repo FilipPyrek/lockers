@@ -1,4 +1,5 @@
 import { takeEvery, call, put, select } from 'redux-saga/effects';
+import { push } from 'react-router-redux';
 import request from 'utils/request';
 import {
   SAVE,
@@ -34,6 +35,11 @@ export function* sendData({ payload }) {
   }
 }
 
+export function* redirect() {
+  yield put(push('/layouts'));
+}
+
 export default function* save() {
   yield takeEvery(SAVE, sendData);
+  yield takeEvery(SAVE_SUCCESS, redirect);
 }

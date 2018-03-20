@@ -16,7 +16,10 @@ module.exports = function lockerLayoutAdd({ connectToMongo }) {
                boxes,
                name,
              })
-             .then((data) => res.json({ body: req.body, data }))
+             .then(() => res.json({
+               code: 201,
+               message: 'Rozložení bylo úspěšně vytvořeno.',
+             }))
           )
         )
         .catch(handleError(res));

@@ -8,6 +8,7 @@ import ApplicationFrame from 'components/ApplicationFrame';
 import LoginScreen from 'containers/LoginScreen';
 import LogoutScreen from 'containers/LogoutScreen';
 import CreateGridScreen from 'containers/CreateGridScreen';
+import LayoutsListScreen from 'containers/LayoutsListScreen';
 
 function App(props) {
   return (
@@ -21,7 +22,8 @@ function App(props) {
       <ApplicationFrame>
         <Switch>
           <Route exact path="/" component={() => <div>{props.isLoggenIn ? 'ANO' : 'NE'}</div>} />
-          <Route exact path="/create" component={CreateGridScreen} />
+          <Route exact path="/layouts" component={LayoutsListScreen} />
+          <Route exact path="/layouts/create" component={CreateGridScreen} />
           <Route exact path="/login" component={(p) => props.isLoggenIn ? <Redirect to="/" /> : <LoginScreen {...p} />} />
           <Route exact path="/logout" component={LogoutScreen} />
           <Route component={() => <div>not found</div>} />
