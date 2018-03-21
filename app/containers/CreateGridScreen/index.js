@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import injectReducer from 'utils/injectReducer';
@@ -17,6 +16,7 @@ import Dialog, {
 } from 'material-ui/Dialog';
 import { withStyles } from 'material-ui/styles';
 import { SketchPicker } from 'react-color';
+import ApplicationFrame from 'components/ApplicationFrame';
 import Grid from 'components/Grid';
 import { fromJS } from 'immutable';
 import { generate } from 'randomstring';
@@ -217,105 +217,104 @@ class CreateGridScreen extends React.Component {
       : null;
 
     return (
-      <div className={classes.wrapper}>
-        <Helmet
-          title="Nové rozmístění"
-        />
-        <div className={classes.leftPanel}>
-          <Paper className={classes.toolbar}>
-            <Button color="primary" onClick={this.addBox}>Přidat skříňku</Button>
-            <Button color="primary" onClick={this.zoomIn}>Přiblížit</Button>
-            <Button color="primary" onClick={this.zoomOut}>Oddálit</Button>
-            <Button color="primary" onClick={this.centerMap}>Vrátit na střed</Button>
-            <Button color="primary" variant="raised" onClick={this.save}>Uložit</Button>
-          </Paper>
-          <Paper
-            className={classes.grid}
-            onWheel={this.wheel}
-          >
-            <Grid
-              mapOffsetX={this.state.map.get('x')}
-              mapOffsetY={this.state.map.get('y')}
-              boxes={this.state.boxes.toJS()}
-              scale={this.state.map.get('scale')}
-              onBoxMove={this.boxMove}
-              onBoxSelect={this.boxSelect}
-              onMapMove={this.mapMove}
-            />
-          </Paper>
-        </div>
-        <Paper className={classes.panel}>
-          <Typography variant="title" paragraph>Úprava skříňky</Typography>
-          {
-            activeBox === null
-            ? (
-              <div>
-                <Typography variant="subheading" paragraph>Vyberte skříňku</Typography>
-              </div>
-            ) : (
-              <div>
-                <TextField
-                  label="Název skříňky"
-                  margin="normal"
-                  value={activeBox.name}
-                  onChange={this.boxNameChange}
-                />
-                <TextField
-                  label="Barva"
-                  margin="normal"
-                  value={activeBox.color}
-                  onFocus={this.openColorPicker}
-                  onBlur={this.closeColorPicker}
-                />
-                <div style={{ position: 'relative' }}>
-                  <div style={{ position: 'absolute' }}>
-                    {
-                      this.state.isColorPickerOpen
-                      ? (
-                        <SketchPicker
-                          color={activeBox.color}
-                          onChange={this.boxColorChange}
-                        />
-                      )
-                      : null
-                    }
+      <ApplicationFrame title="Vytvoření rozložení">
+        <div className={classes.wrapper}>
+          <div className={classes.leftPanel}>
+            <Paper className={classes.toolbar}>
+              <Button color="primary" onClick={this.addBox}>Přidat skříňku</Button>
+              <Button color="primary" onClick={this.zoomIn}>Přiblížit</Button>
+              <Button color="primary" onClick={this.zoomOut}>Oddálit</Button>
+              <Button color="primary" onClick={this.centerMap}>Vrátit na střed</Button>
+              <Button color="primary" variant="raised" onClick={this.save}>Uložit</Button>
+            </Paper>
+            <Paper
+              className={classes.grid}
+              onWheel={this.wheel}
+            >
+              <Grid
+                mapOffsetX={this.state.map.get('x')}
+                mapOffsetY={this.state.map.get('y')}
+                boxes={this.state.boxes.toJS()}
+                scale={this.state.map.get('scale')}
+                onBoxMove={this.boxMove}
+                onBoxSelect={this.boxSelect}
+                onMapMove={this.mapMove}
+              />
+            </Paper>
+          </div>
+          <Paper className={classes.panel}>
+            <Typography variant="title" paragraph>Úprava skříňky</Typography>
+            {
+              activeBox === null
+              ? (
+                <div>
+                  <Typography variant="subheading" paragraph>Vyberte skříňku</Typography>
+                </div>
+              ) : (
+                <div>
+                  <TextField
+                    label="Název skříňky"
+                    margin="normal"
+                    value={activeBox.name}
+                    onChange={this.boxNameChange}
+                  />
+                  <TextField
+                    label="Barva"
+                    margin="normal"
+                    value={activeBox.color}
+                    onFocus={this.openColorPicker}
+                    onBlur={this.closeColorPicker}
+                  />
+                  <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'absolute' }}>
+                      {
+                        this.state.isColorPickerOpen
+                        ? (
+                          <SketchPicker
+                            color={activeBox.color}
+                            onChange={this.boxColorChange}
+                          />
+                        )
+                        : null
+                      }
+                    </div>
                   </div>
                 </div>
-              </div>
-            )
-          }
-        </Paper>
-        <Dialog
-          open={this.state.isLayoutNameDialogOpen}
-          onClose={this.cancelLayoutNameDialog}
-          aria-labelledby="save-dialog-title"
-        >
-          <form onSubmit={this.save}>
-            <DialogTitle id="save-dialog-title">Název rozložení</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                Zadejte název rozložení:
-              </DialogContentText>
-              <TextField
-                margin="dense"
-                label="Název rozložení"
-                value={this.state.layoutName}
-                onChange={this.changeLayoutName}
-                autoFocus
-                fullWidth
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={this.cancelLayoutNameDialog} color="primary">
-                Zrušit
-              </Button>
-              <Button type="submit" color="primary" disabled={!this.state.layoutName}>
-                OK
-              </Button>
-            </DialogActions>
-          </form>
-        </Dialog>
-      </div>
+              )
+            }
+          </Paper>
+          <Dialog
+            open={this.state.isLayoutNameDialogOpen}
+            onClose={this.cancelLayoutNameDialog}
+            aria-labelledby="save-dialog-title"
+          >
+            <form onSubmit={this.save}>
+              <DialogTitle id="save-dialog-title">Název rozložení</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Zadejte název rozložení:
+                </DialogContentText>
+                <TextField
+                  margin="dense"
+                  label="Název rozložení"
+                  value={this.state.layoutName}
+                  onChange={this.changeLayoutName}
+                  autoFocus
+                  fullWidth
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.cancelLayoutNameDialog} color="primary">
+                  Zrušit
+                </Button>
+                <Button type="submit" color="primary" disabled={!this.state.layoutName}>
+                  OK
+                </Button>
+              </DialogActions>
+            </form>
+          </Dialog>
+        </div>
+      </ApplicationFrame>
     );
   }
 
@@ -327,6 +326,6 @@ const withReducer = injectReducer({ key: 'createGrid', reducer });
 
 const withSaga = injectSaga({ key: 'createGrid', saga });
 
-const withStyle = withStyles(styles);
+const withStyle = withStyles(styles, { withTheme: true });
 
 export default compose(withStyle, withReducer, withSaga, withConnect)(CreateGridScreen);

@@ -5,7 +5,7 @@ const { handleError } = require('./helpers');
 const addLayoutSchema = Joi.object().keys({
   ids: Joi.array().items(Joi.string().required()).error(() => ({ message: 'Musíte odeslat pole s id layoutů.' })),
 });
-module.exports = function lockerLayoutAdd({ connectToMongo }) {
+module.exports = function lockerLayoutRemove({ connectToMongo }) {
   return (req, res) =>
     Joi.validate(req.body, addLayoutSchema)
       .then(({ ids }) =>

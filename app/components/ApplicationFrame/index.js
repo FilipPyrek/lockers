@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import classNames from 'classnames';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Link as RawLink } from 'react-router-dom';
@@ -25,6 +26,18 @@ const Link = styled(RawLink)`
 `;
 
 class ApplicationFrame extends React.Component {
+
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    children: PropTypes.node.isRequired,
+    isLoggenIn: PropTypes.bool.isRequired,
+    title: PropTypes.string,
+  }
+
+  static defaultProps = {
+    title: 'Purkyňka Lockers',
+  }
+
   state = {
     open: false,
   };
@@ -42,6 +55,9 @@ class ApplicationFrame extends React.Component {
 
     return (
       <div className={classes.root}>
+        <Helmet
+          title={this.props.title}
+        />
         <KeyHandler keyEventName={KEYUP} keyValue="Escape" onKeyHandle={this.handleDrawerClose} />
         <AppBar
           position="absolute"
@@ -57,7 +73,7 @@ class ApplicationFrame extends React.Component {
               <MenuIcon />
             </IconButton>
             <Typography variant="title" color="inherit" noWrap>
-              Purkyňka Lockers
+              {this.props.title}
             </Typography>
           </Toolbar>
         </AppBar>
@@ -126,12 +142,6 @@ class ApplicationFrame extends React.Component {
     );
   }
 }
-
-ApplicationFrame.propTypes = {
-  classes: PropTypes.object.isRequired,
-  children: PropTypes.node.isRequired,
-  isLoggenIn: PropTypes.bool.isRequired,
-};
 
 const ConnectedAppFrame = connect(
   (state) => ({

@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import injectReducer from 'utils/injectReducer';
@@ -10,6 +9,7 @@ import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
+import ApplicationFrame from 'components/ApplicationFrame';
 import * as actions from './actions';
 import saga from './saga';
 import reducer from './reducer';
@@ -66,47 +66,46 @@ class LoginScreen extends React.PureComponent {
     const passwordError = error && error.password ? error.password : defaultErrorMessage;
 
     return (
-      <div className={classes.wrapper}>
-        <Paper className={classes.paper}>
-          <Helmet
-            title="Přihlášení"
-          />
-          <form onSubmit={this.handleLogin}>
-            <Typography variant="headline">Přihlášení</Typography>
-            <TextField
-              autoFocus
-              id="email"
-              label="E-mail"
-              placeholder="karel.polak@sspbrno.cz"
-              value={email}
-              onChange={this.handleEmail}
-              className={classes.textField}
-              margin="normal"
-              fullWidth
-              error={!!error}
-              helperText={emailError}
-            />
-            <TextField
-              id="password"
-              type="password"
-              label="Heslo"
-              placeholder="********"
-              value={password}
-              onChange={this.handlePassword}
-              className={classes.textField}
-              margin="normal"
-              fullWidth
-              error={!!error}
-              helperText={passwordError}
-            />
-            <div className={classes.buttonContainer}>
-              <Button type="submit" color="primary" disabled={inProgress}>
-                Přihlásit se
-              </Button>
-            </div>
-          </form>
-        </Paper>
-      </div>
+      <ApplicationFrame title="Přihlášení">
+        <div className={classes.wrapper}>
+          <Paper className={classes.paper}>
+            <form onSubmit={this.handleLogin}>
+              <Typography variant="headline">Přihlášení</Typography>
+              <TextField
+                autoFocus
+                id="email"
+                label="E-mail"
+                placeholder="karel.polak@sspbrno.cz"
+                value={email}
+                onChange={this.handleEmail}
+                className={classes.textField}
+                margin="normal"
+                fullWidth
+                error={!!error}
+                helperText={emailError}
+              />
+              <TextField
+                id="password"
+                type="password"
+                label="Heslo"
+                placeholder="********"
+                value={password}
+                onChange={this.handlePassword}
+                className={classes.textField}
+                margin="normal"
+                fullWidth
+                error={!!error}
+                helperText={passwordError}
+              />
+              <div className={classes.buttonContainer}>
+                <Button type="submit" color="primary" disabled={inProgress}>
+                  Přihlásit se
+                </Button>
+              </div>
+            </form>
+          </Paper>
+        </div>
+      </ApplicationFrame>
     );
   }
 
@@ -118,6 +117,6 @@ const withReducer = injectReducer({ key: 'login', reducer });
 
 const withSaga = injectSaga({ key: 'login', saga });
 
-const withStyle = withStyles(styles);
+const withStyle = withStyles(styles, { withTheme: true });
 
 export default compose(withStyle, withReducer, withSaga, withConnect)(LoginScreen);

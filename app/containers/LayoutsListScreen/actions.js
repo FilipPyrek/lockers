@@ -1,4 +1,4 @@
-import { LOAD, REMOVE } from './constants';
+import { LOAD, REMOVE, DUPLICATE } from './constants';
 
 export function load() {
   return {
@@ -9,6 +9,15 @@ export function load() {
 export function remove(ids) {
   return {
     type: REMOVE,
+    payload: {
+      ids,
+    },
+  };
+}
+
+export function duplicate(ids) {
+  return {
+    type: DUPLICATE,
     payload: {
       ids,
     },
