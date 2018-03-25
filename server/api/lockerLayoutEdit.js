@@ -14,7 +14,7 @@ module.exports = function lockerLayoutEdit({ connectToMongo }) {
             db.collection('layouts')
               .updateOne(
                 { _id: ObjectId(req.params.id) },
-                { $set: { boxes } }
+                { $set: { boxes, lastUpdate: new Date() } }
               )
               .then((data) => res.json({
                 code: 200,

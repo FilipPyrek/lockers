@@ -12,7 +12,7 @@ module.exports = function lockerLayoutAdd({ connectToMongo }) {
         connectToMongo()
           .then((db) =>
              db.collection('layouts').insert({
-               creationDate: new Date(),
+               lastUpdate: new Date(),
                boxes,
                name,
              })

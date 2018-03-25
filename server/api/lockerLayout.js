@@ -8,7 +8,7 @@ module.exports = function lockerLayoutAdd({ connectToMongo }) {
           .find()
           .project({
             name: 1,
-            creationDate: 1,
+            lastUpdate: 1,
           })
           .toArray()
             .then((data) => res.json({

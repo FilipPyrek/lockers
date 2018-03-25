@@ -28,7 +28,7 @@ module.exports = function lockerLayoutDuplicate({ connectToMongo }) {
                       layout,
                       {
                         name: `Kopie - ${layout.name}`,
-                        creationDate: new Date(),
+                        lastUpdate: new Date(),
                       }
                     )
                   )

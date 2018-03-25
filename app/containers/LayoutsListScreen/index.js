@@ -109,7 +109,7 @@ class LayoutsListScreen extends React.Component {
     const { classes } = this.props;
     const { selectedRows } = this.state;
     const layouts = this.props.layouts.sort((a, b) =>
-      new Date(b.creationDate) - new Date(a.creationDate)
+      new Date(b.lastUpdate) - new Date(a.lastUpdate)
     );
 
     return (
@@ -165,7 +165,7 @@ class LayoutsListScreen extends React.Component {
                   <TableRow>
                     <TableCell>Vybráno</TableCell>
                     <TableCell>Název</TableCell>
-                    <TableCell>Datum vytvoření</TableCell>
+                    <TableCell>Datum posledn úpravy</TableCell>
                     <TableCell>Akce</TableCell>
                   </TableRow>
                 </TableHead>
@@ -214,7 +214,7 @@ class LayoutsListScreen extends React.Component {
                             {layout.name}
                           </TableCell>
                           <TableCell>
-                            {moment(layout.creationDate).format('D.M.YYYY HH:mm')}
+                            {moment(layout.lastUpdate).format('D.M.YYYY HH:mm')}
                           </TableCell>
                           <TableCell>
                             <Tooltip title="Smazat" placement="top" id="create-new-layout">

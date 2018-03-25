@@ -250,9 +250,10 @@ class CreateGridScreen extends React.Component {
     const activeBox = this.state.lastUsedBoxId !== null && this.props.boxes.get(this.state.lastUsedBoxId)
       ? this.props.boxes.get(this.state.lastUsedBoxId).toJS()
       : null;
+    const isEdit = !!this.props.match.params.id;
 
     return (
-      <ApplicationFrame title="Vytvoření rozložení">
+      <ApplicationFrame title={isEdit ? 'Upravit rozložení' : 'Vytvořit rozložení'} >
         <div className={classes.wrapper}>
           <div className={classes.leftPanel}>
             <Paper className={classes.toolbar}>
