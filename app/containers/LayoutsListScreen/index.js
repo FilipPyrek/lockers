@@ -6,8 +6,8 @@ import styled from 'styled-components';
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
 import Paper from 'material-ui/Paper';
+import Typography from 'material-ui/Typography';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
-// import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import RefreshIcon from 'material-ui-icons/Refresh';
 import AddIcon from 'material-ui-icons/Add';
@@ -39,6 +39,10 @@ class LayoutsListScreen extends React.Component {
     duplicate: PropTypes.func.isRequired,
     layouts: PropTypes.array,
     loading: PropTypes.bool.isRequired,
+    error: PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.string,
+    ]),
   }
 
   static defaultProps = {
@@ -166,11 +170,30 @@ class LayoutsListScreen extends React.Component {
                 </TableHead>
                 <TableBody>
                   {
+                    this.props.error
+                    ? (
+                      <TableRow>
+                        <TableCell colSpan="4">
+                          <Typography align="center" color="error">
+                            Chyba: <span />
+                            {
+                              typeof this.props.error === 'string'
+                                ? this.props.error
+                                : JSON.stringify(this.props.error)
+                            }
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    ) : null
+                  }
+                  {
                     this.props.loading
                     ? (
                       <TableRow>
-                        <TableCell colSpan="4" className={classes.loading}>
-                          Načítání...
+                        <TableCell colSpan="4">
+                          <Typography align="center">
+                            Načítání...
+                          </Typography>
                         </TableCell>
                       </TableRow>
                     ) : (

@@ -22,7 +22,4 @@ export default (theme) => ({
     height: '60vmin',
     overflow: 'auto',
   },
-  loading: {
-    textAlign: 'center',
-  },
 });
