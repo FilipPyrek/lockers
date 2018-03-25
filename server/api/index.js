@@ -19,7 +19,9 @@ const dependencies = { connectToMongo };
 const handlers = Map({
   userLogin: require('./userLogin'),
   lockerLayout: require('./lockerLayout'),
+  lockerLayoutById: require('./lockerLayoutById'),
   lockerLayoutAdd: require('./lockerLayoutAdd'),
+  lockerLayoutEdit: require('./lockerLayoutEdit'),
   lockerLayoutRemove: require('./lockerLayoutRemove'),
   lockerLayoutDuplicate: require('./lockerLayoutDuplicate'),
 })
@@ -39,6 +41,8 @@ api.use(bodyParser.json(), (err, req, res, next) => {
 api.post('/user/login', handlers.userLogin);
 
 api.use(security).get('/locker/layout', handlers.lockerLayout);
+api.use(security).get('/locker/layout/:id', handlers.lockerLayoutById);
+api.use(security).post('/locker/layout/edit/:id', handlers.lockerLayoutEdit);
 api.use(security).post('/locker/layout/add', handlers.lockerLayoutAdd);
 api.use(security).post('/locker/layout/remove', handlers.lockerLayoutRemove);
 api.use(security).post('/locker/layout/duplicate', handlers.lockerLayoutDuplicate);

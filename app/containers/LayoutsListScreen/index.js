@@ -13,6 +13,7 @@ import RefreshIcon from 'material-ui-icons/Refresh';
 import AddIcon from 'material-ui-icons/Add';
 import DeleteIcon from 'material-ui-icons/Delete';
 import CopyIcon from 'material-ui-icons/ContentCopy';
+import EditIcon from 'material-ui-icons/Edit';
 import Checkbox from 'material-ui/Checkbox';
 import Tooltip from 'material-ui/Tooltip';
 import { withStyles } from 'material-ui/styles';
@@ -237,6 +238,18 @@ class LayoutsListScreen extends React.Component {
                               >
                                 <CopyIcon />
                               </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Upravit rozložení" placement="top" id="create-new-layout">
+                              <Link to={`/layouts/edit/${layout._id}`}>
+                                <IconButton
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                  }}
+                                  aria-label="Upravit rozložení"
+                                >
+                                  <EditIcon />
+                                </IconButton>
+                              </Link>
                             </Tooltip>
                           </TableCell>
                         </TableRow>

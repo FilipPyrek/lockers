@@ -29,7 +29,13 @@ class CreateGridScreen extends React.Component {
 
   static propTypes = {
     classes: PropTypes.object.isRequired,
+    edit: PropTypes.func.isRequired,
     save: PropTypes.func.isRequired,
+    updateBoxes: PropTypes.func.isRequired,
+    loadInitialData: PropTypes.func.isRequired,
+    match: PropTypes.object.isRequired,
+    boxes: PropTypes.object,
+    _id: PropTypes.string,
   }
 
   static zoomCoefficient = 1.1;
@@ -37,15 +43,6 @@ class CreateGridScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      boxes: fromJS({
-        a: {
-          x: 0,
-          y: 0,
-          color: 'red',
-          name: 'A123',
-          isActive: true,
-        },
-      }),
       map: fromJS({
         scale: 1,
         x: 0,
@@ -57,8 +54,11 @@ class CreateGridScreen extends React.Component {
       isColorPickerOpen: false,
     };
 
+    this.initialize();
+
     this.boxNameChange = this.boxNameChange.bind(this);
     this.boxColorChange = this.boxColorChange.bind(this);
+    this.boxRemove = this.boxRemove.bind(this);
     this.openColorPicker = this.openColorPicker.bind(this);
     this.closeColorPicker = this.closeColorPicker.bind(this);
     this.mapMove = this.mapMove.bind(this);
@@ -74,42 +74,65 @@ class CreateGridScreen extends React.Component {
     this.wheel = this.wheel.bind(this);
   }
 
+  initialize() {
+    const { id } = this.props.match.params;
+    if (id) {
+      this.props.loadInitialData(id);
+    }
+  }
+
   boxNameChange(event) {
     const newName = event.target.value;
-    this.setState((prevState) => ({
-      ...prevState,
-      boxes: prevState.boxes
-        .setIn([prevState.lastUsedBoxId, 'name'], newName),
-    }));
+    this.props.updateBoxes(
+      this.props.boxes
+        .setIn([this.state.lastUsedBoxId, 'name'], newName)
+    );
   }
 
   boxColorChange({ hex }) {
-    this.setState((prevState) => ({
-      ...prevState,
-      boxes: prevState.boxes
-        .setIn([prevState.lastUsedBoxId, 'color'], hex),
-    }));
+    this.props.updateBoxes(
+      this.props.boxes
+        .setIn([this.state.lastUsedBoxId, 'color'], hex)
+    );
+  }
+
+  boxRemove() {
+    this.setState((prevState) => {
+      this.props.updateBoxes(
+        this.props.boxes
+          .delete(this.state.lastUsedBoxId)
+      );
+
+      return {
+        ...prevState,
+        lastUsedBoxId: null,
+      };
+    });
   }
 
   boxMove(id, { x, y }) {
-    this.setState((prevState) => ({
-      ...prevState,
-      boxes: prevState.boxes
+    this.props.updateBoxes(
+      this.props.boxes
         .setIn([id, 'x'], x)
         .setIn([id, 'y'], y),
-    }));
+    );
   }
 
   boxSelect(id) {
-    this.setState((prevState) => ({
-      ...prevState,
-      boxes: prevState.boxes
-        .map((box, bid) =>
-          box.set('isActive', bid === id)
-            .set('name', box.get('name').trim())
-        ),
-      lastUsedBoxId: id,
-    }));
+    this.setState((prevState) => {
+      this.props.updateBoxes(
+        this.props.boxes
+          .map((box, bid) =>
+            box.set('isActive', bid === id)
+              .set('name', box.get('name').trim())
+          )
+      );
+
+      return {
+        ...prevState,
+        lastUsedBoxId: id,
+      };
+    });
   }
 
   mapMove({ x, y }) {
@@ -140,17 +163,24 @@ class CreateGridScreen extends React.Component {
   }
 
   addBox() {
-    this.setState((prevState) => ({
-      ...prevState,
-      boxes: prevState.boxes
-        .set(generate(6), fromJS({
-          x: Math.round(this.state.map.get('x') / Grid.boxSize) * Grid.boxSize,
-          y: Math.round(this.state.map.get('y') / Grid.boxSize) * Grid.boxSize,
-          color: '#00a9ff',
-          name: `S${Math.round((Math.random() * 100))}`,
-          isActive: false,
-        })),
-    }));
+    const boxId = generate(6);
+    this.setState((prevState) => {
+      this.props.updateBoxes(
+        this.props.boxes
+          .set(boxId, fromJS({
+            x: Math.round(this.state.map.get('x') / Grid.boxSize) * Grid.boxSize,
+            y: Math.round(this.state.map.get('y') / Grid.boxSize) * Grid.boxSize,
+            color: '#00a9ff',
+            name: `S${Math.round((Math.random() * 100))}`,
+            isActive: false,
+          }))
+      );
+
+      return {
+        ...prevState,
+        lastUsedBoxId: boxId,
+      };
+    });
   }
 
   zoomIn() {
@@ -172,8 +202,13 @@ class CreateGridScreen extends React.Component {
   save(event) {
     event.preventDefault();
 
+    if (this.props._id) {
+      this.props.edit(this.props._id, this.props.boxes.toJS());
+      return;
+    }
+
     if (this.state.layoutName) {
-      this.props.save(this.state.layoutName, this.state.boxes.toJS());
+      this.props.save(this.state.layoutName, this.props.boxes.toJS());
       this.setState((prevState) => ({
         ...prevState,
         layoutName: '',
@@ -212,8 +247,8 @@ class CreateGridScreen extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const activeBox = this.state.lastUsedBoxId !== null
-      ? this.state.boxes.get(this.state.lastUsedBoxId).toJS()
+    const activeBox = this.state.lastUsedBoxId !== null && this.props.boxes.get(this.state.lastUsedBoxId)
+      ? this.props.boxes.get(this.state.lastUsedBoxId).toJS()
       : null;
 
     return (
@@ -234,7 +269,7 @@ class CreateGridScreen extends React.Component {
               <Grid
                 mapOffsetX={this.state.map.get('x')}
                 mapOffsetY={this.state.map.get('y')}
-                boxes={this.state.boxes.toJS()}
+                boxes={this.props.boxes.toJS()}
                 scale={this.state.map.get('scale')}
                 onBoxMove={this.boxMove}
                 onBoxSelect={this.boxSelect}
@@ -252,6 +287,10 @@ class CreateGridScreen extends React.Component {
                 </div>
               ) : (
                 <div>
+                  <Typography>
+                    X: {activeBox.x / Grid.boxSize}<br />
+                    Y: {activeBox.y / Grid.boxSize}
+                  </Typography>
                   <TextField
                     label="Název skříňky"
                     margin="normal"
@@ -266,7 +305,7 @@ class CreateGridScreen extends React.Component {
                     onBlur={this.closeColorPicker}
                   />
                   <div style={{ position: 'relative' }}>
-                    <div style={{ position: 'absolute' }}>
+                    <div style={{ position: 'absolute', zIndex: '999999' }}>
                       {
                         this.state.isColorPickerOpen
                         ? (
@@ -279,6 +318,7 @@ class CreateGridScreen extends React.Component {
                       }
                     </div>
                   </div>
+                  <Button color="primary" onClick={this.boxRemove}>Smazat skříňku</Button>
                 </div>
               )
             }
@@ -320,7 +360,7 @@ class CreateGridScreen extends React.Component {
 
 }
 
-const withConnect = connect(null, actions);
+const withConnect = connect((state) => state.get('createGrid').toObject(), actions);
 
 const withReducer = injectReducer({ key: 'createGrid', reducer });
 
