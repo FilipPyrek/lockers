@@ -25,7 +25,7 @@ import saga from './saga';
 import reducer from './reducer';
 import styles from './styles';
 
-class CreateGridScreen extends React.Component {
+class CreateLayoutScreen extends React.Component {
 
   static propTypes = {
     classes: PropTypes.object.isRequired,
@@ -187,7 +187,7 @@ class CreateGridScreen extends React.Component {
     this.setState((prevState) => ({
       ...prevState,
       map: prevState.map
-        .set('scale', prevState.map.get('scale') * CreateGridScreen.zoomCoefficient),
+        .set('scale', prevState.map.get('scale') * CreateLayoutScreen.zoomCoefficient),
     }));
   }
 
@@ -195,7 +195,7 @@ class CreateGridScreen extends React.Component {
     this.setState((prevState) => ({
       ...prevState,
       map: prevState.map
-        .set('scale', prevState.map.get('scale') / CreateGridScreen.zoomCoefficient),
+        .set('scale', prevState.map.get('scale') / CreateLayoutScreen.zoomCoefficient),
     }));
   }
 
@@ -369,4 +369,4 @@ const withSaga = injectSaga({ key: 'createGrid', saga });
 
 const withStyle = withStyles(styles, { withTheme: true });
 
-export default compose(withStyle, withReducer, withSaga, withConnect)(CreateGridScreen);
+export default compose(withStyle, withReducer, withSaga, withConnect)(CreateLayoutScreen);
