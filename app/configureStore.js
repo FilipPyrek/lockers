@@ -7,6 +7,7 @@ import { fromJS } from 'immutable';
 import { routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import persistState from 'redux-localstorage';
+import authMiddleware from 'utils/authMiddleware';
 import createReducer from './reducers';
 
 const sagaMiddleware = createSagaMiddleware();
@@ -18,6 +19,7 @@ export default function configureStore(initialState = {}, history) {
   const middlewares = [
     sagaMiddleware,
     routerMiddleware(history),
+    authMiddleware,
   ];
 
   const enhancers = [

@@ -31,9 +31,15 @@ module.exports = function userLogin({ connectToMongo }) {
                       code: 200,
                       message: 'Přihlášení proběhlo úspěšně',
                       response: {
-                        token: jwt.sign({
-                          verified: true,
-                        }, process.env.API_KEY),
+                        token: jwt.sign(
+                          {
+                            verified: true,
+                          },
+                          process.env.API_KEY,
+                          {
+                            expiresIn: '1d',
+                          }
+                        ),
                       },
                     })
                   )

@@ -15,7 +15,7 @@ class LogoutScreen extends React.PureComponent {
   }
 
   render() {
-    return <Redirect to="/" />;
+    return <Redirect to="/login" />;
   }
 
 }

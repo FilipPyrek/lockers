@@ -8,7 +8,13 @@ const security = compose(
   }),
   (err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {
-      res.status(401).json({ invalidToken: true });
+      res.json({
+        code: 401,
+        message: 'Přihlášení vypršelo.',
+        error: {
+          token: 'expired',
+        },
+      });
       return;
     }
     next();
