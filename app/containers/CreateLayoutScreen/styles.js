@@ -15,9 +15,12 @@ export default (theme) => ({
     height: '12.5%',
     marginBottom: '2.5vmin',
     display: 'flex',
-    justifyContent: 'left',
+    justifyContent: 'space-between',
     boxSizing: 'border-box',
     padding: theme.spacing.unit * 1,
+  },
+  toolbarContent: {
+    display: 'flex',
   },
   grid: {
     height: 'calc(87.5% - 2.5vmin)',

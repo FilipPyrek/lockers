@@ -257,11 +257,15 @@ class CreateLayoutScreen extends React.Component {
         <div className={classes.wrapper}>
           <div className={classes.leftPanel}>
             <Paper className={classes.toolbar}>
-              <Button color="primary" onClick={this.addBox}>Přidat skříňku</Button>
-              <Button color="primary" onClick={this.zoomIn}>Přiblížit</Button>
-              <Button color="primary" onClick={this.zoomOut}>Oddálit</Button>
-              <Button color="primary" onClick={this.centerMap}>Vrátit na střed</Button>
-              <Button color="primary" variant="raised" onClick={this.save}>Uložit</Button>
+              <div className={classes.toolbarContent}>
+                <Button onClick={this.addBox}>Přidat skříňku</Button>
+                <Button onClick={this.zoomIn}>Přiblížit</Button>
+                <Button onClick={this.zoomOut}>Oddálit</Button>
+                <Button onClick={this.centerMap}>Vrátit na střed</Button>
+              </div>
+              <div className={classes.toolbarContent}>
+                <Button color="primary" onClick={this.save}>Uložit</Button>
+              </div>
             </Paper>
             <Paper
               className={classes.grid}

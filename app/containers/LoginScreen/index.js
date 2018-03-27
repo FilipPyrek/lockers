@@ -33,14 +33,19 @@ class LoginScreen extends React.PureComponent {
     this.handlePassword = this.handlePassword.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.inProgress && !nextProps.inProgress) {
+      this.setState({
+        ...this.state,
+        password: '',
+      });
+    }
+  }
+
   handleLogin(event) {
     const { login } = this.props;
     event.preventDefault();
     login(this.state.email, this.state.password);
-    this.setState({
-      ...this.state,
-      password: '',
-    });
   }
 
   handleEmail(event) {

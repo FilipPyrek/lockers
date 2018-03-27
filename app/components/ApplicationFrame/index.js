@@ -96,7 +96,7 @@ class ApplicationFrame extends React.Component {
                 <Divider />
                 <List>
                   <Link to="/login">
-                    <ListItem button>
+                    <ListItem button className={classes.button}>
                       <ListItemIcon>
                         <LoginIcon titleAccess="Přihlásit se" />
                       </ListItemIcon>
@@ -114,7 +114,7 @@ class ApplicationFrame extends React.Component {
                 <Divider />
                 <List>
                   <Link to="/layouts">
-                    <ListItem button>
+                    <ListItem button className={classes.button}>
                       <ListItemIcon>
                         <GridIcon />
                       </ListItemIcon>
@@ -122,7 +122,7 @@ class ApplicationFrame extends React.Component {
                     </ListItem>
                   </Link>
                   <Link to="/logout">
-                    <ListItem button>
+                    <ListItem button className={classes.button}>
                       <ListItemIcon>
                         <LogoutIcon title="logout" titleAccess="Odhlásit se" />
                       </ListItemIcon>

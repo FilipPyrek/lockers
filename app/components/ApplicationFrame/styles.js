@@ -50,6 +50,9 @@ export default (theme) => ({
       width: theme.spacing.unit * 9,
     },
   },
+  button: {
+    color: theme.palette.primary.main,
+  },
   toolbar: {
     display: 'flex',
     alignItems: 'center',
