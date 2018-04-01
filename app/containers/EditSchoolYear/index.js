@@ -58,6 +58,7 @@ class EditSchoolYear extends React.Component {
     this.lockerColorChange = this.lockerColorChange.bind(this);
     this.changeLockerOccupation = this.changeLockerOccupation.bind(this);
     this.changeLockerNote = this.changeLockerNote.bind(this);
+    this.changeLockerName = this.changeLockerName.bind(this);
   }
 
   initialize() {
@@ -167,6 +168,14 @@ class EditSchoolYear extends React.Component {
     );
   }
 
+  changeLockerName(event) {
+    const name = event.target.value;
+    this.props.updateLockers(
+      this.props.lockers
+        .setIn([this.state.lastUsedLockerId, 'name'], name)
+    );
+  }
+
   clearLockers(lockers) {
     return lockers.map((locker) =>
       locker.delete('isActive')
@@ -226,7 +235,7 @@ class EditSchoolYear extends React.Component {
                     label="Název skříňky"
                     margin="normal"
                     value={activeLocker.name}
-                    onChange={() => {}}
+                    onChange={this.changeLockerName}
                   />
                   <TextField
                     label="Žák"
