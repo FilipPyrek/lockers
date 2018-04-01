@@ -32,6 +32,7 @@ class CreateLayoutScreen extends React.Component {
     edit: PropTypes.func.isRequired,
     save: PropTypes.func.isRequired,
     updateBoxes: PropTypes.func.isRequired,
+    reset: PropTypes.func.isRequired,
     loadInitialData: PropTypes.func.isRequired,
     match: PropTypes.object.isRequired,
     boxes: PropTypes.object,
@@ -54,8 +55,6 @@ class CreateLayoutScreen extends React.Component {
       isColorPickerOpen: false,
     };
 
-    this.initialize();
-
     this.boxNameChange = this.boxNameChange.bind(this);
     this.boxColorChange = this.boxColorChange.bind(this);
     this.boxRemove = this.boxRemove.bind(this);
@@ -74,11 +73,17 @@ class CreateLayoutScreen extends React.Component {
     this.wheel = this.wheel.bind(this);
   }
 
+  componentDidMount() {
+    this.initialize();
+  }
+
   initialize() {
     const { id } = this.props.match.params;
     if (id) {
       this.props.loadInitialData(id);
+      return;
     }
+    this.props.reset();
   }
 
   boxNameChange(event) {
@@ -203,12 +208,18 @@ class CreateLayoutScreen extends React.Component {
     event.preventDefault();
 
     if (this.props._id) {
-      this.props.edit(this.props._id, this.props.boxes.toJS());
+      this.props.edit(
+        this.props._id,
+        this.clearBoxes(this.props.boxes).toJS()
+      );
       return;
     }
 
     if (this.state.layoutName) {
-      this.props.save(this.state.layoutName, this.props.boxes.toJS());
+      this.props.save(
+        this.state.layoutName,
+        this.clearBoxes(this.props.boxes).toJS()
+      );
       this.setState((prevState) => ({
         ...prevState,
         layoutName: '',
@@ -243,6 +254,12 @@ class CreateLayoutScreen extends React.Component {
       return;
     }
     this.zoomIn();
+  }
+
+  clearBoxes(boxes) {
+    return boxes.map((box) =>
+      box.delete('isActive')
+    );
   }
 
   render() {

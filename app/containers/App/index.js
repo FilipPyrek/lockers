@@ -9,6 +9,7 @@ import LoginScreen from 'containers/LoginScreen';
 import LogoutScreen from 'containers/LogoutScreen';
 import CreateLayoutScreen from 'containers/CreateLayoutScreen';
 import LayoutsListScreen from 'containers/LayoutsListScreen';
+import SchoolYearsListScreen from 'containers/SchoolYearsListScreen';
 import EditSchoolYear from 'containers/EditSchoolYear';
 
 function App(props) {
@@ -25,6 +26,7 @@ function App(props) {
         <Route exact path="/layouts" component={LayoutsListScreen} />
         <Route exact path="/layouts/create" component={CreateLayoutScreen} />
         <Route exact path="/layouts/edit/:id" component={CreateLayoutScreen} />
+        <Route exact path="/school-years" component={SchoolYearsListScreen} />
         <Route exact path="/school-year/edit/:id" component={EditSchoolYear} />
         <Route exact path="/login" component={(p) => props.isLoggenIn ? <Redirect to="/" /> : <LoginScreen {...p} />} />
         <Route exact path="/logout" component={LogoutScreen} />

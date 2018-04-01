@@ -1,9 +1,16 @@
 import {
+  RESET,
   SAVE,
   EDIT,
   LOAD_INITIAL_DATA,
   UPDATE_BOXES,
 } from './constants';
+
+export function reset() {
+  return {
+    type: RESET,
+  };
+}
 
 export function save(name, boxes) {
   return {

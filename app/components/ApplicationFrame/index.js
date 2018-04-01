@@ -121,6 +121,14 @@ class ApplicationFrame extends React.Component {
                       <ListItemText primary="Seznam rozložení" />
                     </ListItem>
                   </Link>
+                  <Link to="/school-years">
+                    <ListItem button className={classes.button}>
+                      <ListItemIcon>
+                        <GridIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Seznam školních roků" />
+                    </ListItem>
+                  </Link>
                   <Link to="/logout">
                     <ListItem button className={classes.button}>
                       <ListItemIcon>

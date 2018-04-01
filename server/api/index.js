@@ -24,6 +24,10 @@ const handlers = Map({
   lockerLayoutEdit: require('./lockerLayoutEdit'),
   lockerLayoutRemove: require('./lockerLayoutRemove'),
   lockerLayoutDuplicate: require('./lockerLayoutDuplicate'),
+  schoolYear: require('./schoolYear'),
+  schoolYearCreate: require('./schoolYearCreate'),
+  schoolYearDuplicate: require('./schoolYearDuplicate'),
+  schoolYearRemove: require('./schoolYearRemove'),
 })
 /* eslint-enable */
 .map((func) => func(dependencies))
@@ -46,5 +50,9 @@ api.use(security).post('/locker/layout/edit/:id', handlers.lockerLayoutEdit);
 api.use(security).post('/locker/layout/add', handlers.lockerLayoutAdd);
 api.use(security).post('/locker/layout/remove', handlers.lockerLayoutRemove);
 api.use(security).post('/locker/layout/duplicate', handlers.lockerLayoutDuplicate);
+api.use(security).get('/school-year', handlers.schoolYear);
+api.use(security).post('/school-year/create', handlers.schoolYearCreate);
+api.use(security).post('/school-year/duplicate', handlers.schoolYearDuplicate);
+api.use(security).post('/school-year/remove', handlers.schoolYearRemove);
 
 module.exports = api;

@@ -7,6 +7,7 @@ import { fromJS } from 'immutable';
 import { routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import persistState from 'redux-localstorage';
+import layoutListScreenSaga from 'containers/LayoutsListScreen/saga';
 import authMiddleware from 'utils/authMiddleware';
 import createReducer from './reducers';
 
@@ -55,6 +56,12 @@ export default function configureStore(initialState = {}, history) {
     fromJS(initialState),
     composeEnhancers(...enhancers)
   );
+
+  const sagas = [
+    layoutListScreenSaga,
+  ];
+
+  sagas.forEach(sagaMiddleware.run);
 
   // Extensions
   store.runSaga = sagaMiddleware.run;

@@ -7,6 +7,7 @@ import { combineReducers } from 'redux-immutable';
 import { LOCATION_CHANGE } from 'react-router-redux';
 
 import globalReducer from 'containers/App/reducer';
+import layoutsList from 'containers/LayoutsListScreen/reducer';
 
 /*
  * routeReducer
@@ -43,6 +44,7 @@ export default function createReducer(injectedReducers) {
   return combineReducers({
     route: routeReducer,
     global: globalReducer,
+    layoutsList,
     ...injectedReducers,
   });
 }

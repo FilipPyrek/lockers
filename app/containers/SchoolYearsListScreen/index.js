@@ -3,8 +3,21 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import styled from 'styled-components';
+import injectReducer from 'utils/injectReducer';
+import injectSaga from 'utils/injectSaga';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from 'material-ui/Dialog';
+import { FormControl } from 'material-ui/Form';
+import TextField from 'material-ui/TextField';
+import Button from 'material-ui/Button';
+import Select from 'material-ui/Select';
+import { MenuItem } from 'material-ui/Menu';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import IconButton from 'material-ui/IconButton';
 import RefreshIcon from 'material-ui-icons/Refresh';
@@ -19,7 +32,10 @@ import { Link as RawLink } from 'react-router-dom';
 import ApplicationFrame from 'components/ApplicationFrame';
 import moment from 'moment';
 import { Set } from 'immutable';
+import { load as loadLayoutsList } from 'containers/LayoutsListScreen/actions';
 import * as actions from './actions';
+import saga from './saga';
+import reducer from './reducer';
 import styles from './styles';
 
 const Link = styled(RawLink)`
@@ -27,14 +43,17 @@ const Link = styled(RawLink)`
 `;
 
 
-class LayoutsListScreen extends React.Component {
+class SchoolYearsListScreen extends React.Component {
 
   static propTypes = {
     classes: PropTypes.object.isRequired,
     load: PropTypes.func.isRequired,
     remove: PropTypes.func.isRequired,
     duplicate: PropTypes.func.isRequired,
-    layouts: PropTypes.array,
+    loadLayoutsList: PropTypes.func.isRequired,
+    create: PropTypes.func.isRequired,
+    layoutsList: PropTypes.array,
+    schoolYears: PropTypes.array,
     loading: PropTypes.bool.isRequired,
     error: PropTypes.oneOfType([
       PropTypes.object,
@@ -43,17 +62,25 @@ class LayoutsListScreen extends React.Component {
   }
 
   static defaultProps = {
-    layouts: [],
+    schoolYears: [],
   }
 
   constructor(props) {
     super(props);
     this.state = {
       selectedRows: Set(),
+      isDialogOpen: false,
+      selectedLayout: '_',
+      schoolYearName: '',
     };
 
     this.removeRows = this.removeRows.bind(this);
     this.duplicateRows = this.duplicateRows.bind(this);
+    this.selectLayout = this.selectLayout.bind(this);
+    this.createSchoolYear = this.createSchoolYear.bind(this);
+    this.openDialog = this.openDialog.bind(this);
+    this.closeDialog = this.closeDialog.bind(this);
+    this.changeSchoolYearName = this.changeSchoolYearName.bind(this);
   }
 
   componentWillMount() {
@@ -101,15 +128,61 @@ class LayoutsListScreen extends React.Component {
     this.resetSelectedRows();
   }
 
+  openDialog() {
+    this.props.loadLayoutsList();
+    this.setState((prevState) => ({
+      ...prevState,
+      isDialogOpen: true,
+    }));
+  }
+
+  closeDialog() {
+    this.setState((prevState) => ({
+      ...prevState,
+      isDialogOpen: false,
+    }));
+  }
+
+  changeSchoolYearName(event) {
+    const schoolYearName = event.target.value;
+    this.setState((prevState) => ({
+      ...prevState,
+      schoolYearName,
+    }));
+  }
+
+  selectLayout(event) {
+    this.setState((prevState) => ({
+      ...prevState,
+      selectedLayout: event.target.value,
+    }));
+  }
+
+  canCreateSchoolYear() {
+    return this.state.selectedLayout !== '_' && !!this.state.schoolYearName;
+  }
+
+  createSchoolYear(event) {
+    event.preventDefault();
+    if (!this.canCreateSchoolYear()) {
+      return;
+    }
+    this.props.create(this.state.selectedLayout, this.state.schoolYearName);
+    this.closeDialog();
+  }
+
   render() {
     const { classes } = this.props;
     const { selectedRows } = this.state;
-    const layouts = this.props.layouts.sort((a, b) =>
+    const schoolYears = this.props.schoolYears.sort((a, b) =>
+      new Date(b.lastUpdate) - new Date(a.lastUpdate)
+    );
+    const layouts = this.props.layoutsList.sort((a, b) =>
       new Date(b.lastUpdate) - new Date(a.lastUpdate)
     );
 
     return (
-      <ApplicationFrame title="Seznam rozložení">
+      <ApplicationFrame title="Seznam školních roků">
         <div className={classes.wrapper}>
           <div className={classes.leftPanel}>
             <Paper className={classes.toolbar}>
@@ -118,7 +191,7 @@ class LayoutsListScreen extends React.Component {
                   this.state.selectedRows.size > 0
                   ? (
                     <div>
-                      <Tooltip title="Smazat vybrané" placement="top" id="remove-layouts">
+                      <Tooltip title="Smazat vybrané" placement="top" id="remove-school-year">
                         <IconButton
                           onClick={this.removeRows}
                           aria-label="Smazat vybrané"
@@ -126,10 +199,10 @@ class LayoutsListScreen extends React.Component {
                           <DeleteIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Duplikovat rozložení" placement="top" id="duplicate-layouts">
+                      <Tooltip title="Duplikovat vybrané" placement="top" id="duplicate-school-year">
                         <IconButton
                           onClick={this.duplicateRows}
-                          aria-label="Duplikovat rozložení"
+                          aria-label="Duplikovat vybrané"
                         >
                           <CopyIcon />
                         </IconButton>
@@ -137,13 +210,14 @@ class LayoutsListScreen extends React.Component {
                     </div>
                   )
                   : (
-                    <Link to="/layouts/create">
-                      <Tooltip title="Vytvořit nové rozložení" placement="top" id="create-new-layout">
-                        <IconButton aria-label="Vytvořit nové rozložení">
-                          <AddIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </Link>
+                    <Tooltip title="Vytvořit nový školní rok" placement="top" id="create-new-school-year">
+                      <IconButton
+                        onClick={this.openDialog}
+                        aria-label="Vytvořit nový školní rok"
+                      >
+                        <AddIcon />
+                      </IconButton>
+                    </Tooltip>
                   )
                 }
               </div>
@@ -194,54 +268,54 @@ class LayoutsListScreen extends React.Component {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      layouts.map((layout) => (
+                      schoolYears.map((schoolYear) => (
                         <TableRow
-                          key={layout._id}
-                          data-id={layout._id}
-                          onClick={() => this.clickRow(layout._id)}
+                          key={schoolYear._id}
+                          data-id={schoolYear._id}
+                          onClick={() => this.clickRow(schoolYear._id)}
                           role="checkbox"
-                          aria-checked={selectedRows.contains(layout._id)}
+                          aria-checked={selectedRows.contains(schoolYear._id)}
                           hover
                         >
                           <TableCell padding="checkbox">
-                            <Checkbox checked={selectedRows.contains(layout._id)} />
+                            <Checkbox checked={selectedRows.contains(schoolYear._id)} />
                           </TableCell>
                           <TableCell>
-                            {layout.name}
+                            {schoolYear.name}
                           </TableCell>
                           <TableCell>
-                            {moment(layout.lastUpdate).format('D.M.YYYY HH:mm')}
+                            {moment(schoolYear.lastUpdate).format('D.M.YYYY HH:mm')}
                           </TableCell>
                           <TableCell>
-                            <Tooltip title="Smazat" placement="top" id="remove-layout">
+                            <Tooltip title="Smazat" placement="top" id="remove-school-year">
                               <IconButton
                                 onClick={(event) => {
                                   event.stopPropagation();
-                                  this.removeRow(layout._id);
+                                  this.removeRow(schoolYear._id);
                                 }}
-                                aria-label="Smazat rozložení"
+                                aria-label="Odstranit školní rok"
                               >
                                 <DeleteIcon />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip title="Duplikovat rozložení" placement="top" id="duplicate-layout">
+                            <Tooltip title="Duplikovat školní rok" placement="top" id="duplicate-school-year">
                               <IconButton
                                 onClick={(event) => {
                                   event.stopPropagation();
-                                  this.duplicateRow(layout._id);
+                                  this.duplicateRow(schoolYear._id);
                                 }}
-                                aria-label="Duplikovat rozložení"
+                                aria-label="Duplikovat školní rok"
                               >
                                 <CopyIcon />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip title="Upravit rozložení" placement="top" id="edit-layout">
-                              <Link to={`/layouts/edit/${layout._id}`}>
+                            <Tooltip title="Upravit školní rok" placement="top" id="edit-school-year">
+                              <Link to={`/layouts/edit/${schoolYear._id}`}>
                                 <IconButton
                                   onClick={(event) => {
                                     event.stopPropagation();
                                   }}
-                                  aria-label="Upravit rozložení"
+                                  aria-label="Upravit školní rok"
                                 >
                                   <EditIcon />
                                 </IconButton>
@@ -255,6 +329,58 @@ class LayoutsListScreen extends React.Component {
                 </TableBody>
               </Table>
             </Paper>
+            <Dialog
+              open={this.state.isDialogOpen}
+              onClose={this.closeDialog}
+              fullWidth
+              aria-labelledby="create-school-year"
+            >
+              <form onSubmit={this.createSchoolYear}>
+                <DialogTitle id="create-school-year">Vytvořit školní rok</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    Zadejte údaje nového školního roku:
+                  </DialogContentText>
+                  <TextField
+                    margin="normal"
+                    label="Název školního roku"
+                    placeholder="2064/2065"
+                    value={this.state.schoolYearName}
+                    onChange={this.changeSchoolYearName}
+                    autoFocus
+                    fullWidth
+                  />
+                  <FormControl fullWidth margin="normal">
+                    <Select
+                      value={this.state.selectedLayout}
+                      onChange={this.selectLayout}
+                    >
+                      <MenuItem value="_">
+                        <em>Zvolte výchozí rozložení</em>
+                      </MenuItem>
+                      {
+                        layouts.map((layout) => (
+                          <MenuItem
+                            key={layout._id}
+                            value={layout._id}
+                          >
+                            {layout.name}
+                          </MenuItem>
+                        ))
+                      }
+                    </Select>
+                  </FormControl>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={this.closeDialog} color="primary">
+                    Zrušit
+                  </Button>
+                  <Button type="submit" color="primary" disabled={!this.canCreateSchoolYear()}>
+                    OK
+                  </Button>
+                </DialogActions>
+              </form>
+            </Dialog>
           </div>
         </div>
       </ApplicationFrame>
@@ -263,8 +389,16 @@ class LayoutsListScreen extends React.Component {
 
 }
 
-const withConnect = connect((state) => state.getIn(['layoutsList']).toJS(), actions);
+const withConnect = connect((state) =>
+    state.getIn(['schoolYearsList'])
+      .set('layoutsList', state.getIn(['layoutsList', 'layouts']))
+      .toJS()
+, { ...actions, loadLayoutsList });
+
+const withReducer = injectReducer({ key: 'schoolYearsList', reducer });
+
+const withSaga = injectSaga({ key: 'schoolYearsList', saga });
 
 const withStyle = withStyles(styles, { withTheme: true });
 
-export default compose(withConnect, withStyle)(LayoutsListScreen);
+export default compose(withStyle, withReducer, withSaga, withConnect)(SchoolYearsListScreen);

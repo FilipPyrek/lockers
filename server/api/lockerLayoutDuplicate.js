@@ -2,12 +2,12 @@ const Joi = require('joi');
 const { ObjectId } = require('mongodb');
 const { handleError } = require('./helpers');
 
-const addLayoutSchema = Joi.object().keys({
+const duplicateLayoutSchema = Joi.object().keys({
   ids: Joi.array().items(Joi.string().required()).error(() => ({ message: 'Musíte odeslat pole s id layoutů.' })),
 });
 module.exports = function lockerLayoutDuplicate({ connectToMongo }) {
   return (req, res) =>
-    Joi.validate(req.body, addLayoutSchema)
+    Joi.validate(req.body, duplicateLayoutSchema)
       .then(({ ids }) =>
         connectToMongo()
           .then((db) =>
