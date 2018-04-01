@@ -310,7 +310,7 @@ class SchoolYearsListScreen extends React.Component {
                               </IconButton>
                             </Tooltip>
                             <Tooltip title="Upravit školní rok" placement="top" id="edit-school-year">
-                              <Link to={`/layouts/edit/${schoolYear._id}`}>
+                              <Link to={`/school-year/edit/${schoolYear._id}`}>
                                 <IconButton
                                   onClick={(event) => {
                                     event.stopPropagation();

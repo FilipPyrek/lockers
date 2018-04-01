@@ -27,7 +27,9 @@ const handlers = Map({
   schoolYear: require('./schoolYear'),
   schoolYearCreate: require('./schoolYearCreate'),
   schoolYearDuplicate: require('./schoolYearDuplicate'),
+  schoolYearById: require('./schoolYearById'),
   schoolYearRemove: require('./schoolYearRemove'),
+  schoolYearEdit: require('./schoolYearEdit'),
 })
 /* eslint-enable */
 .map((func) => func(dependencies))
@@ -54,5 +56,7 @@ api.use(security).get('/school-year', handlers.schoolYear);
 api.use(security).post('/school-year/create', handlers.schoolYearCreate);
 api.use(security).post('/school-year/duplicate', handlers.schoolYearDuplicate);
 api.use(security).post('/school-year/remove', handlers.schoolYearRemove);
+api.use(security).post('/school-year/edit/:id', handlers.schoolYearEdit);
+api.use(security).get('/school-year/:id', handlers.schoolYearById);
 
 module.exports = api;

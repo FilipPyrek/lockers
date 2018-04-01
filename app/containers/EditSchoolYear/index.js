@@ -8,15 +8,10 @@ import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from 'material-ui/Dialog';
 import { withStyles } from 'material-ui/styles';
 import ApplicationFrame from 'components/ApplicationFrame';
 import Grid from 'components/Grid';
+import { SketchPicker } from 'react-color';
 import { fromJS } from 'immutable';
 import * as actions from './actions';
 import saga from './saga';
@@ -28,11 +23,10 @@ class EditSchoolYear extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     edit: PropTypes.func.isRequired,
-    save: PropTypes.func.isRequired,
-    updateBoxes: PropTypes.func.isRequired,
+    updateLockers: PropTypes.func.isRequired,
     loadInitialData: PropTypes.func.isRequired,
     match: PropTypes.object.isRequired,
-    boxes: PropTypes.object,
+    lockers: PropTypes.object,
     _id: PropTypes.string,
   }
 
@@ -46,10 +40,8 @@ class EditSchoolYear extends React.Component {
         x: 0,
         y: 0,
       }),
-      layoutName: '',
-      isLayoutNameDialogOpen: false,
-      lastUsedBoxId: null,
-      isColorPickerOpen: false,
+      schoolYearName: '',
+      lastUsedLockerId: null,
     };
 
     this.initialize();
@@ -57,11 +49,15 @@ class EditSchoolYear extends React.Component {
     this.mapMove = this.mapMove.bind(this);
     this.zoomIn = this.zoomIn.bind(this);
     this.zoomOut = this.zoomOut.bind(this);
-    this.boxSelect = this.boxSelect.bind(this);
+    this.lockerSelect = this.lockerSelect.bind(this);
     this.centerMap = this.centerMap.bind(this);
     this.save = this.save.bind(this);
-    this.cancelLayoutNameDialog = this.cancelLayoutNameDialog.bind(this);
     this.wheel = this.wheel.bind(this);
+    this.openColorPicker = this.openColorPicker.bind(this);
+    this.closeColorPicker = this.closeColorPicker.bind(this);
+    this.lockerColorChange = this.lockerColorChange.bind(this);
+    this.changeLockerOccupation = this.changeLockerOccupation.bind(this);
+    this.changeLockerNote = this.changeLockerNote.bind(this);
   }
 
   initialize() {
@@ -71,19 +67,19 @@ class EditSchoolYear extends React.Component {
     }
   }
 
-  boxSelect(id) {
+  lockerSelect(id) {
     this.setState((prevState) => {
-      this.props.updateBoxes(
-        this.props.boxes
-          .map((box, bid) =>
-            box.set('isActive', bid === id)
-              .set('name', box.get('name').trim())
+      this.props.updateLockers(
+        this.props.lockers
+          .map((locker, bid) =>
+            locker.set('isActive', bid === id)
+              .set('name', locker.get('name').trim())
           )
       );
 
       return {
         ...prevState,
-        lastUsedBoxId: id,
+        lastUsedLockerId: id,
       };
     });
   }
@@ -120,39 +116,10 @@ class EditSchoolYear extends React.Component {
   save(event) {
     event.preventDefault();
 
-    if (this.props._id) {
-      this.props.edit(this.props._id, this.props.boxes.toJS());
-      return;
-    }
-
-    if (this.state.layoutName) {
-      this.props.save(this.state.layoutName, this.props.boxes.toJS());
-      this.setState((prevState) => ({
-        ...prevState,
-        layoutName: '',
-        isLayoutNameDialogOpen: false,
-      }));
-      return;
-    }
-    this.setState((prevState) => ({
-      ...prevState,
-      isLayoutNameDialogOpen: true,
-    }));
-  }
-
-  changeLayoutName(event) {
-    const { value } = event.target;
-    this.setState((prevState) => ({
-      ...prevState,
-      layoutName: value.trim(),
-    }));
-  }
-
-  cancelLayoutNameDialog() {
-    this.setState((prevState) => ({
-      ...prevState,
-      isLayoutNameDialogOpen: false,
-    }));
+    this.props.edit(
+      this.props._id,
+      this.clearLockers(this.props.lockers).toJS()
+    );
   }
 
   wheel(event) {
@@ -163,15 +130,57 @@ class EditSchoolYear extends React.Component {
     this.zoomIn();
   }
 
+  openColorPicker() {
+    this.setState((prevState) => ({
+      ...prevState,
+      isColorPickerOpen: true,
+    }));
+  }
+
+  closeColorPicker() {
+    this.setState((prevState) => ({
+      ...prevState,
+      isColorPickerOpen: false,
+    }));
+  }
+
+  lockerColorChange({ hex }) {
+    this.props.updateLockers(
+      this.props.lockers
+        .setIn([this.state.lastUsedLockerId, 'color'], hex)
+    );
+  }
+
+  changeLockerOccupation(event) {
+    const occupation = event.target.value;
+    this.props.updateLockers(
+      this.props.lockers
+        .setIn([this.state.lastUsedLockerId, 'occupation'], occupation)
+    );
+  }
+
+  changeLockerNote(event) {
+    const note = event.target.value;
+    this.props.updateLockers(
+      this.props.lockers
+        .setIn([this.state.lastUsedLockerId, 'note'], note)
+    );
+  }
+
+  clearLockers(lockers) {
+    return lockers.map((locker) =>
+      locker.delete('isActive')
+    );
+  }
+
   render() {
     const { classes } = this.props;
-    const activeBox = this.state.lastUsedBoxId !== null && this.props.boxes.get(this.state.lastUsedBoxId)
-      ? this.props.boxes.get(this.state.lastUsedBoxId).toJS()
+    const activeLocker = this.state.lastUsedLockerId !== null && this.props.lockers.get(this.state.lastUsedLockerId)
+      ? this.props.lockers.get(this.state.lastUsedLockerId).toJS()
       : null;
-    const isEdit = !!this.props.match.params.id;
 
     return (
-      <ApplicationFrame title={isEdit ? 'Upravit školního roku' : 'Vytvoření školního roku'} >
+      <ApplicationFrame title="Upravit školního roku">
         <div className={classes.wrapper}>
           <div className={classes.leftPanel}>
             <Paper className={classes.toolbar}>
@@ -191,9 +200,9 @@ class EditSchoolYear extends React.Component {
               <Grid
                 mapOffsetX={this.state.map.get('x')}
                 mapOffsetY={this.state.map.get('y')}
-                boxes={this.props.boxes.toJS()}
+                boxes={this.props.lockers.toJS()}
                 scale={this.state.map.get('scale')}
-                onBoxSelect={this.boxSelect}
+                onBoxSelect={this.lockerSelect}
                 onMapMove={this.mapMove}
                 disableBoxMovement
               />
@@ -202,7 +211,7 @@ class EditSchoolYear extends React.Component {
           <Paper className={classes.panel}>
             <Typography variant="title" paragraph>Úprava skříňky</Typography>
             {
-              activeBox === null
+              activeLocker === null
               ? (
                 <div>
                   <Typography variant="subheading" paragraph>Vyberte skříňku</Typography>
@@ -210,49 +219,54 @@ class EditSchoolYear extends React.Component {
               ) : (
                 <div>
                   <Typography>
-                    X: {activeBox.x / Grid.boxSize}<br />
-                    Y: {activeBox.y / Grid.boxSize}
+                    X: {activeLocker.x / Grid.boxSize}<br />
+                    Y: {activeLocker.y / Grid.boxSize}
                   </Typography>
                   <TextField
                     label="Název skříňky"
                     margin="normal"
-                    value={activeBox.name}
+                    value={activeLocker.name}
                     onChange={() => {}}
+                  />
+                  <TextField
+                    label="Žák"
+                    margin="normal"
+                    value={activeLocker.occupation}
+                    onChange={this.changeLockerOccupation}
+                  />
+                  <TextField
+                    label="Barva"
+                    margin="normal"
+                    value={activeLocker.color}
+                    onFocus={this.openColorPicker}
+                    onBlur={this.closeColorPicker}
+                  />
+                  <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'absolute', zIndex: '999999' }}>
+                      {
+                        this.state.isColorPickerOpen
+                        ? (
+                          <SketchPicker
+                            color={activeLocker.color}
+                            onChange={this.lockerColorChange}
+                          />
+                        )
+                        : null
+                      }
+                    </div>
+                  </div>
+                  <TextField
+                    margin="normal"
+                    label="Poznámka"
+                    value={activeLocker.note}
+                    onChange={this.changeLockerNote}
+                    multiline
+                    rows={3}
                   />
                 </div>
               )
             }
           </Paper>
-          <Dialog
-            open={this.state.isLayoutNameDialogOpen}
-            onClose={this.cancelLayoutNameDialog}
-            aria-labelledby="save-dialog-title"
-          >
-            <form onSubmit={this.save}>
-              <DialogTitle id="save-dialog-title">Název rozložení</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  Zadejte školní rok:
-                </DialogContentText>
-                <TextField
-                  margin="dense"
-                  label="Školní rok"
-                  value={this.state.layoutName}
-                  onChange={this.changeLayoutName}
-                  autoFocus
-                  fullWidth
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={this.cancelLayoutNameDialog} color="primary">
-                  Zrušit
-                </Button>
-                <Button type="submit" color="primary" disabled={!this.state.layoutName}>
-                  OK
-                </Button>
-              </DialogActions>
-            </form>
-          </Dialog>
         </div>
       </ApplicationFrame>
     );
@@ -260,11 +274,11 @@ class EditSchoolYear extends React.Component {
 
 }
 
-const withConnect = connect((state) => state.get('EditSchoolYear').toObject(), actions);
+const withConnect = connect((state) => state.get('editSchoolYear').toObject(), actions);
 
-const withReducer = injectReducer({ key: 'EditSchoolYear', reducer });
+const withReducer = injectReducer({ key: 'editSchoolYear', reducer });
 
-const withSaga = injectSaga({ key: 'EditSchoolYear', saga });
+const withSaga = injectSaga({ key: 'editSchoolYear', saga });
 
 const withStyle = withStyles(styles, { withTheme: true });
 

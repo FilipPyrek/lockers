@@ -26,7 +26,8 @@ module.exports = function schoolYearCreate({ connectToMongo }) {
                 .then((layout) =>
                   fromJS(layout.boxes)
                     .map((box) =>
-                      box.set('occupation', null)
+                      box.set('occupation', '')
+                        .set('note', '')
                     )
                     .toJS()
                 )

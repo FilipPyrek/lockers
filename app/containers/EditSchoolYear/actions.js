@@ -1,26 +1,15 @@
 import {
-  SAVE,
   EDIT,
   LOAD_INITIAL_DATA,
-  UPDATE_BOXES,
+  UPDATE_LOCKERS,
 } from './constants';
 
-export function save(name, boxes) {
-  return {
-    type: SAVE,
-    payload: {
-      name,
-      boxes,
-    },
-  };
-}
-
-export function edit(_id, boxes) {
+export function edit(_id, lockers) {
   return {
     type: EDIT,
     payload: {
       _id,
-      boxes,
+      lockers,
     },
   };
 }
@@ -35,11 +24,11 @@ export function loadInitialData(id) {
   };
 }
 
-export function updateBoxes(boxes) {
+export function updateLockers(lockers) {
   return {
-    type: UPDATE_BOXES,
+    type: UPDATE_LOCKERS,
     payload: {
-      boxes,
+      lockers,
     },
   };
 }

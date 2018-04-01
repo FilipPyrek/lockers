@@ -3,22 +3,22 @@ const { ObjectId } = require('mongodb');
 const { handleError } = require('./helpers');
 
 const addLayoutSchema = Joi.object().keys({
-  boxes: Joi.object().required().error(() => ({ message: 'Musíte odeslat objekt s boxy.' })),
+  lockers: Joi.object().required().error(() => ({ message: 'Musíte odeslat objekt se skříňkami.' })),
 });
-module.exports = function lockerLayoutEdit({ connectToMongo }) {
+module.exports = function schoolYearEdit({ connectToMongo }) {
   return (req, res) =>
     Joi.validate(req.body, addLayoutSchema)
-      .then(({ boxes }) =>
+      .then(({ lockers }) =>
         connectToMongo()
           .then((db) =>
-            db.collection('layouts')
+            db.collection('schoolYears')
               .updateOne(
                 { _id: ObjectId(req.params.id) },
-                { $set: { boxes, lastUpdate: new Date() } }
+                { $set: { lockers, lastUpdate: new Date() } }
               )
               .then(() => res.json({
                 code: 200,
-                message: 'Změny v rozložení byly úspěšně uloženy.',
+                message: 'Změny ve školním roce byly úspěšně uloženy.',
               }))
         )
     )
