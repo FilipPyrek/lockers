@@ -310,8 +310,8 @@ class CreateLayoutScreen extends React.Component {
               ) : (
                 <div>
                   <Typography>
-                    X: {activeBox.x / Grid.boxSize}<br />
-                    Y: {activeBox.y / Grid.boxSize}
+                    X: {-activeBox.x / Grid.boxSize}<br />
+                    Y: {-activeBox.y / Grid.boxSize}
                   </Typography>
                   <TextField
                     label="Název skříňky"

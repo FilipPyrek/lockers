@@ -219,8 +219,8 @@ class EditSchoolYear extends React.Component {
               ) : (
                 <div>
                   <Typography>
-                    X: {activeLocker.x / Grid.boxSize}<br />
-                    Y: {activeLocker.y / Grid.boxSize}
+                    X: {-activeLocker.x / Grid.boxSize}<br />
+                    Y: {-activeLocker.y / Grid.boxSize}
                   </Typography>
                   <TextField
                     label="Název skříňky"
