@@ -14,6 +14,12 @@ import Dialog, {
   DialogContentText,
   DialogTitle,
 } from 'material-ui/Dialog';
+import IconButton from 'material-ui/IconButton';
+import ZoomInIcon from 'material-ui-icons/ZoomIn';
+import ZoomOutIcon from 'material-ui-icons/ZoomOut';
+import SaveIcon from 'material-ui-icons/Save';
+import CenterMapIcon from 'material-ui-icons/CenterFocusStrong';
+import Tooltip from 'material-ui/Tooltip';
 import { withStyles } from 'material-ui/styles';
 import { SketchPicker } from 'react-color';
 import ApplicationFrame from 'components/ApplicationFrame';
@@ -275,13 +281,28 @@ class CreateLayoutScreen extends React.Component {
           <div className={classes.leftPanel}>
             <Paper className={classes.toolbar}>
               <div className={classes.toolbarContent}>
-                <Button onClick={this.addBox}>Přidat skříňku</Button>
-                <Button onClick={this.zoomIn}>Přiblížit</Button>
-                <Button onClick={this.zoomOut}>Oddálit</Button>
-                <Button onClick={this.centerMap}>Vrátit na střed</Button>
+                <Tooltip title="Přiblížit" placement="top">
+                  <IconButton className={classes.toolbarIconButton} onClick={this.zoomIn} aria-label="Přiblížit">
+                    <ZoomInIcon className={classes.toolbarIcon} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Oddálit" placement="top">
+                  <IconButton className={classes.toolbarIconButton} onClick={this.zoomOut} aria-label="Oddálit">
+                    <ZoomOutIcon className={classes.toolbarIcon} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Vrátit mapu na střed" placement="top">
+                  <IconButton className={classes.toolbarIconButton} onClick={this.centerMap} aria-label="Vrátit mapu na střed">
+                    <CenterMapIcon className={classes.toolbarIcon} />
+                  </IconButton>
+                </Tooltip>
               </div>
               <div className={classes.toolbarContent}>
-                <Button color="primary" onClick={this.save}>Uložit</Button>
+                <Tooltip title="Uložit" placement="top">
+                  <IconButton className={classes.toolbarIconButton} onClick={this.save} aria-label="Uložit">
+                    <SaveIcon className={classes.toolbarIcon} color="primary" />
+                  </IconButton>
+                </Tooltip>
               </div>
             </Paper>
             <Paper

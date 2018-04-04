@@ -1,4 +1,5 @@
 import { takeEvery, call, put, select } from 'redux-saga/effects';
+import { push } from 'react-router-redux';
 import request from 'utils/request';
 import {
   LOAD,
@@ -122,6 +123,10 @@ export function* create({ payload }) {
   }
 }
 
+export function* redirectToNewSchoolYear({ payload }) {
+  yield put(push(`/school-year/edit/${payload._id}`));
+}
+
 export default function* defaultSaga() {
   yield takeEvery(LOAD, load);
   yield takeEvery(REMOVE, remove);
@@ -130,4 +135,5 @@ export default function* defaultSaga() {
   yield takeEvery(CREATE_SUCCESS, load);
   yield takeEvery(DUPLICATE_SUCCESS, load);
   yield takeEvery(REMOVE_SUCCESS, load);
+  yield takeEvery(CREATE_SUCCESS, redirectToNewSchoolYear);
 }

@@ -28,6 +28,7 @@ module.exports = function schoolYearCreate({ connectToMongo }) {
                     .map((box) =>
                       box.set('occupation', '')
                         .set('note', '')
+                        .set('classes', {})
                     )
                     .toJS()
                 )
@@ -37,9 +38,10 @@ module.exports = function schoolYearCreate({ connectToMongo }) {
                     lockers: boxes,
                     name,
                   })
-                  .then(() => res.json({
+                  .then((data) => res.json({
                     code: 200,
                     message: 'Rozložení bylo úspěšně vytvořeno.',
+                    response: data.ops[0],
                   }))
                 )
           )

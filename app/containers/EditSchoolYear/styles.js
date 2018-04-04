@@ -11,6 +11,9 @@ export default (theme) => ({
     width: '60%',
     textAlign: 'left',
   },
+  hideLeftPanel: {
+    width: 'calc(80% + 2.5vmin)',
+  },
   toolbar: {
     height: '12.5%',
     marginBottom: '2.5vmin',
@@ -34,5 +37,15 @@ export default (theme) => ({
     boxSizing: 'border-box',
     padding: theme.spacing.unit * 4,
     marginLeft: '2.5vmin',
+  },
+  hidePanel: {
+    display: 'none',
+  },
+  toolbarIconButton: {
+    height: '100%',
+    marginRight: '2vmin',
+  },
+  toolbarIcon: {
+    fontSize: '4vh',
   },
 });

@@ -7,16 +7,39 @@ import injectSaga from 'utils/injectSaga';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
+import IconButton from 'material-ui/IconButton';
+import ZoomInIcon from 'material-ui-icons/ZoomIn';
+import ZoomOutIcon from 'material-ui-icons/ZoomOut';
+import TableIcon from 'material-ui-icons/Reorder';
+import PrintIcon from 'material-ui-icons/Print';
+import SaveIcon from 'material-ui-icons/Save';
+import GridIcon from 'material-ui-icons/GridOn';
+import OrderedSortIcon from 'material-ui-icons/SortByAlpha';
+import RandomSortIcon from 'material-ui-icons/Shuffle';
+import CenterMapIcon from 'material-ui-icons/CenterFocusStrong';
+import Tooltip from 'material-ui/Tooltip';
 import { withStyles } from 'material-ui/styles';
 import ApplicationFrame from 'components/ApplicationFrame';
+import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import Grid from 'components/Grid';
-import { SketchPicker } from 'react-color';
-import { fromJS } from 'immutable';
+import Frame from 'react-frame-component';
+import { fromJS, OrderedMap } from 'immutable';
+import classNames from 'classnames';
+import Random from 'random-js';
 import * as actions from './actions';
 import saga from './saga';
 import reducer from './reducer';
 import styles from './styles';
+
+const injectBorder = (elem) => (props) => {
+  const newProps = { ...props };
+  delete newProps.children;
+  return elem({ ...props, style: { ...props.style, border: 'solid 2px black', padding: '5px' } }, props.children);
+};
+
+const Th = injectBorder(React.createFactory('th'));
+
+const Td = injectBorder(React.createFactory('td'));
 
 class EditSchoolYear extends React.Component {
 
@@ -26,6 +49,7 @@ class EditSchoolYear extends React.Component {
     updateLockers: PropTypes.func.isRequired,
     loadInitialData: PropTypes.func.isRequired,
     match: PropTypes.object.isRequired,
+    name: PropTypes.string.isRequired,
     lockers: PropTypes.object,
     _id: PropTypes.string,
   }
@@ -42,6 +66,8 @@ class EditSchoolYear extends React.Component {
       }),
       schoolYearName: '',
       lastUsedLockerId: null,
+      isTable: false,
+      tableShuffleSeed: null,
     };
 
     this.initialize();
@@ -53,12 +79,13 @@ class EditSchoolYear extends React.Component {
     this.centerMap = this.centerMap.bind(this);
     this.save = this.save.bind(this);
     this.wheel = this.wheel.bind(this);
-    this.openColorPicker = this.openColorPicker.bind(this);
-    this.closeColorPicker = this.closeColorPicker.bind(this);
-    this.lockerColorChange = this.lockerColorChange.bind(this);
     this.changeLockerOccupation = this.changeLockerOccupation.bind(this);
     this.changeLockerNote = this.changeLockerNote.bind(this);
-    this.changeLockerName = this.changeLockerName.bind(this);
+    this.printTable = this.printTable.bind(this);
+    this.showMap = this.showMap.bind(this);
+    this.showTable = this.showTable.bind(this);
+    this.sortTable = this.sortTable.bind(this);
+    this.shuffleTable = this.shuffleTable.bind(this);
   }
 
   initialize() {
@@ -131,49 +158,24 @@ class EditSchoolYear extends React.Component {
     this.zoomIn();
   }
 
-  openColorPicker() {
-    this.setState((prevState) => ({
-      ...prevState,
-      isColorPickerOpen: true,
-    }));
+  changeLockerOccupation(lockerId) {
+    return (event) => {
+      const occupation = event.target.value;
+      this.props.updateLockers(
+        this.props.lockers
+          .setIn([lockerId, 'occupation'], occupation)
+      );
+    };
   }
 
-  closeColorPicker() {
-    this.setState((prevState) => ({
-      ...prevState,
-      isColorPickerOpen: false,
-    }));
-  }
-
-  lockerColorChange({ hex }) {
-    this.props.updateLockers(
-      this.props.lockers
-        .setIn([this.state.lastUsedLockerId, 'color'], hex)
-    );
-  }
-
-  changeLockerOccupation(event) {
-    const occupation = event.target.value;
-    this.props.updateLockers(
-      this.props.lockers
-        .setIn([this.state.lastUsedLockerId, 'occupation'], occupation)
-    );
-  }
-
-  changeLockerNote(event) {
-    const note = event.target.value;
-    this.props.updateLockers(
-      this.props.lockers
-        .setIn([this.state.lastUsedLockerId, 'note'], note)
-    );
-  }
-
-  changeLockerName(event) {
-    const name = event.target.value;
-    this.props.updateLockers(
-      this.props.lockers
-        .setIn([this.state.lastUsedLockerId, 'name'], name)
-    );
+  changeLockerNote(lockerId) {
+    return (event) => {
+      const note = event.target.value;
+      this.props.updateLockers(
+        this.props.lockers
+          .setIn([lockerId, 'note'], note)
+      );
+    };
   }
 
   clearLockers(lockers) {
@@ -182,93 +184,252 @@ class EditSchoolYear extends React.Component {
     );
   }
 
+  printTable() {
+    window.frames.listFrame.print();
+  }
+
+  showMap() {
+    this.setState((prevState) => ({
+      ...prevState,
+      isTable: false,
+    }));
+  }
+
+  showTable() {
+    this.setState((prevState) => ({
+      ...prevState,
+      isTable: true,
+    }));
+  }
+
+  sortTable() {
+    this.setState((prevState) => ({
+      ...prevState,
+      tableShuffleSeed: null,
+    }));
+  }
+
+  shuffleTable() {
+    this.setState((prevState) => ({
+      ...prevState,
+      tableShuffleSeed: Random.integer(0, 100000)(Random.engines.nativeMath),
+    }));
+  }
+
   render() {
     const { classes } = this.props;
     const activeLocker = this.state.lastUsedLockerId !== null && this.props.lockers.get(this.state.lastUsedLockerId)
       ? this.props.lockers.get(this.state.lastUsedLockerId).toJS()
       : null;
+    const lockers = this.state.tableShuffleSeed === null
+      ?
+        this.props.lockers.sort((a, b) =>
+          [b.get('name'), a.get('name')].sort()[0] === b.get('name') ? 1 : -1
+        )
+      :
+        Random.shuffle(
+          Random.engines.mt19937().seed(this.state.tableShuffleSeed),
+          this.props.lockers.map((locker, id) => locker.set('__id', id)).toArray()
+        )
+        .reduce((acc, locker) =>
+          acc.set(locker.get('__id'), locker.delete('__id'))
+        , OrderedMap());
 
     return (
-      <ApplicationFrame title="Upravit školního roku">
+      <ApplicationFrame title="Upravit školní rok">
         <div className={classes.wrapper}>
-          <div className={classes.leftPanel}>
+          <div className={classNames(classes.leftPanel, { [classes.hideLeftPanel]: this.state.isTable })}>
             <Paper className={classes.toolbar}>
+              {
+                this.state.isTable
+                  ? (
+                    <div className={classes.toolbarContent}>
+                      <Tooltip title="Zobrazit mapu" placement="top">
+                        <IconButton className={classes.toolbarIconButton} onClick={this.showMap} aria-label="Zobrazit mapu">
+                          <GridIcon className={classes.toolbarIcon} />
+                        </IconButton>
+                      </Tooltip>
+                      {
+                        this.state.tableShuffleSeed === null
+                          ? (
+                            <Tooltip title="Seřaddit tabulku náhodně" placement="top">
+                              <IconButton className={classes.toolbarIconButton} onClick={this.shuffleTable} aria-label="Seřaddit tabulku náhodně">
+                                <RandomSortIcon className={classes.toolbarIcon} />
+                              </IconButton>
+                            </Tooltip>
+                          )
+                          : (
+                            <Tooltip title="Seřadit tabulku podle abecedy" placement="top">
+                              <IconButton className={classes.toolbarIconButton} onClick={this.sortTable} aria-label="Seřadit tabulku podle abecedy">
+                                <OrderedSortIcon className={classes.toolbarIcon} />
+                              </IconButton>
+                            </Tooltip>
+                          )
+                      }
+                    </div>
+                  )
+                  : (
+                    <div className={classes.toolbarContent}>
+                      <Tooltip title="Zobrazit seznam" placement="top">
+                        <IconButton className={classes.toolbarIconButton} onClick={this.showTable} aria-label="Zobrazit seznam">
+                          <TableIcon className={classes.toolbarIcon} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Přiblížit" placement="top">
+                        <IconButton className={classes.toolbarIconButton} onClick={this.zoomIn} aria-label="Přiblížit">
+                          <ZoomInIcon className={classes.toolbarIcon} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Oddálit" placement="top">
+                        <IconButton className={classes.toolbarIconButton} onClick={this.zoomOut} aria-label="Oddálit">
+                          <ZoomOutIcon className={classes.toolbarIcon} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Vrátit mapu na střed" placement="top">
+                        <IconButton className={classes.toolbarIconButton} onClick={this.centerMap} aria-label="Vrátit mapu na střed">
+                          <CenterMapIcon className={classes.toolbarIcon} />
+                        </IconButton>
+                      </Tooltip>
+                    </div>
+                  )
+              }
               <div className={classes.toolbarContent}>
-                <Button onClick={this.zoomIn}>Přiblížit</Button>
-                <Button onClick={this.zoomOut}>Oddálit</Button>
-                <Button onClick={this.centerMap}>Vrátit na střed</Button>
-              </div>
-              <div className={classes.toolbarContent}>
-                <Button color="primary" onClick={this.save}>Uložit</Button>
+                <Tooltip title="Tisk" placement="top">
+                  <IconButton className={classes.toolbarIconButton} onClick={this.printTable} aria-label="Tisk">
+                    <PrintIcon className={classes.toolbarIcon} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Uložit" placement="top">
+                  <IconButton className={classes.toolbarIconButton} onClick={this.save} aria-label="Uložit">
+                    <SaveIcon className={classes.toolbarIcon} color="primary" />
+                  </IconButton>
+                </Tooltip>
               </div>
             </Paper>
             <Paper
               className={classes.grid}
               onWheel={this.wheel}
             >
-              <Grid
-                mapOffsetX={this.state.map.get('x')}
-                mapOffsetY={this.state.map.get('y')}
-                boxes={this.props.lockers.toJS()}
-                scale={this.state.map.get('scale')}
-                onBoxSelect={this.lockerSelect}
-                onMapMove={this.mapMove}
-                disableBoxMovement
-              />
+              <Frame name="listFrame" id="listFrame" style={{ display: 'none' }}>
+                <h1 style={{ textAlign: 'center' }}>
+                  Seznam skříněk pro školní rok &quot;{this.props.name}&quot;
+                </h1>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <tbody>
+                    <tr>
+                      <Th style={{ width: '25%' }}>
+                        Název skříňky
+                      </Th>
+                      <Th style={{ width: '37.5%' }}>
+                        Žák
+                      </Th>
+                      <Th style={{ width: '37.5%' }}>
+                        Poznámka
+                      </Th>
+                    </tr>
+                    {
+                      lockers.map((locker, id) => (
+                        <tr key={id}>
+                          <Td>{locker.get('name')}</Td>
+                          <Td>{locker.get('occupation')}</Td>
+                          <Td>{locker.get('note')}</Td>
+                        </tr>
+                      )).toArray()
+                    }
+                  </tbody>
+                </table>
+                <div>Dont forget this here</div>
+                <div style={{ pageBreakAfter: 'always' }}>&nbsp;</div>
+                <div>Dont forget this here</div>
+              </Frame>
+              {
+                this.state.isTable
+                  ? (
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>
+                            Název skříňky
+                          </TableCell>
+                          <TableCell>
+                            Žák
+                          </TableCell>
+                          <TableCell>
+                            Poznámka
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {
+                          lockers.map((locker, id) => (
+                            <TableRow key={id}>
+                              <TableCell>
+                                <Typography>
+                                  {locker.get('name')}
+                                </Typography>
+                              </TableCell>
+                              <TableCell>
+                                <TextField
+                                  value={locker.get('occupation')}
+                                  onChange={this.changeLockerOccupation(id)}
+                                  fullWidth
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <TextField
+                                  value={locker.get('note')}
+                                  onChange={this.changeLockerNote(id)}
+                                  multiline
+                                  rows={3}
+                                  fullWidth
+                                />
+                              </TableCell>
+                            </TableRow>
+                          )).toArray()
+                        }
+                      </TableBody>
+                    </Table>
+                  )
+                  : (
+                    <Grid
+                      mapOffsetX={this.state.map.get('x')}
+                      mapOffsetY={this.state.map.get('y')}
+                      boxes={lockers.toJS()}
+                      scale={this.state.map.get('scale')}
+                      onBoxSelect={this.lockerSelect}
+                      onMapMove={this.mapMove}
+                      disableBoxMovement
+                    />
+                  )
+              }
             </Paper>
           </div>
-          <Paper className={classes.panel}>
-            <Typography variant="title" paragraph>Úprava skříňky</Typography>
+          <Paper className={classNames(classes.panel, { [classes.hidePanel]: this.state.isTable })}>
             {
               activeLocker === null
               ? (
                 <div>
+                  <Typography variant="title" paragraph>Úprava skříňky</Typography>
                   <Typography variant="subheading" paragraph>Vyberte skříňku</Typography>
                 </div>
               ) : (
                 <div>
+                  <Typography variant="title" paragraph>Úprava skříňky: {activeLocker.name}</Typography>
                   <Typography>
                     X: {-activeLocker.x / Grid.boxSize}<br />
                     Y: {-activeLocker.y / Grid.boxSize}
                   </Typography>
                   <TextField
-                    label="Název skříňky"
-                    margin="normal"
-                    value={activeLocker.name}
-                    onChange={this.changeLockerName}
-                  />
-                  <TextField
                     label="Žák"
                     margin="normal"
                     value={activeLocker.occupation}
-                    onChange={this.changeLockerOccupation}
+                    onChange={this.changeLockerOccupation(this.state.lastUsedLockerId)}
                   />
-                  <TextField
-                    label="Barva"
-                    margin="normal"
-                    value={activeLocker.color}
-                    onFocus={this.openColorPicker}
-                    onBlur={this.closeColorPicker}
-                  />
-                  <div style={{ position: 'relative' }}>
-                    <div style={{ position: 'absolute', zIndex: '999999' }}>
-                      {
-                        this.state.isColorPickerOpen
-                        ? (
-                          <SketchPicker
-                            color={activeLocker.color}
-                            onChange={this.lockerColorChange}
-                          />
-                        )
-                        : null
-                      }
-                    </div>
-                  </div>
                   <TextField
                     margin="normal"
                     label="Poznámka"
                     value={activeLocker.note}
-                    onChange={this.changeLockerNote}
+                    onChange={this.changeLockerNote(this.state.lastUsedLockerId)}
                     multiline
                     rows={3}
                   />

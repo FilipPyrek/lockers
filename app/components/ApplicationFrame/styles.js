@@ -1,4 +1,4 @@
-const drawerWidth = 240;
+const drawerWidth = 280;
 
 export default (theme) => ({
   root: {

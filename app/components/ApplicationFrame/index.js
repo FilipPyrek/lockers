@@ -15,7 +15,8 @@ import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui-icons/Menu';
-import GridIcon from 'material-ui-icons/GridOn';
+import LayoutListIcon from 'material-ui-icons/GridOn';
+import SchoolYearListIcon from 'material-ui-icons/Folder';
 import LoginIcon from 'material-ui-icons/LockOpen';
 import LogoutIcon from 'material-ui-icons/ExitToApp';
 import ChevronLeftIcon from 'material-ui-icons/ChevronLeft';
@@ -116,7 +117,7 @@ class ApplicationFrame extends React.Component {
                   <Link to="/layouts">
                     <ListItem button className={classes.button}>
                       <ListItemIcon>
-                        <GridIcon />
+                        <LayoutListIcon />
                       </ListItemIcon>
                       <ListItemText primary="Seznam rozložení" />
                     </ListItem>
@@ -124,7 +125,7 @@ class ApplicationFrame extends React.Component {
                   <Link to="/school-years">
                     <ListItem button className={classes.button}>
                       <ListItemIcon>
-                        <GridIcon />
+                        <SchoolYearListIcon />
                       </ListItemIcon>
                       <ListItemText primary="Seznam školních roků" />
                     </ListItem>

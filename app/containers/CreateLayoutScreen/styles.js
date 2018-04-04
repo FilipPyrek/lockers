@@ -35,4 +35,11 @@ export default (theme) => ({
     padding: theme.spacing.unit * 4,
     marginLeft: '2.5vmin',
   },
+  toolbarIconButton: {
+    height: '100%',
+    marginRight: '2vmin',
+  },
+  toolbarIcon: {
+    fontSize: '4vh',
+  },
 });
