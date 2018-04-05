@@ -8,12 +8,7 @@ import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from 'material-ui/Dialog';
+import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog';
 import IconButton from 'material-ui/IconButton';
 import ZoomInIcon from 'material-ui-icons/ZoomIn';
 import ZoomOutIcon from 'material-ui-icons/ZoomOut';
@@ -250,6 +245,7 @@ class CreateLayoutScreen extends React.Component {
   cancelLayoutNameDialog() {
     this.setState((prevState) => ({
       ...prevState,
+      layoutName: '',
       isLayoutNameDialogOpen: false,
     }));
   }
@@ -276,7 +272,7 @@ class CreateLayoutScreen extends React.Component {
     const isEdit = !!this.props.match.params.id;
 
     return (
-      <ApplicationFrame title={isEdit ? 'Upravit rozložení' : 'Vytvořit rozložení'} >
+      <ApplicationFrame title={isEdit ? 'Upravit mapu' : 'Vytvořit mapu'} >
         <div className={classes.wrapper}>
           <div className={classes.leftPanel}>
             <Paper className={classes.toolbar}>
@@ -372,14 +368,11 @@ class CreateLayoutScreen extends React.Component {
             aria-labelledby="save-dialog-title"
           >
             <form onSubmit={this.save}>
-              <DialogTitle id="save-dialog-title">Název rozložení</DialogTitle>
+              <DialogTitle id="save-dialog-title">Uložit mapu</DialogTitle>
               <DialogContent>
-                <DialogContentText>
-                  Zadejte název rozložení:
-                </DialogContentText>
                 <TextField
                   margin="dense"
-                  label="Název rozložení"
+                  label="Název mapy"
                   value={this.state.layoutName}
                   onChange={this.changeLayoutName}
                   autoFocus

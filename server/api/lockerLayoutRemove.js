@@ -3,7 +3,7 @@ const { ObjectId } = require('mongodb');
 const { handleError } = require('./helpers');
 
 const removeLayoutSchema = Joi.object().keys({
-  ids: Joi.array().items(Joi.string().required()).error(() => ({ message: 'Musíte odeslat pole s id layoutů.' })),
+  ids: Joi.array().items(Joi.string().required()).error(() => ({ message: 'Musíte odeslat pole s id map.' })),
 });
 module.exports = function lockerLayoutRemove({ connectToMongo }) {
   return (req, res) =>
@@ -16,7 +16,7 @@ module.exports = function lockerLayoutRemove({ connectToMongo }) {
              })
              .then((data) => res.json({
                code: 200,
-               message: 'Rozložení byla úspěšně smazána.',
+               message: 'Mapy byly úspěšně smazány.',
                response: {
                  requestedCount: ids.length,
                  removedCount: data.result.n,

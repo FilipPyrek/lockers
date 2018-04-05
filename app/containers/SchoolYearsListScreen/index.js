@@ -7,12 +7,7 @@ import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from 'material-ui/Dialog';
+import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog';
 import { FormControl } from 'material-ui/Form';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
@@ -139,6 +134,8 @@ class SchoolYearsListScreen extends React.Component {
   closeDialog() {
     this.setState((prevState) => ({
       ...prevState,
+      selectedLayout: '_',
+      schoolYearName: '',
       isDialogOpen: false,
     }));
   }
@@ -287,13 +284,13 @@ class SchoolYearsListScreen extends React.Component {
                             {moment(schoolYear.lastUpdate).format('D.M.YYYY HH:mm')}
                           </TableCell>
                           <TableCell>
-                            <Tooltip title="Smazat" placement="top" id="remove-school-year">
+                            <Tooltip title="Smazat školní rok" placement="top" id="remove-school-year">
                               <IconButton
                                 onClick={(event) => {
                                   event.stopPropagation();
                                   this.removeRow(schoolYear._id);
                                 }}
-                                aria-label="Odstranit školní rok"
+                                aria-label="Smazat školní rok"
                               >
                                 <DeleteIcon />
                               </IconButton>
@@ -338,9 +335,6 @@ class SchoolYearsListScreen extends React.Component {
               <form onSubmit={this.createSchoolYear}>
                 <DialogTitle id="create-school-year">Vytvořit školní rok</DialogTitle>
                 <DialogContent>
-                  <DialogContentText>
-                    Zadejte údaje nového školního roku:
-                  </DialogContentText>
                   <TextField
                     margin="normal"
                     label="Název školního roku"
@@ -356,7 +350,7 @@ class SchoolYearsListScreen extends React.Component {
                       onChange={this.selectLayout}
                     >
                       <MenuItem value="_">
-                        <em>Zvolte výchozí rozložení</em>
+                        <em>Zvolte mapu - šablonu</em>
                       </MenuItem>
                       {
                         layouts.map((layout) => (

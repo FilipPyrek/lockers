@@ -109,7 +109,7 @@ class LayoutsListScreen extends React.Component {
     );
 
     return (
-      <ApplicationFrame title="Seznam rozložení">
+      <ApplicationFrame title="Seznam map">
         <div className={classes.wrapper}>
           <div className={classes.leftPanel}>
             <Paper className={classes.toolbar}>
@@ -126,10 +126,10 @@ class LayoutsListScreen extends React.Component {
                           <DeleteIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Duplikovat rozložení" placement="top" id="duplicate-layouts">
+                      <Tooltip title="Duplikovat vybrané" placement="top" id="duplicate-layouts">
                         <IconButton
                           onClick={this.duplicateRows}
-                          aria-label="Duplikovat rozložení"
+                          aria-label="Duplikovat vybrané"
                         >
                           <CopyIcon />
                         </IconButton>
@@ -138,8 +138,8 @@ class LayoutsListScreen extends React.Component {
                   )
                   : (
                     <Link to="/layouts/create">
-                      <Tooltip title="Vytvořit nové rozložení" placement="top" id="create-new-layout">
-                        <IconButton aria-label="Vytvořit nové rozložení">
+                      <Tooltip title="Vytvořit novou mapu" placement="top" id="create-new-layout">
+                        <IconButton aria-label="Vytvořit novou mapu">
                           <AddIcon />
                         </IconButton>
                       </Tooltip>
@@ -213,35 +213,35 @@ class LayoutsListScreen extends React.Component {
                             {moment(layout.lastUpdate).format('D.M.YYYY HH:mm')}
                           </TableCell>
                           <TableCell>
-                            <Tooltip title="Smazat" placement="top" id="remove-layout">
+                            <Tooltip title="Smazat mapu" placement="top" id="remove-layout">
                               <IconButton
                                 onClick={(event) => {
                                   event.stopPropagation();
                                   this.removeRow(layout._id);
                                 }}
-                                aria-label="Smazat rozložení"
+                                aria-label="Smazat mapu"
                               >
                                 <DeleteIcon />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip title="Duplikovat rozložení" placement="top" id="duplicate-layout">
+                            <Tooltip title="Duplikovat mapu" placement="top" id="duplicate-layout">
                               <IconButton
                                 onClick={(event) => {
                                   event.stopPropagation();
                                   this.duplicateRow(layout._id);
                                 }}
-                                aria-label="Duplikovat rozložení"
+                                aria-label="Duplikovat mapu"
                               >
                                 <CopyIcon />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip title="Upravit rozložení" placement="top" id="edit-layout">
+                            <Tooltip title="Upravit mapu" placement="top" id="edit-layout">
                               <Link to={`/layouts/edit/${layout._id}`}>
                                 <IconButton
                                   onClick={(event) => {
                                     event.stopPropagation();
                                   }}
-                                  aria-label="Upravit rozložení"
+                                  aria-label="Upravit mapu"
                                 >
                                   <EditIcon />
                                 </IconButton>

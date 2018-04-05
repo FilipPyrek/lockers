@@ -6,7 +6,7 @@ const { handleError } = require('./helpers');
 class LayoutNotFoundError extends Error {}
 
 const schoolYearCreateSchema = Joi.object().keys({
-  layoutId: Joi.string().required().error(() => ({ message: 'Musíte ID mateřského layoutu.' })),
+  layoutId: Joi.string().required().error(() => ({ message: 'Musíte ID mateřské mapy.' })),
   name: Joi.string().required().error(() => ({ message: 'Musíte zadat školní rok.' })),
 });
 module.exports = function schoolYearCreate({ connectToMongo }) {
@@ -40,7 +40,7 @@ module.exports = function schoolYearCreate({ connectToMongo }) {
                   })
                   .then((data) => res.json({
                     code: 200,
-                    message: 'Rozložení bylo úspěšně vytvořeno.',
+                    message: 'Školní rok úspěšně vytvořen.',
                     response: data.ops[0],
                   }))
                 )
@@ -49,7 +49,7 @@ module.exports = function schoolYearCreate({ connectToMongo }) {
             if (error instanceof LayoutNotFoundError) {
               res.json({
                 code: 404,
-                message: 'Mateřské rozložení nenalezeno.',
+                message: 'Mateřská mapa nenalezena.',
                 error: {
                   layoutId,
                 },

@@ -13,7 +13,7 @@ module.exports = function lockerLayoutAdd({ connectToMongo }) {
           .toArray()
             .then((data) => res.json({
               code: 200,
-              message: 'Rozložení získána úspěšně.',
+              message: 'Mapa získána úspěšně.',
               response: {
                 layouts: data,
               },

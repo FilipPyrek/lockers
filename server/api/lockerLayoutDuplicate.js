@@ -3,7 +3,7 @@ const { ObjectId } = require('mongodb');
 const { handleError } = require('./helpers');
 
 const duplicateLayoutSchema = Joi.object().keys({
-  ids: Joi.array().items(Joi.string().required()).error(() => ({ message: 'Musíte odeslat pole s id layoutů.' })),
+  ids: Joi.array().items(Joi.string().required()).error(() => ({ message: 'Musíte odeslat pole s id map.' })),
 });
 module.exports = function lockerLayoutDuplicate({ connectToMongo }) {
   return (req, res) =>
@@ -36,7 +36,7 @@ module.exports = function lockerLayoutDuplicate({ connectToMongo }) {
               .then((layouts) => db.collection('layouts').insertMany(layouts))
               .then(({ insertedIds }) => res.json({
                 code: 200,
-                message: 'Rozložení byla úspěšně duplikována.',
+                message: 'Mapy byly úspěšně duplikovány.',
                 result: {
                   newIdsIds: insertedIds,
                 },

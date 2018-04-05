@@ -18,7 +18,7 @@ module.exports = function lockerLayoutEdit({ connectToMongo }) {
               )
               .then(() => res.json({
                 code: 200,
-                message: 'Změny v rozložení byly úspěšně uloženy.',
+                message: 'Změny v mapách byly úspěšně uloženy.',
               }))
         )
     )

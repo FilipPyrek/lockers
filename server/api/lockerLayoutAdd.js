@@ -3,7 +3,7 @@ const { handleError } = require('./helpers');
 
 const addLayoutSchema = Joi.object().keys({
   boxes: Joi.object().required().error(() => ({ message: 'Musíte odeslat objekt s boxy.' })),
-  name: Joi.string().required().error(() => ({ message: 'Musíte zadat název layoutu.' })),
+  name: Joi.string().required().error(() => ({ message: 'Musíte zadat název mapy.' })),
 });
 module.exports = function lockerLayoutAdd({ connectToMongo }) {
   return (req, res) =>
@@ -18,7 +18,7 @@ module.exports = function lockerLayoutAdd({ connectToMongo }) {
              })
              .then(() => res.json({
                code: 201,
-               message: 'Rozložení bylo úspěšně vytvořeno.',
+               message: 'Mapa byla úspěšně vytvořena.',
              }))
           )
         )

@@ -64,7 +64,6 @@ class EditSchoolYear extends React.Component {
         x: 0,
         y: 0,
       }),
-      schoolYearName: '',
       lastUsedLockerId: null,
       isTable: false,
       tableShuffleSeed: null,

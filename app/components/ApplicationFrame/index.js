@@ -114,23 +114,23 @@ class ApplicationFrame extends React.Component {
               <div>
                 <Divider />
                 <List>
-                  <Link to="/layouts">
-                    <ListItem button className={classes.button}>
-                      <ListItemIcon>
-                        <LayoutListIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Seznam rozložení" />
-                    </ListItem>
-                  </Link>
-                  <Link to="/school-years">
+                  <Link to="/school-years" title="Seznam Školních roků">
                     <ListItem button className={classes.button}>
                       <ListItemIcon>
                         <SchoolYearListIcon />
                       </ListItemIcon>
-                      <ListItemText primary="Seznam školních roků" />
+                      <ListItemText primary="Seznam Školních roků" />
                     </ListItem>
                   </Link>
-                  <Link to="/logout">
+                  <Link to="/layouts" title="Seznam Map">
+                    <ListItem button className={classes.button}>
+                      <ListItemIcon>
+                        <LayoutListIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Seznam Map" />
+                    </ListItem>
+                  </Link>
+                  <Link to="/logout" title="Odhlásit se">
                     <ListItem button className={classes.button}>
                       <ListItemIcon>
                         <LogoutIcon title="logout" titleAccess="Odhlásit se" />
