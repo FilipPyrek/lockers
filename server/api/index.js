@@ -17,19 +17,19 @@ const dependencies = { connectToMongo };
 
 /* eslint-disable global-require */
 const handlers = Map({
-  userLogin: require('./userLogin'),
-  lockerLayout: require('./lockerLayout'),
-  lockerLayoutById: require('./lockerLayoutById'),
-  lockerLayoutAdd: require('./lockerLayoutAdd'),
-  lockerLayoutEdit: require('./lockerLayoutEdit'),
-  lockerLayoutRemove: require('./lockerLayoutRemove'),
-  lockerLayoutDuplicate: require('./lockerLayoutDuplicate'),
-  schoolYear: require('./schoolYear'),
-  schoolYearCreate: require('./schoolYearCreate'),
-  schoolYearDuplicate: require('./schoolYearDuplicate'),
-  schoolYearById: require('./schoolYearById'),
-  schoolYearRemove: require('./schoolYearRemove'),
-  schoolYearEdit: require('./schoolYearEdit'),
+  userLogin: require('./user/login'),
+  lockerLayout: require('./map/get'),
+  lockerLayoutById: require('./map/byId'),
+  lockerLayoutAdd: require('./map/add'),
+  lockerLayoutDuplicate: require('./map/duplicate'),
+  lockerLayoutEdit: require('./map/edit'),
+  lockerLayoutRemove: require('./map/remove'),
+  schoolYear: require('./schoolYear/get'),
+  schoolYearCreate: require('./schoolYear/add'),
+  schoolYearDuplicate: require('./schoolYear/duplicate'),
+  schoolYearById: require('./schoolYear/byId'),
+  schoolYearRemove: require('./schoolYear/remove'),
+  schoolYearEdit: require('./schoolYear/edit'),
 })
 /* eslint-enable */
 .map((func) => func(dependencies))

@@ -1,16 +1,16 @@
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { handleError } = require('./helpers');
+const { handleError } = require('../helpers');
 
-const loginSchema = Joi.object().keys({
+const userLoginSchema = Joi.object().keys({
   email: Joi.string().email().required().error(() => ({ message: 'Musíte zadat email v platném tvaru např. jmeno@domena.com' })),
   password: Joi.string().required().error(() => ({ message: 'Musíte zadat heslo' })),
 });
 class AuthError extends Error {}
 module.exports = function userLogin({ connectToMongo }) {
   return (req, res) =>
-    Joi.validate(req.body, loginSchema)
+    Joi.validate(req.body, userLoginSchema)
       .then(({ email, password }) =>
         connectToMongo().then((db) =>
           db.collection('users')

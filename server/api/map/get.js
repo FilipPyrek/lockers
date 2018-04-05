@@ -1,10 +1,10 @@
-const { handleError } = require('./helpers');
+const { handleError } = require('../helpers');
 
-module.exports = function lockerLayoutAdd({ connectToMongo }) {
+module.exports = function getMap({ connectToMongo }) {
   return (req, res) =>
     connectToMongo()
       .then((db) =>
-         db.collection('layouts')
+         db.collection('maps')
           .find()
           .project({
             name: 1,

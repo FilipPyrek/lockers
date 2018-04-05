@@ -1,13 +1,13 @@
 const Joi = require('joi');
 const { ObjectId } = require('mongodb');
-const { handleError } = require('./helpers');
+const { handleError } = require('../helpers');
 
-const schoolYearRemoveSchema = Joi.object().keys({
+const removeSchoolYearSchema = Joi.object().keys({
   ids: Joi.array().items(Joi.string().required()).error(() => ({ message: 'Musíte odeslat pole s id školních roků.' })),
 });
-module.exports = function schoolYearRemove({ connectToMongo }) {
+module.exports = function removeSchoolYear({ connectToMongo }) {
   return (req, res) =>
-    Joi.validate(req.body, schoolYearRemoveSchema)
+    Joi.validate(req.body, removeSchoolYearSchema)
       .then(({ ids }) =>
         connectToMongo()
           .then((db) =>

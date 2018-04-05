@@ -24,11 +24,11 @@ export function duplicate(ids) {
   };
 }
 
-export function create(layoutId, name) {
+export function create(mapId, name) {
   return {
     type: CREATE,
     payload: {
-      layoutId,
+      mapId,
       name,
     },
   };

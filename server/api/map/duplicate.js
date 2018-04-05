@@ -1,39 +1,39 @@
 const Joi = require('joi');
 const { ObjectId } = require('mongodb');
-const { handleError } = require('./helpers');
+const { handleError } = require('../helpers');
 
-const duplicateLayoutSchema = Joi.object().keys({
+const duplicateMapSchema = Joi.object().keys({
   ids: Joi.array().items(Joi.string().required()).error(() => ({ message: 'Musíte odeslat pole s id map.' })),
 });
-module.exports = function lockerLayoutDuplicate({ connectToMongo }) {
+module.exports = function duplicateMap({ connectToMongo }) {
   return (req, res) =>
-    Joi.validate(req.body, duplicateLayoutSchema)
+    Joi.validate(req.body, duplicateMapSchema)
       .then(({ ids }) =>
         connectToMongo()
           .then((db) =>
-            db.collection('layouts')
+            db.collection('maps')
               .find({
                 _id: { $in: ids.map((id) => ObjectId(id)) },
               })
               .toArray()
-              .then((layouts) =>
-                layouts
-                  .map((layout) => {
-                    const newLayout = Object.assign(layout);
-                    delete newLayout._id;
-                    return newLayout;
+              .then((maps) =>
+                maps
+                  .map((map) => {
+                    const newMap = Object.assign(map);
+                    delete newMap._id;
+                    return newMap;
                   })
-                  .map((layout) =>
+                  .map((map) =>
                     Object.assign(
-                      layout,
+                      map,
                       {
-                        name: `Kopie - ${layout.name}`,
+                        name: `Kopie - ${map.name}`,
                         lastUpdate: new Date(),
                       }
                     )
                   )
               )
-              .then((layouts) => db.collection('layouts').insertMany(layouts))
+              .then((maps) => db.collection('maps').insertMany(maps))
               .then(({ insertedIds }) => res.json({
                 code: 200,
                 message: 'Mapy byly úspěšně duplikovány.',

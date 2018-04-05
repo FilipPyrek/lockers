@@ -1,30 +1,30 @@
 const Joi = require('joi');
 const { ObjectId } = require('mongodb');
 const { fromJS } = require('immutable');
-const { handleError } = require('./helpers');
+const { handleError } = require('../helpers');
 
-class LayoutNotFoundError extends Error {}
+class MapNotFoundError extends Error {}
 
-const schoolYearCreateSchema = Joi.object().keys({
-  layoutId: Joi.string().required().error(() => ({ message: 'Musíte ID mateřské mapy.' })),
+const addSchoolYearSchema = Joi.object().keys({
+  mapId: Joi.string().required().error(() => ({ message: 'Musíte ID mateřské mapy.' })),
   name: Joi.string().required().error(() => ({ message: 'Musíte zadat školní rok.' })),
 });
-module.exports = function schoolYearCreate({ connectToMongo }) {
+module.exports = function addSchoolYear({ connectToMongo }) {
   return (req, res) =>
-    Joi.validate(req.body, schoolYearCreateSchema)
-      .then(({ layoutId, name }) =>
+    Joi.validate(req.body, addSchoolYearSchema)
+      .then(({ mapId, name }) =>
         connectToMongo()
           .then((db) =>
-            db.collection('layouts')
-              .findOne({ _id: ObjectId(layoutId) })
-                .then((layout) => {
-                  if (layout === null) {
-                    throw new LayoutNotFoundError('Layout not found');
+            db.collection('maps')
+              .findOne({ _id: ObjectId(mapId) })
+                .then((map) => {
+                  if (map === null) {
+                    throw new MapNotFoundError('Map not found');
                   }
-                  return layout;
+                  return map;
                 })
-                .then((layout) =>
-                  fromJS(layout.boxes)
+                .then((map) =>
+                  fromJS(map.boxes)
                     .map((box) =>
                       box.set('occupation', '')
                         .set('note', '')
@@ -46,12 +46,12 @@ module.exports = function schoolYearCreate({ connectToMongo }) {
                 )
           )
           .catch((error) => {
-            if (error instanceof LayoutNotFoundError) {
+            if (error instanceof MapNotFoundError) {
               res.json({
                 code: 404,
                 message: 'Mateřská mapa nenalezena.',
                 error: {
-                  layoutId,
+                  mapId,
                 },
               });
               return;

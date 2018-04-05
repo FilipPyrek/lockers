@@ -1,6 +1,6 @@
-const { handleError } = require('./helpers');
+const { handleError } = require('../helpers');
 
-module.exports = function shcoolYear({ connectToMongo }) {
+module.exports = function getSchoolYear({ connectToMongo }) {
   return (req, res) =>
     connectToMongo()
       .then((db) =>

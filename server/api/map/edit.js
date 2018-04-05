@@ -1,17 +1,17 @@
 const Joi = require('joi');
 const { ObjectId } = require('mongodb');
-const { handleError } = require('./helpers');
+const { handleError } = require('../helpers');
 
-const addLayoutSchema = Joi.object().keys({
+const editMapSchema = Joi.object().keys({
   boxes: Joi.object().required().error(() => ({ message: 'Musíte odeslat objekt s boxy.' })),
 });
-module.exports = function lockerLayoutEdit({ connectToMongo }) {
+module.exports = function editMap({ connectToMongo }) {
   return (req, res) =>
-    Joi.validate(req.body, addLayoutSchema)
+    Joi.validate(req.body, editMapSchema)
       .then(({ boxes }) =>
         connectToMongo()
           .then((db) =>
-            db.collection('layouts')
+            db.collection('maps')
               .updateOne(
                 { _id: ObjectId(req.params.id) },
                 { $set: { boxes, lastUpdate: new Date() } }

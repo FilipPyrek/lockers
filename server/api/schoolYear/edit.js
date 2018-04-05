@@ -1,14 +1,14 @@
 const Joi = require('joi');
 const { ObjectId } = require('mongodb');
-const { handleError } = require('./helpers');
+const { handleError } = require('../helpers');
 
-const addLayoutSchema = Joi.object().keys({
+const editSchoolYearSchema = Joi.object().keys({
   lockers: Joi.object().error(() => ({ message: 'Tato položka musí být objekt. Klíč je ID skříňky a hodnota je objekt skříňky.' })),
-  classes: Joi.object().error(() => ({ message: 'Tato položka musí být object. Klíč je název třídy a hodnota je počet žáků.' })),
+  classes: Joi.object().error(() => ({ message: 'Tato položka musí být objekt. Klíč je název třídy a hodnota je počet žáků.' })),
 });
-module.exports = function schoolYearEdit({ connectToMongo }) {
+module.exports = function editSchoolYear({ connectToMongo }) {
   return (req, res) =>
-    Joi.validate(req.body, addLayoutSchema)
+    Joi.validate(req.body, editSchoolYearSchema)
       .then(({ lockers, classes }) =>
         connectToMongo()
           .then((db) =>

@@ -1,11 +1,11 @@
 const Joi = require('joi');
 const { ObjectId } = require('mongodb');
-const { handleError } = require('./helpers');
+const { handleError } = require('../helpers');
 
 const duplicateSchoolYearSchema = Joi.object().keys({
   ids: Joi.array().items(Joi.string().required()).error(() => ({ message: 'Musíte odeslat pole s id školních roků.' })),
 });
-module.exports = function schoolYearDuplicate({ connectToMongo }) {
+module.exports = function duplicateSchoolYear({ connectToMongo }) {
   return (req, res) =>
     Joi.validate(req.body, duplicateSchoolYearSchema)
       .then(({ ids }) =>
