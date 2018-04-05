@@ -13,6 +13,7 @@ import IconButton from 'material-ui/IconButton';
 import ZoomInIcon from 'material-ui-icons/ZoomIn';
 import ZoomOutIcon from 'material-ui-icons/ZoomOut';
 import SaveIcon from 'material-ui-icons/Save';
+import AddIcon from 'material-ui-icons/Add';
 import CenterMapIcon from 'material-ui-icons/CenterFocusStrong';
 import Tooltip from 'material-ui/Tooltip';
 import { withStyles } from 'material-ui/styles';
@@ -277,6 +278,11 @@ class CreateLayoutScreen extends React.Component {
           <div className={classes.leftPanel}>
             <Paper className={classes.toolbar}>
               <div className={classes.toolbarContent}>
+                <Tooltip title="Přidat skříňku" placement="top">
+                  <IconButton className={classes.toolbarIconButton} onClick={this.addBox} aria-label="Přidat skříňku">
+                    <AddIcon className={classes.toolbarIcon} />
+                  </IconButton>
+                </Tooltip>
                 <Tooltip title="Přiblížit" placement="top">
                   <IconButton className={classes.toolbarIconButton} onClick={this.zoomIn} aria-label="Přiblížit">
                     <ZoomInIcon className={classes.toolbarIcon} />
