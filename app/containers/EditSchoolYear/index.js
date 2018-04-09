@@ -22,6 +22,7 @@ import AddClassIcon from 'material-ui-icons/AddCircleOutline';
 import OrderedSortIcon from 'material-ui-icons/SortByAlpha';
 import RandomSortIcon from 'material-ui-icons/Shuffle';
 import CenterMapIcon from 'material-ui-icons/CenterFocusStrong';
+import List, { ListItem, ListItemText } from 'material-ui/List';
 import Tooltip from 'material-ui/Tooltip';
 import { withStyles } from 'material-ui/styles';
 import ApplicationFrame from 'components/ApplicationFrame';
@@ -75,6 +76,7 @@ class EditSchoolYear extends React.Component {
       isTable: false,
       tableShuffleSeed: null,
       isClassesDialogOpen: false,
+      isPrintDialogOpen: false,
     };
 
     this.initialize();
@@ -84,6 +86,8 @@ class EditSchoolYear extends React.Component {
     this.zoomOut = this.zoomOut.bind(this);
     this.lockerSelect = this.lockerSelect.bind(this);
     this.centerMap = this.centerMap.bind(this);
+    this.openPrintDialog = this.openPrintDialog.bind(this);
+    this.closePrintDialog = this.closePrintDialog.bind(this);
     this.openClassesDialog = this.openClassesDialog.bind(this);
     this.closeClassesDialog = this.closeClassesDialog.bind(this);
     this.changeClassName = this.changeClassName.bind(this);
@@ -94,7 +98,8 @@ class EditSchoolYear extends React.Component {
     this.wheel = this.wheel.bind(this);
     this.changeLockerOccupation = this.changeLockerOccupation.bind(this);
     this.changeLockerNote = this.changeLockerNote.bind(this);
-    this.printTable = this.printTable.bind(this);
+    this.printFullTable = this.printFullTable.bind(this);
+    this.printClassesTable = this.printClassesTable.bind(this);
     this.showMap = this.showMap.bind(this);
     this.showTable = this.showTable.bind(this);
     this.sortTable = this.sortTable.bind(this);
@@ -198,8 +203,14 @@ class EditSchoolYear extends React.Component {
     );
   }
 
-  printTable() {
+  printFullTable() {
+    this.closePrintDialog();
     window.frames.listFrame.print();
+  }
+
+  printClassesTable() {
+    this.closePrintDialog();
+    window.frames.classesListFrame.print();
   }
 
   showMap() {
@@ -286,6 +297,20 @@ class EditSchoolYear extends React.Component {
       );
   }
 
+  openPrintDialog() {
+    this.setState((prevState) => ({
+      ...prevState,
+      isPrintDialogOpen: true,
+    }));
+  }
+
+  closePrintDialog() {
+    this.setState((prevState) => ({
+      ...prevState,
+      isPrintDialogOpen: false,
+    }));
+  }
+
   render() {
     const { classes } = this.props;
     const activeLocker = this.state.lastUsedLockerId !== null && this.props.lockers.get(this.state.lastUsedLockerId)
@@ -370,7 +395,7 @@ class EditSchoolYear extends React.Component {
               }
               <div className={classes.toolbarContent}>
                 <Tooltip title="Tisk" placement="top">
-                  <IconButton className={classes.toolbarIconButton} onClick={this.printTable} aria-label="Tisk">
+                  <IconButton className={classes.toolbarIconButton} onClick={this.openPrintDialog} aria-label="Tisk">
                     <PrintIcon className={classes.toolbarIcon} />
                   </IconButton>
                 </Tooltip>
@@ -387,7 +412,7 @@ class EditSchoolYear extends React.Component {
             >
               <Frame name="listFrame" id="listFrame" style={{ display: 'none' }}>
                 <h1 style={{ textAlign: 'center' }}>
-                  Seznam skříněk pro školní rok &quot;{this.props.name}&quot;
+                  Seznam skříněk pro školní rok {this.props.name}
                 </h1>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <tbody>
@@ -413,9 +438,65 @@ class EditSchoolYear extends React.Component {
                     }
                   </tbody>
                 </table>
-                <div>Dont forget this here</div>
-                <div style={{ pageBreakAfter: 'always' }}>&nbsp;</div>
-                <div>Dont forget this here</div>
+              </Frame>
+              <Frame name="classesListFrame" id="classesListFrame" style={{ display: 'none' }}>
+                {
+                  this.props.classesList
+                    .reduce((acc, classData) =>
+                      acc.set(
+                        'classes',
+                        acc.get('classes').push(
+                          classData.set(
+                            'lockers',
+                            lockers.toArray().slice(
+                              acc.get('count'),
+                              acc.get('count') + Number(classData.get('size')),
+                            )
+                          )
+                        )
+                      )
+                      .set('count', acc.get('count') + Number(classData.get('size')))
+                    , fromJS({ classes: [], count: 0 }))
+                    .get('classes')
+                    .map((classData, cid) => (
+                      <div key={cid} >
+                        <h1 style={{ textAlign: 'center' }}>
+                          Seznam skříněk pro třídu {classData.get('name')}
+                        </h1>
+                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                          <tbody>
+                            <tr>
+                              <Th style={{ width: '4%' }}>
+                                #
+                              </Th>
+                              <Th style={{ width: '20%' }}>
+                                Skříňka
+                              </Th>
+                              <Th style={{ width: '38%' }}>
+                                Žák
+                              </Th>
+                              <Th style={{ width: '38%' }}>
+                                Poznámka
+                              </Th>
+                            </tr>
+                            {
+                              classData.get('lockers')
+                                .map((locker, lid) => (
+                                  <tr key={lid}>
+                                    <Td>{lid + 1}</Td>
+                                    <Td>{locker.get('name')}</Td>
+                                    <Td>{locker.get('occupation')}</Td>
+                                    <Td>{locker.get('note')}</Td>
+                                  </tr>
+                                ))
+                            }
+                          </tbody>
+                        </table>
+                        <div style={{ pageBreakAfter: 'always' }}>&nbsp;</div>
+                      </div>
+                    ))
+                    .toArray()
+                }
               </Frame>
               {
                 this.state.isTable
@@ -586,6 +667,28 @@ class EditSchoolYear extends React.Component {
               Zavřít
             </Button>
           </DialogActions>
+        </Dialog>
+
+        <Dialog
+          open={this.state.isPrintDialogOpen}
+          onClose={this.closePrintDialog}
+          fullWidth
+          aria-labelledby="manage-print"
+        >
+          <DialogTitle id="manage-print">Tisk:</DialogTitle>
+          <DialogContent>
+            <List component="nav">
+              <ListItem button divider onClick={this.printClassesTable}>
+                <ListItemText primary="Seznam skříněk po třídách" />
+              </ListItem>
+              <ListItem button divider onClick={this.printFullTable}>
+                <ListItemText primary="Seznam všech skříněk" />
+              </ListItem>
+              <ListItem button>
+                <ListItemText primary="Zavřít" onClick={this.closePrintDialog} />
+              </ListItem>
+            </List>
+          </DialogContent>
         </Dialog>
       </ApplicationFrame>
     );
