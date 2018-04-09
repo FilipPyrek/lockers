@@ -414,7 +414,7 @@ class EditSchoolYear extends React.Component {
                 <h1 style={{ textAlign: 'center' }}>
                   Seznam skříněk pro školní rok {this.props.name}
                 </h1>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '16px' }}>
                   <tbody>
                     <tr>
                       <Th style={{ width: '25%' }}>
@@ -463,7 +463,7 @@ class EditSchoolYear extends React.Component {
                         <h1 style={{ textAlign: 'center' }}>
                           Seznam skříněk pro třídu {classData.get('name')}
                         </h1>
-                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '16px' }}>
                           <tbody>
                             <tr>
                               <Th style={{ width: '4%' }}>
@@ -684,8 +684,8 @@ class EditSchoolYear extends React.Component {
               <ListItem button divider onClick={this.printFullTable}>
                 <ListItemText primary="Seznam všech skříněk" />
               </ListItem>
-              <ListItem button>
-                <ListItemText primary="Zavřít" onClick={this.closePrintDialog} />
+              <ListItem button onClick={this.closePrintDialog}>
+                <ListItemText primary="Zavřít" />
               </ListItem>
             </List>
           </DialogContent>
