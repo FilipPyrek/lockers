@@ -7,6 +7,8 @@ import injectSaga from 'utils/injectSaga';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
+import Button from 'material-ui/Button';
+import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog';
 import IconButton from 'material-ui/IconButton';
 import ZoomInIcon from 'material-ui-icons/ZoomIn';
 import ZoomOutIcon from 'material-ui-icons/ZoomOut';
@@ -14,6 +16,9 @@ import TableIcon from 'material-ui-icons/Reorder';
 import PrintIcon from 'material-ui-icons/Print';
 import SaveIcon from 'material-ui-icons/Save';
 import GridIcon from 'material-ui-icons/GridOn';
+import ClassesIcon from 'material-ui-icons/People';
+import RemoveClassIcon from 'material-ui-icons/RemoveCircleOutline';
+import AddClassIcon from 'material-ui-icons/AddCircleOutline';
 import OrderedSortIcon from 'material-ui-icons/SortByAlpha';
 import RandomSortIcon from 'material-ui-icons/Shuffle';
 import CenterMapIcon from 'material-ui-icons/CenterFocusStrong';
@@ -47,10 +52,12 @@ class EditSchoolYear extends React.Component {
     classes: PropTypes.object.isRequired,
     edit: PropTypes.func.isRequired,
     updateLockers: PropTypes.func.isRequired,
+    updateClasses: PropTypes.func.isRequired,
     loadInitialData: PropTypes.func.isRequired,
     match: PropTypes.object.isRequired,
     name: PropTypes.string.isRequired,
     lockers: PropTypes.object,
+    classesList: PropTypes.object,
     _id: PropTypes.string,
   }
 
@@ -67,6 +74,7 @@ class EditSchoolYear extends React.Component {
       lastUsedLockerId: null,
       isTable: false,
       tableShuffleSeed: null,
+      isClassesDialogOpen: false,
     };
 
     this.initialize();
@@ -76,6 +84,12 @@ class EditSchoolYear extends React.Component {
     this.zoomOut = this.zoomOut.bind(this);
     this.lockerSelect = this.lockerSelect.bind(this);
     this.centerMap = this.centerMap.bind(this);
+    this.openClassesDialog = this.openClassesDialog.bind(this);
+    this.closeClassesDialog = this.closeClassesDialog.bind(this);
+    this.changeClassName = this.changeClassName.bind(this);
+    this.changeClassSize = this.changeClassSize.bind(this);
+    this.addClass = this.addClass.bind(this);
+    this.removeClass = this.removeClass.bind(this);
     this.save = this.save.bind(this);
     this.wheel = this.wheel.bind(this);
     this.changeLockerOccupation = this.changeLockerOccupation.bind(this);
@@ -145,7 +159,8 @@ class EditSchoolYear extends React.Component {
 
     this.props.edit(
       this.props._id,
-      this.clearLockers(this.props.lockers).toJS()
+      this.clearLockers(this.props.lockers).toJS(),
+      this.props.classesList.toJS(),
     );
   }
 
@@ -213,6 +228,62 @@ class EditSchoolYear extends React.Component {
       ...prevState,
       tableShuffleSeed: Random.integer(0, 100000)(Random.engines.nativeMath),
     }));
+  }
+
+  openClassesDialog() {
+    this.setState((prevState) => ({
+      ...prevState,
+      isClassesDialogOpen: true,
+    }));
+  }
+
+  closeClassesDialog() {
+    this.setState((prevState) => {
+      this.props.updateClasses(
+        this.props.classesList.filter((classData) =>
+          classData.get('name') && classData.get('size')
+        )
+      );
+      return {
+        ...prevState,
+        isClassesDialogOpen: false,
+      };
+    });
+  }
+
+  changeClassName(id) {
+    return (event) => {
+      const { value } = event.target;
+      this.props.updateClasses(
+        this.props.classesList.setIn([id, 'name'], value)
+      );
+    };
+  }
+
+  changeClassSize(id) {
+    return (event) => {
+      const { value } = event.target;
+      this.props.updateClasses(
+        this.props.classesList.setIn([id, 'size'], value)
+      );
+    };
+  }
+
+  addClass() {
+    this.props.updateClasses(
+      this.props.classesList
+        .push(fromJS({
+          name: '',
+          size: '',
+        }))
+    );
+  }
+
+  removeClass(id) {
+    return () =>
+      this.props.updateClasses(
+        this.props.classesList.delete(id)
+      );
   }
 
   render() {
@@ -287,6 +358,11 @@ class EditSchoolYear extends React.Component {
                       <Tooltip title="Vrátit mapu na střed" placement="top">
                         <IconButton className={classes.toolbarIconButton} onClick={this.centerMap} aria-label="Vrátit mapu na střed">
                           <CenterMapIcon className={classes.toolbarIcon} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Spravovat třídy" placement="top">
+                        <IconButton className={classes.toolbarIconButton} onClick={this.openClassesDialog} aria-label="Spravovat třídy">
+                          <ClassesIcon className={classes.toolbarIcon} />
                         </IconButton>
                       </Tooltip>
                     </div>
@@ -437,18 +513,97 @@ class EditSchoolYear extends React.Component {
             }
           </Paper>
         </div>
+        <Dialog
+          open={this.state.isClassesDialogOpen}
+          onClose={this.closeClassesDialog}
+          fullWidth
+          aria-labelledby="manage-classes"
+        >
+          <DialogTitle id="manage-class">Spravovat třídy</DialogTitle>
+          <DialogContent>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    Třída
+                  </TableCell>
+                  <TableCell>
+                    Počet žáků
+                  </TableCell>
+                  <TableCell>
+                    Akce
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {
+                  this.props.classesList
+                    .map((classData, id) => (
+                      <TableRow key={id}>
+                        <TableCell>
+                          <TextField
+                            placeholder="V3A"
+                            value={classData.get('name')}
+                            onChange={this.changeClassName(id)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <TextField
+                            placeholder="23"
+                            value={classData.get('size')}
+                            onChange={this.changeClassSize(id)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <IconButton className={classes.removeClassButton} onClick={this.removeClass(id)} aria-label="Smazat třídu">
+                            <RemoveClassIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                    .toArray()
+                }
+                <TableRow>
+                  <TableCell>
+                    &nbsp;
+                  </TableCell>
+                  <TableCell>
+                    &nbsp;
+                  </TableCell>
+                  <TableCell>
+                    <Tooltip title="Přidat třídu" placement="top">
+                      <IconButton className={classes.addClassButton} onClick={this.addClass} aria-label="Přidat třídu">
+                        <AddClassIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.closeClassesDialog} color="primary">
+              Zavřít
+            </Button>
+          </DialogActions>
+        </Dialog>
       </ApplicationFrame>
     );
   }
 
 }
 
-const withConnect = connect((state) => state.get('editSchoolYear').toObject(), actions);
+const withConnect = connect((state) =>
+  state.get('editSchoolYear')
+    .delete('classes')
+    .set('classesList', state.getIn(['editSchoolYear', 'classes']))
+    .toObject()
+, actions);
 
 const withReducer = injectReducer({ key: 'editSchoolYear', reducer });
 
 const withSaga = injectSaga({ key: 'editSchoolYear', saga });
 
-const withStyle = withStyles(styles, { withTheme: true });
+const withStyle = withStyles(styles, { withTheme: true, stylesPropName: 'classNames' });
 
 export default compose(withStyle, withReducer, withSaga, withConnect)(EditSchoolYear);

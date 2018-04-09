@@ -37,6 +37,7 @@ module.exports = function addSchoolYear({ connectToMongo }) {
                     lastUpdate: new Date(),
                     lockers,
                     name,
+                    classes: [],
                   })
                   .then((data) => res.json({
                     code: 200,

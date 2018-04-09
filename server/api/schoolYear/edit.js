@@ -4,7 +4,12 @@ const { handleError } = require('../helpers');
 
 const editSchoolYearSchema = Joi.object().keys({
   lockers: Joi.object().error(() => ({ message: 'Tato položka musí být objekt. Klíč je ID skříňky a hodnota je objekt skříňky.' })),
-  classes: Joi.object().error(() => ({ message: 'Tato položka musí být objekt. Klíč je název třídy a hodnota je počet žáků.' })),
+  classes: Joi.array().items(
+    Joi.object().keys({
+      name: Joi.string().required().error(() => ({ message: 'Tato položka je povinná.' })),
+      size: Joi.string().required().error(() => ({ message: 'Tato položka je povinná.' })),
+    })
+  ).error(() => ({ message: 'Tato položka musí být objekt. Klíč je název třídy a hodnota je počet žáků.' })),
 });
 module.exports = function editSchoolYear({ connectToMongo }) {
   return (req, res) =>

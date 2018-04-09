@@ -7,3 +7,4 @@ export const LOAD_INITIAL_DATA_SUCCESS = '@EditSchoolYear/LOAD_INITIAL_DATA_SUCC
 export const LOAD_INITIAL_DATA_FAIL = '@EditSchoolYear/LOAD_INITIAL_DATA_FAIL';
 
 export const UPDATE_LOCKERS = '@EditSchoolYear/UPDATE_LOCKERS';
+export const UPDATE_CLASSES = '@EditSchoolYear/UPDATE_CLASSES';

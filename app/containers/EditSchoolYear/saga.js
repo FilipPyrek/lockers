@@ -40,7 +40,7 @@ export function* loadInitialData({ payload }) {
   }
 }
 
-export function* editData({ payload: { _id, lockers } }) {
+export function* editData({ payload: { _id, lockers, classes } }) {
   const token = yield select((state) => state.getIn(['global', 'token']));
   try {
     const data = yield call(
@@ -51,7 +51,7 @@ export function* editData({ payload: { _id, lockers } }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ lockers }),
+        body: JSON.stringify({ lockers, classes }),
       }
     );
     if (data.error) {

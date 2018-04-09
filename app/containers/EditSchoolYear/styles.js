@@ -48,4 +48,10 @@ export default (theme) => ({
   toolbarIcon: {
     fontSize: '4vh',
   },
+  removeClassButton: {
+    color: theme.palette.error.main,
+  },
+  addClassButton: {
+    color: theme.palette.primary.main,
+  },
 });
