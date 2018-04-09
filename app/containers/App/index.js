@@ -7,8 +7,8 @@ import { withRouter } from 'react-router';
 import ApplicationFrame from 'components/ApplicationFrame';
 import LoginScreen from 'containers/LoginScreen';
 import LogoutScreen from 'containers/LogoutScreen';
-import CreateLayoutScreen from 'containers/CreateLayoutScreen';
-import LayoutsListScreen from 'containers/LayoutsListScreen';
+import EditMapScreen from 'containers/EditMapScreen';
+import MapsListScreen from 'containers/MapsListScreen';
 import SchoolYearsListScreen from 'containers/SchoolYearsListScreen';
 import EditSchoolYear from 'containers/EditSchoolYear';
 
@@ -22,10 +22,10 @@ function App(props) {
         <meta name="description" content="Aplikace pro správu skříněk na Purkyňce." />
       </Helmet>
       <Switch>
-        <Route exact path="/" component={() => <ApplicationFrame>{props.isLoggenIn ? 'ANO' : 'NE'}</ApplicationFrame>} />
-        <Route exact path="/layouts" component={LayoutsListScreen} />
-        <Route exact path="/layouts/create" component={CreateLayoutScreen} />
-        <Route exact path="/layouts/edit/:id" component={CreateLayoutScreen} />
+        <Route exact path="/" component={() => props.isLoggenIn ? <Redirect to="/school-years" /> : <Redirect to="/login" />} />
+        <Route exact path="/maps" component={MapsListScreen} />
+        <Route exact path="/map/create" component={EditMapScreen} />
+        <Route exact path="/map/edit/:id" component={EditMapScreen} />
         <Route exact path="/school-years" component={SchoolYearsListScreen} />
         <Route exact path="/school-year/edit/:id" component={EditSchoolYear} />
         <Route exact path="/login" component={(p) => props.isLoggenIn ? <Redirect to="/" /> : <LoginScreen {...p} />} />

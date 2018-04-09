@@ -24,18 +24,18 @@ module.exports = function addSchoolYear({ connectToMongo }) {
                   return map;
                 })
                 .then((map) =>
-                  fromJS(map.boxes)
-                    .map((box) =>
-                      box.set('occupation', '')
+                  fromJS(map.lockers)
+                    .map((locker) =>
+                      locker.set('occupation', '')
                         .set('note', '')
                         .set('classes', {})
                     )
                     .toJS()
                 )
-                .then((boxes) =>
+                .then((lockers) =>
                   db.collection('schoolYears').insert({
                     lastUpdate: new Date(),
-                    lockers: boxes,
+                    lockers,
                     name,
                   })
                   .then((data) => res.json({

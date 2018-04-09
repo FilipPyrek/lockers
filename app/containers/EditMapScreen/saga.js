@@ -19,7 +19,7 @@ export function* sendData({ payload }) {
   try {
     const data = yield call(
       request,
-      `/locker/layout/add?token=${token}`,
+      `/map/add?token=${token}`,
       {
         method: 'POST',
         headers: {
@@ -42,7 +42,7 @@ export function* sendData({ payload }) {
 }
 
 export function* redirect() {
-  yield put(push('/layouts'));
+  yield put(push('/maps'));
 }
 
 export function* loadInitialData({ payload }) {
@@ -50,7 +50,7 @@ export function* loadInitialData({ payload }) {
   try {
     const data = yield call(
       request,
-      `/locker/layout/${payload.id}/?token=${token}`,
+      `/map/${payload.id}/?token=${token}`,
       {
         method: 'GET',
         headers: {
@@ -71,18 +71,18 @@ export function* loadInitialData({ payload }) {
   }
 }
 
-export function* editData({ payload: { _id, boxes } }) {
+export function* editData({ payload: { _id, lockers } }) {
   const token = yield select((state) => state.getIn(['global', 'token']));
   try {
     const data = yield call(
       request,
-      `/locker/layout/edit/${_id}/?token=${token}`,
+      `/map/edit/${_id}/?token=${token}`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ boxes }),
+        body: JSON.stringify({ lockers }),
       }
     );
     if (data.error) {

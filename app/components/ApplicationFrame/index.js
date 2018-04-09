@@ -122,7 +122,7 @@ class ApplicationFrame extends React.Component {
                       <ListItemText primary="Seznam Školních roků" />
                     </ListItem>
                   </Link>
-                  <Link to="/layouts" title="Seznam Map">
+                  <Link to="/maps" title="Seznam Map">
                     <ListItem button className={classes.button}>
                       <ListItemIcon>
                         <LayoutListIcon />

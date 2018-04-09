@@ -18,12 +18,12 @@ const dependencies = { connectToMongo };
 /* eslint-disable global-require */
 const handlers = Map({
   userLogin: require('./user/login'),
-  lockerLayout: require('./map/get'),
-  lockerLayoutById: require('./map/byId'),
-  lockerLayoutAdd: require('./map/add'),
-  lockerLayoutDuplicate: require('./map/duplicate'),
-  lockerLayoutEdit: require('./map/edit'),
-  lockerLayoutRemove: require('./map/remove'),
+  map: require('./map/get'),
+  mapById: require('./map/byId'),
+  mapAdd: require('./map/add'),
+  mapDuplicate: require('./map/duplicate'),
+  mapEdit: require('./map/edit'),
+  mapRemove: require('./map/remove'),
   schoolYear: require('./schoolYear/get'),
   schoolYearCreate: require('./schoolYear/add'),
   schoolYearDuplicate: require('./schoolYear/duplicate'),
@@ -46,12 +46,12 @@ api.use(bodyParser.json(), (err, req, res, next) => {
 
 api.post('/user/login', handlers.userLogin);
 
-api.use(security).get('/locker/layout', handlers.lockerLayout);
-api.use(security).get('/locker/layout/:id', handlers.lockerLayoutById);
-api.use(security).post('/locker/layout/edit/:id', handlers.lockerLayoutEdit);
-api.use(security).post('/locker/layout/add', handlers.lockerLayoutAdd);
-api.use(security).post('/locker/layout/remove', handlers.lockerLayoutRemove);
-api.use(security).post('/locker/layout/duplicate', handlers.lockerLayoutDuplicate);
+api.use(security).get('/map', handlers.map);
+api.use(security).get('/map/:id', handlers.mapById);
+api.use(security).post('/map/edit/:id', handlers.mapEdit);
+api.use(security).post('/map/add', handlers.mapAdd);
+api.use(security).post('/map/remove', handlers.mapRemove);
+api.use(security).post('/map/duplicate', handlers.mapDuplicate);
 api.use(security).get('/school-year', handlers.schoolYear);
 api.use(security).post('/school-year/create', handlers.schoolYearCreate);
 api.use(security).post('/school-year/duplicate', handlers.schoolYearDuplicate);

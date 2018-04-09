@@ -27,14 +27,14 @@ const Link = styled(RawLink)`
 `;
 
 
-class LayoutsListScreen extends React.Component {
+class MapsListScreen extends React.Component {
 
   static propTypes = {
     classes: PropTypes.object.isRequired,
     load: PropTypes.func.isRequired,
     remove: PropTypes.func.isRequired,
     duplicate: PropTypes.func.isRequired,
-    layouts: PropTypes.array,
+    maps: PropTypes.array,
     loading: PropTypes.bool.isRequired,
     error: PropTypes.oneOfType([
       PropTypes.object,
@@ -43,7 +43,7 @@ class LayoutsListScreen extends React.Component {
   }
 
   static defaultProps = {
-    layouts: [],
+    maps: [],
   }
 
   constructor(props) {
@@ -104,9 +104,10 @@ class LayoutsListScreen extends React.Component {
   render() {
     const { classes } = this.props;
     const { selectedRows } = this.state;
-    const layouts = this.props.layouts.sort((a, b) =>
+    const maps = this.props.maps.sort((a, b) =>
       new Date(b.lastUpdate) - new Date(a.lastUpdate)
     );
+    console.log(maps);
 
     return (
       <ApplicationFrame title="Seznam map">
@@ -118,7 +119,7 @@ class LayoutsListScreen extends React.Component {
                   this.state.selectedRows.size > 0
                   ? (
                     <div>
-                      <Tooltip title="Smazat vybrané" placement="top" id="remove-layouts">
+                      <Tooltip title="Smazat vybrané" placement="top" id="remove-maps">
                         <IconButton
                           onClick={this.removeRows}
                           aria-label="Smazat vybrané"
@@ -126,7 +127,7 @@ class LayoutsListScreen extends React.Component {
                           <DeleteIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Duplikovat vybrané" placement="top" id="duplicate-layouts">
+                      <Tooltip title="Duplikovat vybrané" placement="top" id="duplicate-maps">
                         <IconButton
                           onClick={this.duplicateRows}
                           aria-label="Duplikovat vybrané"
@@ -137,8 +138,8 @@ class LayoutsListScreen extends React.Component {
                     </div>
                   )
                   : (
-                    <Link to="/layouts/create">
-                      <Tooltip title="Vytvořit novou mapu" placement="top" id="create-new-layout">
+                    <Link to="/map/create">
+                      <Tooltip title="Vytvořit novou mapu" placement="top" id="create-new-map">
                         <IconButton aria-label="Vytvořit novou mapu">
                           <AddIcon />
                         </IconButton>
@@ -194,49 +195,49 @@ class LayoutsListScreen extends React.Component {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      layouts.map((layout) => (
+                      maps.map((map) => (
                         <TableRow
-                          key={layout._id}
-                          data-id={layout._id}
-                          onClick={() => this.clickRow(layout._id)}
+                          key={map._id}
+                          data-id={map._id}
+                          onClick={() => this.clickRow(map._id)}
                           role="checkbox"
-                          aria-checked={selectedRows.contains(layout._id)}
+                          aria-checked={selectedRows.contains(map._id)}
                           hover
                         >
                           <TableCell padding="checkbox">
-                            <Checkbox checked={selectedRows.contains(layout._id)} />
+                            <Checkbox checked={selectedRows.contains(map._id)} />
                           </TableCell>
                           <TableCell>
-                            {layout.name}
+                            {map.name}
                           </TableCell>
                           <TableCell>
-                            {moment(layout.lastUpdate).format('D.M.YYYY HH:mm')}
+                            {moment(map.lastUpdate).format('D.M.YYYY HH:mm')}
                           </TableCell>
                           <TableCell>
-                            <Tooltip title="Smazat mapu" placement="top" id="remove-layout">
+                            <Tooltip title="Smazat mapu" placement="top" id="remove-map">
                               <IconButton
                                 onClick={(event) => {
                                   event.stopPropagation();
-                                  this.removeRow(layout._id);
+                                  this.removeRow(map._id);
                                 }}
                                 aria-label="Smazat mapu"
                               >
                                 <DeleteIcon />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip title="Duplikovat mapu" placement="top" id="duplicate-layout">
+                            <Tooltip title="Duplikovat mapu" placement="top" id="duplicate-map">
                               <IconButton
                                 onClick={(event) => {
                                   event.stopPropagation();
-                                  this.duplicateRow(layout._id);
+                                  this.duplicateRow(map._id);
                                 }}
                                 aria-label="Duplikovat mapu"
                               >
                                 <CopyIcon />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip title="Upravit mapu" placement="top" id="edit-layout">
-                              <Link to={`/layouts/edit/${layout._id}`}>
+                            <Tooltip title="Upravit mapu" placement="top" id="edit-map">
+                              <Link to={`/map/edit/${map._id}`}>
                                 <IconButton
                                   onClick={(event) => {
                                     event.stopPropagation();
@@ -263,8 +264,8 @@ class LayoutsListScreen extends React.Component {
 
 }
 
-const withConnect = connect((state) => state.getIn(['layoutsList']).toJS(), actions);
+const withConnect = connect((state) => state.getIn(['mapsList']).toJS(), actions);
 
 const withStyle = withStyles(styles, { withTheme: true });
 
-export default compose(withConnect, withStyle)(LayoutsListScreen);
+export default compose(withConnect, withStyle)(MapsListScreen);

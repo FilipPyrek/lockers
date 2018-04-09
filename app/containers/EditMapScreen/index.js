@@ -27,17 +27,17 @@ import saga from './saga';
 import reducer from './reducer';
 import styles from './styles';
 
-class CreateLayoutScreen extends React.Component {
+class EditMapScreen extends React.Component {
 
   static propTypes = {
     classes: PropTypes.object.isRequired,
     edit: PropTypes.func.isRequired,
     save: PropTypes.func.isRequired,
-    updateBoxes: PropTypes.func.isRequired,
+    updateLockers: PropTypes.func.isRequired,
     reset: PropTypes.func.isRequired,
     loadInitialData: PropTypes.func.isRequired,
     match: PropTypes.object.isRequired,
-    boxes: PropTypes.object,
+    lockers: PropTypes.object,
     _id: PropTypes.string,
   }
 
@@ -51,27 +51,27 @@ class CreateLayoutScreen extends React.Component {
         x: 0,
         y: 0,
       }),
-      layoutName: '',
-      isLayoutNameDialogOpen: false,
-      lastUsedBoxId: null,
+      mapName: '',
+      isMapNameDialogOpen: false,
+      lastUsedLockerId: null,
       isColorPickerOpen: false,
     };
 
-    this.boxNameChange = this.boxNameChange.bind(this);
-    this.boxColorChange = this.boxColorChange.bind(this);
-    this.boxRemove = this.boxRemove.bind(this);
+    this.lockerNameChange = this.lockerNameChange.bind(this);
+    this.lockerColorChange = this.lockerColorChange.bind(this);
+    this.lockerRemove = this.lockerRemove.bind(this);
     this.openColorPicker = this.openColorPicker.bind(this);
     this.closeColorPicker = this.closeColorPicker.bind(this);
     this.mapMove = this.mapMove.bind(this);
-    this.addBox = this.addBox.bind(this);
+    this.addLocker = this.addLocker.bind(this);
     this.zoomIn = this.zoomIn.bind(this);
     this.zoomOut = this.zoomOut.bind(this);
-    this.boxMove = this.boxMove.bind(this);
-    this.boxSelect = this.boxSelect.bind(this);
+    this.lockerMove = this.lockerMove.bind(this);
+    this.lockerSelect = this.lockerSelect.bind(this);
     this.centerMap = this.centerMap.bind(this);
     this.save = this.save.bind(this);
-    this.changeLayoutName = this.changeLayoutName.bind(this);
-    this.cancelLayoutNameDialog = this.cancelLayoutNameDialog.bind(this);
+    this.changeMapName = this.changeMapName.bind(this);
+    this.cancelMapNameDialog = this.cancelMapNameDialog.bind(this);
     this.wheel = this.wheel.bind(this);
   }
 
@@ -88,56 +88,56 @@ class CreateLayoutScreen extends React.Component {
     this.props.reset();
   }
 
-  boxNameChange(event) {
+  lockerNameChange(event) {
     const newName = event.target.value;
-    this.props.updateBoxes(
-      this.props.boxes
-        .setIn([this.state.lastUsedBoxId, 'name'], newName)
+    this.props.updateLockers(
+      this.props.lockers
+        .setIn([this.state.lastUsedLockerId, 'name'], newName)
     );
   }
 
-  boxColorChange({ hex }) {
-    this.props.updateBoxes(
-      this.props.boxes
-        .setIn([this.state.lastUsedBoxId, 'color'], hex)
+  lockerColorChange({ hex }) {
+    this.props.updateLockers(
+      this.props.lockers
+        .setIn([this.state.lastUsedLockerId, 'color'], hex)
     );
   }
 
-  boxRemove() {
+  lockerRemove() {
     this.setState((prevState) => {
-      this.props.updateBoxes(
-        this.props.boxes
-          .delete(this.state.lastUsedBoxId)
+      this.props.updateLockers(
+        this.props.lockers
+          .delete(this.state.lastUsedLockerId)
       );
 
       return {
         ...prevState,
-        lastUsedBoxId: null,
+        lastUsedLockerId: null,
       };
     });
   }
 
-  boxMove(id, { x, y }) {
-    this.props.updateBoxes(
-      this.props.boxes
+  lockerMove(id, { x, y }) {
+    this.props.updateLockers(
+      this.props.lockers
         .setIn([id, 'x'], x)
         .setIn([id, 'y'], y),
     );
   }
 
-  boxSelect(id) {
+  lockerSelect(id) {
     this.setState((prevState) => {
-      this.props.updateBoxes(
-        this.props.boxes
-          .map((box, bid) =>
-            box.set('isActive', bid === id)
-              .set('name', box.get('name').trim())
+      this.props.updateLockers(
+        this.props.lockers
+          .map((locker, lid) =>
+            locker.set('isActive', lid === id)
+              .set('name', locker.get('name').trim())
           )
       );
 
       return {
         ...prevState,
-        lastUsedBoxId: id,
+        lastUsedLockerId: id,
       };
     });
   }
@@ -169,23 +169,23 @@ class CreateLayoutScreen extends React.Component {
     }));
   }
 
-  addBox() {
-    const boxId = generate(6);
+  addLocker() {
+    const lockerId = generate(6);
     this.setState((prevState) => {
-      this.props.updateBoxes(
-        this.props.boxes
-          .set(boxId, fromJS({
+      this.props.updateLockers(
+        this.props.lockers
+          .map((locker) => locker.set('isActive', false))
+          .set(lockerId, fromJS({
             x: Math.round(this.state.map.get('x') / Grid.boxSize) * Grid.boxSize,
             y: Math.round(this.state.map.get('y') / Grid.boxSize) * Grid.boxSize,
             color: '#00a9ff',
             name: `S${Math.round((Math.random() * 100))}`,
-            isActive: false,
+            isActive: true,
           }))
       );
-
       return {
         ...prevState,
-        lastUsedBoxId: boxId,
+        lastUsedLockerId: lockerId,
       };
     });
   }
@@ -194,7 +194,7 @@ class CreateLayoutScreen extends React.Component {
     this.setState((prevState) => ({
       ...prevState,
       map: prevState.map
-        .set('scale', prevState.map.get('scale') * CreateLayoutScreen.zoomCoefficient),
+        .set('scale', prevState.map.get('scale') * EditMapScreen.zoomCoefficient),
     }));
   }
 
@@ -202,7 +202,7 @@ class CreateLayoutScreen extends React.Component {
     this.setState((prevState) => ({
       ...prevState,
       map: prevState.map
-        .set('scale', prevState.map.get('scale') / CreateLayoutScreen.zoomCoefficient),
+        .set('scale', prevState.map.get('scale') / EditMapScreen.zoomCoefficient),
     }));
   }
 
@@ -212,42 +212,42 @@ class CreateLayoutScreen extends React.Component {
     if (this.props._id) {
       this.props.edit(
         this.props._id,
-        this.clearBoxes(this.props.boxes).toJS()
+        this.clearLockers(this.props.lockers).toJS()
       );
       return;
     }
 
-    if (this.state.layoutName) {
+    if (this.state.mapName) {
       this.props.save(
-        this.state.layoutName,
-        this.clearBoxes(this.props.boxes).toJS()
+        this.state.mapName,
+        this.clearLockers(this.props.lockers).toJS()
       );
       this.setState((prevState) => ({
         ...prevState,
-        layoutName: '',
-        isLayoutNameDialogOpen: false,
+        mapName: '',
+        isMapNameDialogOpen: false,
       }));
       return;
     }
     this.setState((prevState) => ({
       ...prevState,
-      isLayoutNameDialogOpen: true,
+      isMapNameDialogOpen: true,
     }));
   }
 
-  changeLayoutName(event) {
+  changeMapName(event) {
     const { value } = event.target;
     this.setState((prevState) => ({
       ...prevState,
-      layoutName: value.trim(),
+      mapName: value.trim(),
     }));
   }
 
-  cancelLayoutNameDialog() {
+  cancelMapNameDialog() {
     this.setState((prevState) => ({
       ...prevState,
-      layoutName: '',
-      isLayoutNameDialogOpen: false,
+      mapName: '',
+      isMapNameDialogOpen: false,
     }));
   }
 
@@ -259,16 +259,16 @@ class CreateLayoutScreen extends React.Component {
     this.zoomIn();
   }
 
-  clearBoxes(boxes) {
-    return boxes.map((box) =>
-      box.delete('isActive')
+  clearLockers(lockers) {
+    return lockers.map((locker) =>
+      locker.delete('isActive')
     );
   }
 
   render() {
     const { classes } = this.props;
-    const activeBox = this.state.lastUsedBoxId !== null && this.props.boxes.get(this.state.lastUsedBoxId)
-      ? this.props.boxes.get(this.state.lastUsedBoxId).toJS()
+    const activeLocker = this.state.lastUsedLockerId !== null && this.props.lockers.get(this.state.lastUsedLockerId)
+      ? this.props.lockers.get(this.state.lastUsedLockerId).toJS()
       : null;
     const isEdit = !!this.props.match.params.id;
 
@@ -279,7 +279,7 @@ class CreateLayoutScreen extends React.Component {
             <Paper className={classes.toolbar}>
               <div className={classes.toolbarContent}>
                 <Tooltip title="Přidat skříňku" placement="top">
-                  <IconButton className={classes.toolbarIconButton} onClick={this.addBox} aria-label="Přidat skříňku">
+                  <IconButton className={classes.toolbarIconButton} onClick={this.addLocker} aria-label="Přidat skříňku">
                     <AddIcon className={classes.toolbarIcon} />
                   </IconButton>
                 </Tooltip>
@@ -314,10 +314,10 @@ class CreateLayoutScreen extends React.Component {
               <Grid
                 mapOffsetX={this.state.map.get('x')}
                 mapOffsetY={this.state.map.get('y')}
-                boxes={this.props.boxes.toJS()}
+                boxes={this.props.lockers.toJS()}
                 scale={this.state.map.get('scale')}
-                onBoxMove={this.boxMove}
-                onBoxSelect={this.boxSelect}
+                onBoxMove={this.lockerMove}
+                onBoxSelect={this.lockerSelect}
                 onMapMove={this.mapMove}
               />
             </Paper>
@@ -325,7 +325,7 @@ class CreateLayoutScreen extends React.Component {
           <Paper className={classes.panel}>
             <Typography variant="title" paragraph>Úprava skříňky</Typography>
             {
-              activeBox === null
+              activeLocker === null
               ? (
                 <div>
                   <Typography variant="subheading" paragraph>Vyberte skříňku</Typography>
@@ -333,19 +333,19 @@ class CreateLayoutScreen extends React.Component {
               ) : (
                 <div>
                   <Typography>
-                    X: {-activeBox.x / Grid.boxSize}<br />
-                    Y: {-activeBox.y / Grid.boxSize}
+                    X: {-activeLocker.x / Grid.boxSize}<br />
+                    Y: {-activeLocker.y / Grid.boxSize}
                   </Typography>
                   <TextField
                     label="Název skříňky"
                     margin="normal"
-                    value={activeBox.name}
-                    onChange={this.boxNameChange}
+                    value={activeLocker.name}
+                    onChange={this.lockerNameChange}
                   />
                   <TextField
                     label="Barva"
                     margin="normal"
-                    value={activeBox.color}
+                    value={activeLocker.color}
                     onFocus={this.openColorPicker}
                     onBlur={this.closeColorPicker}
                   />
@@ -355,22 +355,22 @@ class CreateLayoutScreen extends React.Component {
                         this.state.isColorPickerOpen
                         ? (
                           <SketchPicker
-                            color={activeBox.color}
-                            onChange={this.boxColorChange}
+                            color={activeLocker.color}
+                            onChange={this.lockerColorChange}
                           />
                         )
                         : null
                       }
                     </div>
                   </div>
-                  <Button color="primary" onClick={this.boxRemove}>Smazat skříňku</Button>
+                  <Button color="primary" onClick={this.lockerRemove}>Smazat skříňku</Button>
                 </div>
               )
             }
           </Paper>
           <Dialog
-            open={this.state.isLayoutNameDialogOpen}
-            onClose={this.cancelLayoutNameDialog}
+            open={this.state.isMapNameDialogOpen}
+            onClose={this.cancelMapNameDialog}
             aria-labelledby="save-dialog-title"
           >
             <form onSubmit={this.save}>
@@ -379,17 +379,17 @@ class CreateLayoutScreen extends React.Component {
                 <TextField
                   margin="dense"
                   label="Název mapy"
-                  value={this.state.layoutName}
-                  onChange={this.changeLayoutName}
+                  value={this.state.mapName}
+                  onChange={this.changeMapName}
                   autoFocus
                   fullWidth
                 />
               </DialogContent>
               <DialogActions>
-                <Button onClick={this.cancelLayoutNameDialog} color="primary">
+                <Button onClick={this.cancelMapNameDialog} color="primary">
                   Zrušit
                 </Button>
-                <Button type="submit" color="primary" disabled={!this.state.layoutName}>
+                <Button type="submit" color="primary" disabled={!this.state.mapName}>
                   OK
                 </Button>
               </DialogActions>
@@ -402,12 +402,12 @@ class CreateLayoutScreen extends React.Component {
 
 }
 
-const withConnect = connect((state) => state.get('createGrid').toObject(), actions);
+const withConnect = connect((state) => state.get('editMap').toObject(), actions);
 
-const withReducer = injectReducer({ key: 'createGrid', reducer });
+const withReducer = injectReducer({ key: 'editMap', reducer });
 
-const withSaga = injectSaga({ key: 'createGrid', saga });
+const withSaga = injectSaga({ key: 'editMap', saga });
 
 const withStyle = withStyles(styles, { withTheme: true });
 
-export default compose(withStyle, withReducer, withSaga, withConnect)(CreateLayoutScreen);
+export default compose(withStyle, withReducer, withSaga, withConnect)(EditMapScreen);

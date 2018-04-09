@@ -15,7 +15,7 @@ module.exports = function getMap({ connectToMongo }) {
               code: 200,
               message: 'Mapa získána úspěšně.',
               response: {
-                layouts: data,
+                maps: data,
               },
             }))
     )

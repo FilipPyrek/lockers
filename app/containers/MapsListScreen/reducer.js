@@ -8,25 +8,25 @@ import {
 
 const initialState = fromJS({
   loading: false,
-  layouts: [],
+  maps: [],
   error: null,
 });
 
-function layoutsListReducer(state = initialState, action) {
+function mapsListReducer(state = initialState, action) {
   switch (action.type) {
     case LOAD:
       return state.set('loading', true)
-                  .set('layouts', fromJS([]))
+                  .set('maps', fromJS([]))
                   .set('error', null);
     case LOAD_FAIL:
       return state.set('error', fromJS(action.payload.error))
                   .set('loading', false);
     case LOAD_SUCCESS:
-      return state.set('layouts', fromJS(action.payload.layouts))
+      return state.set('maps', fromJS(action.payload.maps))
                   .set('loading', false);
     default:
       return state;
   }
 }
 
-export default layoutsListReducer;
+export default mapsListReducer;

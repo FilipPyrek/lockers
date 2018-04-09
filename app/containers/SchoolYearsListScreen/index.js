@@ -27,7 +27,7 @@ import { Link as RawLink } from 'react-router-dom';
 import ApplicationFrame from 'components/ApplicationFrame';
 import moment from 'moment';
 import { Set } from 'immutable';
-import { load as loadLayoutsList } from 'containers/LayoutsListScreen/actions';
+import { load as loadMapsList } from 'containers/MapsListScreen/actions';
 import * as actions from './actions';
 import saga from './saga';
 import reducer from './reducer';
@@ -45,9 +45,9 @@ class SchoolYearsListScreen extends React.Component {
     load: PropTypes.func.isRequired,
     remove: PropTypes.func.isRequired,
     duplicate: PropTypes.func.isRequired,
-    loadLayoutsList: PropTypes.func.isRequired,
+    loadMapsList: PropTypes.func.isRequired,
     create: PropTypes.func.isRequired,
-    layoutsList: PropTypes.array,
+    mapsList: PropTypes.array,
     schoolYears: PropTypes.array,
     loading: PropTypes.bool.isRequired,
     error: PropTypes.oneOfType([
@@ -65,13 +65,13 @@ class SchoolYearsListScreen extends React.Component {
     this.state = {
       selectedRows: Set(),
       isDialogOpen: false,
-      selectedLayout: '_',
+      selectedMap: '_',
       schoolYearName: '',
     };
 
     this.removeRows = this.removeRows.bind(this);
     this.duplicateRows = this.duplicateRows.bind(this);
-    this.selectLayout = this.selectLayout.bind(this);
+    this.selectMap = this.selectMap.bind(this);
     this.createSchoolYear = this.createSchoolYear.bind(this);
     this.openDialog = this.openDialog.bind(this);
     this.closeDialog = this.closeDialog.bind(this);
@@ -124,7 +124,7 @@ class SchoolYearsListScreen extends React.Component {
   }
 
   openDialog() {
-    this.props.loadLayoutsList();
+    this.props.loadMapsList();
     this.setState((prevState) => ({
       ...prevState,
       isDialogOpen: true,
@@ -134,7 +134,7 @@ class SchoolYearsListScreen extends React.Component {
   closeDialog() {
     this.setState((prevState) => ({
       ...prevState,
-      selectedLayout: '_',
+      selectedMap: '_',
       schoolYearName: '',
       isDialogOpen: false,
     }));
@@ -148,15 +148,15 @@ class SchoolYearsListScreen extends React.Component {
     }));
   }
 
-  selectLayout(event) {
+  selectMap(event) {
     this.setState((prevState) => ({
       ...prevState,
-      selectedLayout: event.target.value,
+      selectedMap: event.target.value,
     }));
   }
 
   canCreateSchoolYear() {
-    return this.state.selectedLayout !== '_' && !!this.state.schoolYearName;
+    return this.state.selectedMap !== '_' && !!this.state.schoolYearName;
   }
 
   createSchoolYear(event) {
@@ -164,7 +164,7 @@ class SchoolYearsListScreen extends React.Component {
     if (!this.canCreateSchoolYear()) {
       return;
     }
-    this.props.create(this.state.selectedLayout, this.state.schoolYearName);
+    this.props.create(this.state.selectedMap, this.state.schoolYearName);
     this.closeDialog();
   }
 
@@ -174,7 +174,7 @@ class SchoolYearsListScreen extends React.Component {
     const schoolYears = this.props.schoolYears.sort((a, b) =>
       new Date(b.lastUpdate) - new Date(a.lastUpdate)
     );
-    const layouts = this.props.layoutsList.sort((a, b) =>
+    const maps = this.props.mapsList.sort((a, b) =>
       new Date(b.lastUpdate) - new Date(a.lastUpdate)
     );
 
@@ -346,19 +346,19 @@ class SchoolYearsListScreen extends React.Component {
                   />
                   <FormControl fullWidth margin="normal">
                     <Select
-                      value={this.state.selectedLayout}
-                      onChange={this.selectLayout}
+                      value={this.state.selectedMap}
+                      onChange={this.selectMap}
                     >
                       <MenuItem value="_">
                         <em>Zvolte mapu - šablonu</em>
                       </MenuItem>
                       {
-                        layouts.map((layout) => (
+                        maps.map((map) => (
                           <MenuItem
-                            key={layout._id}
-                            value={layout._id}
+                            key={map._id}
+                            value={map._id}
                           >
-                            {layout.name}
+                            {map.name}
                           </MenuItem>
                         ))
                       }
@@ -385,9 +385,9 @@ class SchoolYearsListScreen extends React.Component {
 
 const withConnect = connect((state) =>
     state.getIn(['schoolYearsList'])
-      .set('layoutsList', state.getIn(['layoutsList', 'layouts']))
+      .set('mapsList', state.getIn(['mapsList', 'maps']))
       .toJS()
-, { ...actions, loadLayoutsList });
+, { ...actions, loadMapsList });
 
 const withReducer = injectReducer({ key: 'schoolYearsList', reducer });
 

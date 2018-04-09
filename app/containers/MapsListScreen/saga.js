@@ -17,7 +17,7 @@ export function* load() {
   try {
     const data = yield call(
       request,
-      `/locker/layout?token=${token}`,
+      `/map?token=${token}`,
       {
         method: 'GET',
         headers: {
@@ -43,7 +43,7 @@ export function* remove({ payload }) {
   try {
     const data = yield call(
       request,
-      `/locker/layout/remove?token=${token}`,
+      `/map/remove?token=${token}`,
       {
         method: 'POST',
         headers: {
@@ -70,7 +70,7 @@ export function* duplicate({ payload }) {
   try {
     const data = yield call(
       request,
-      `/locker/layout/duplicate?token=${token}`,
+      `/map/duplicate?token=${token}`,
       {
         method: 'POST',
         headers: {

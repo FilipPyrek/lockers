@@ -2,18 +2,18 @@ const Joi = require('joi');
 const { handleError } = require('../helpers');
 
 const addMapSchema = Joi.object().keys({
-  boxes: Joi.object().required().error(() => ({ message: 'Musíte odeslat objekt s boxy.' })),
+  lockers: Joi.object().required().error(() => ({ message: 'Musíte odeslat objekt se skříňkami.' })),
   name: Joi.string().required().error(() => ({ message: 'Musíte zadat název mapy.' })),
 });
 module.exports = function addMap({ connectToMongo }) {
   return (req, res) =>
     Joi.validate(req.body, addMapSchema)
-      .then(({ boxes, name }) =>
+      .then(({ lockers, name }) =>
         connectToMongo()
           .then((db) =>
              db.collection('maps').insert({
                lastUpdate: new Date(),
-               boxes,
+               lockers,
                name,
              })
              .then(() => res.json({

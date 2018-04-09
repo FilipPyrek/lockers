@@ -8,7 +8,7 @@ module.exports = function getMapById({ connectToMongo }) {
          db.collection('maps')
           .findOne(
             { _id: ObjectId(req.params.id) },
-            { projection: { _id: 1, boxes: 1, name: 1 } }
+            { projection: { _id: 1, lockers: 1, name: 1 } }
           )
           .then((data) => res.json({
             code: 200,
