@@ -204,13 +204,15 @@ class EditSchoolYear extends React.Component {
   }
 
   printFullTable() {
+    this.sortTable();
     this.closePrintDialog();
-    window.frames.listFrame.print();
+    window.setTimeout(() => window.frames.listFrame.print(), 1000);
   }
 
   printClassesTable() {
+    this.shuffleTable();
     this.closePrintDialog();
-    window.frames.classesListFrame.print();
+    window.setTimeout(() => window.frames.classesListFrame.print(), 1000);
   }
 
   showMap() {
@@ -361,6 +363,11 @@ class EditSchoolYear extends React.Component {
                             </Tooltip>
                           )
                       }
+                      <Tooltip title="Spravovat třídy" placement="top">
+                        <IconButton className={classes.toolbarIconButton} onClick={this.openClassesDialog} aria-label="Spravovat třídy">
+                          <ClassesIcon className={classes.toolbarIcon} />
+                        </IconButton>
+                      </Tooltip>
                     </div>
                   )
                   : (
