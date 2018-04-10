@@ -26,13 +26,14 @@ export function create(email, password, isApi) {
   };
 }
 
-export function edit(id, email, password) {
+export function edit(id, email, password, isApi) {
   return {
     type: EDIT,
     payload: {
       id,
       email,
       password,
+      isApi,
     },
   };
 }

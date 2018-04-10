@@ -22,7 +22,7 @@ module.exports = function userLogin({ connectToMongo }) {
                 }
                 return data;
               })
-              .then(({ _id, password: hashedPassword }) =>
+              .then(({ _id, password: hashedPassword, isApi }) =>
                 bcrypt.compare(password, hashedPassword)
                   .then((isMatching) => {
                     if (!isMatching) throw new AuthError('Passwords are not matching');
@@ -40,11 +40,11 @@ module.exports = function userLogin({ connectToMongo }) {
                       response: {
                         token: jwt.sign(
                           {
-                            verified: true,
+                            isApi,
                           },
                           process.env.API_KEY,
                           {
-                            expiresIn: '1d',
+                            expiresIn: isApi ? '1h' : '1d',
                           }
                         ),
                       },

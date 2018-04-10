@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 const { Map } = require('immutable');
-const security = require('../middlewares/securityMiddleware');
+const { security, onlyAdmin } = require('../middlewares/securityMiddleware');
 
 
 const api = express();
@@ -50,10 +50,10 @@ api.use(bodyParser.json(), (err, req, res, next) => {
 
 api.post('/user/login', handlers.userLogin);
 
-api.use(security).get('/user', handlers.user);
-api.use(security).post('/user/add', handlers.userAdd);
-api.use(security).post('/user/remove', handlers.userRemove);
-api.use(security).post('/user/edit/:id', handlers.userEdit);
+api.use(security, onlyAdmin).get('/user', handlers.user);
+api.use(security, onlyAdmin).post('/user/add', handlers.userAdd);
+api.use(security, onlyAdmin).post('/user/remove', handlers.userRemove);
+api.use(security, onlyAdmin).post('/user/edit/:id', handlers.userEdit);
 
 api.use(security).get('/map', handlers.map);
 api.use(security).get('/map/:id', handlers.mapById);

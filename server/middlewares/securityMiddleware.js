@@ -21,4 +21,36 @@ const security = compose(
   }
 );
 
-module.exports = security;
+const onlyApi = (req, res, next) => {
+  if (req.user.isApi) {
+    next();
+    return;
+  }
+  res.json({
+    code: 403,
+    message: 'Přístup odmítnut.',
+    error: {
+      access: 'denied',
+    },
+  });
+};
+
+const onlyAdmin = (req, res, next) => {
+  if (!req.user.isApi) {
+    next();
+    return;
+  }
+  res.json({
+    code: 403,
+    message: 'Přístup odmítnut.',
+    error: {
+      access: 'denied',
+    },
+  });
+};
+
+module.exports = {
+  onlyApi,
+  onlyAdmin,
+  security,
+};
