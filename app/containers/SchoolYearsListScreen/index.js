@@ -284,42 +284,44 @@ class SchoolYearsListScreen extends React.Component {
                             {moment(schoolYear.lastUpdate).format('D.M.YYYY HH:mm')}
                           </TableCell>
                           <TableCell>
-                            <Typography align="center">
-                              <Tooltip title="Smazat školní rok" placement="top" id="remove-school-year">
-                                <IconButton
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    this.removeRow(schoolYear._id);
-                                  }}
-                                  aria-label="Smazat školní rok"
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Duplikovat školní rok" placement="top" id="duplicate-school-year">
-                                <IconButton
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    this.duplicateRow(schoolYear._id);
-                                  }}
-                                  aria-label="Duplikovat školní rok"
-                                >
-                                  <CopyIcon />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Upravit školní rok" placement="top" id="edit-school-year">
-                                <Link to={`/school-year/edit/${schoolYear._id}`}>
+                            <div style={{ textAlign: 'center' }}>
+                              <div style={{ display: 'inline-block', textAlign: 'left' }}>
+                                <Tooltip title="Smazat školní rok" placement="top" id="remove-school-year">
                                   <IconButton
                                     onClick={(event) => {
                                       event.stopPropagation();
+                                      this.removeRow(schoolYear._id);
                                     }}
-                                    aria-label="Upravit školní rok"
+                                    aria-label="Smazat školní rok"
                                   >
-                                    <EditIcon />
+                                    <DeleteIcon />
                                   </IconButton>
-                                </Link>
-                              </Tooltip>
-                            </Typography>
+                                </Tooltip>
+                                <Tooltip title="Duplikovat školní rok" placement="top" id="duplicate-school-year">
+                                  <IconButton
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      this.duplicateRow(schoolYear._id);
+                                    }}
+                                    aria-label="Duplikovat školní rok"
+                                  >
+                                    <CopyIcon />
+                                  </IconButton>
+                                </Tooltip>
+                                <Tooltip title="Upravit školní rok" placement="top" id="edit-school-year">
+                                  <Link to={`/school-year/edit/${schoolYear._id}`}>
+                                    <IconButton
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                      }}
+                                      aria-label="Upravit školní rok"
+                                    >
+                                      <EditIcon />
+                                    </IconButton>
+                                  </Link>
+                                </Tooltip>
+                              </div>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))

@@ -107,7 +107,6 @@ class MapsListScreen extends React.Component {
     const maps = this.props.maps.sort((a, b) =>
       new Date(b.lastUpdate) - new Date(a.lastUpdate)
     );
-    console.log(maps);
 
     return (
       <ApplicationFrame title="Seznam map">
@@ -214,42 +213,44 @@ class MapsListScreen extends React.Component {
                             {moment(map.lastUpdate).format('D.M.YYYY HH:mm')}
                           </TableCell>
                           <TableCell>
-                            <Typography align="center">
-                              <Tooltip title="Smazat mapu" placement="top" id="remove-map">
-                                <IconButton
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    this.removeRow(map._id);
-                                  }}
-                                  aria-label="Smazat mapu"
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Duplikovat mapu" placement="top" id="duplicate-map">
-                                <IconButton
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    this.duplicateRow(map._id);
-                                  }}
-                                  aria-label="Duplikovat mapu"
-                                >
-                                  <CopyIcon />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Upravit mapu" placement="top" id="edit-map">
-                                <Link to={`/map/edit/${map._id}`}>
+                            <div style={{ textAlign: 'center' }}>
+                              <div style={{ display: 'inline-block', textAlign: 'left' }}>
+                                <Tooltip title="Smazat mapu" placement="top" id="remove-map">
                                   <IconButton
                                     onClick={(event) => {
                                       event.stopPropagation();
+                                      this.removeRow(map._id);
                                     }}
-                                    aria-label="Upravit mapu"
+                                    aria-label="Smazat mapu"
                                   >
-                                    <EditIcon />
+                                    <DeleteIcon />
                                   </IconButton>
-                                </Link>
-                              </Tooltip>
-                            </Typography>
+                                </Tooltip>
+                                <Tooltip title="Duplikovat mapu" placement="top" id="duplicate-map">
+                                  <IconButton
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      this.duplicateRow(map._id);
+                                    }}
+                                    aria-label="Duplikovat mapu"
+                                  >
+                                    <CopyIcon />
+                                  </IconButton>
+                                </Tooltip>
+                                <Tooltip title="Upravit mapu" placement="top" id="edit-map">
+                                  <Link to={`/map/edit/${map._id}`}>
+                                    <IconButton
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                      }}
+                                      aria-label="Upravit mapu"
+                                    >
+                                      <EditIcon />
+                                    </IconButton>
+                                  </Link>
+                                </Tooltip>
+                              </div>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))

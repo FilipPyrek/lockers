@@ -279,30 +279,32 @@ class UsersListScreen extends React.Component {
                             {moment(user.lastUpdate).format('D.M.YYYY HH:mm')}
                           </TableCell>
                           <TableCell>
-                            <Typography align="center">
-                              <Tooltip title="Smazat uživatele" placement="top" id="remove-user">
-                                <IconButton
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    this.removeRow(user._id);
-                                  }}
-                                  aria-label="Smazat uživatele"
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Upravit uživatele" placement="top" id="edit-user">
-                                <IconButton
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    this.editRow(user._id);
-                                  }}
-                                  aria-label="Upravit uživatele"
-                                >
-                                  <EditIcon />
-                                </IconButton>
-                              </Tooltip>
-                            </Typography>
+                            <div style={{ textAlign: 'center' }}>
+                              <div style={{ display: 'inline-block', textAlign: 'left' }}>
+                                <Tooltip title="Smazat uživatele" placement="top" id="remove-user">
+                                  <IconButton
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      this.removeRow(user._id);
+                                    }}
+                                    aria-label="Smazat uživatele"
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </Tooltip>
+                                <Tooltip title="Upravit uživatele" placement="top" id="edit-user">
+                                  <IconButton
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      this.editRow(user._id);
+                                    }}
+                                    aria-label="Upravit uživatele"
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                </Tooltip>
+                              </div>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))
