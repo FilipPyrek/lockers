@@ -17,8 +17,8 @@ function App(props) {
   return (
     <div>
       <Helmet
-        titleTemplate="%s - Purkyňka Lockers"
-        defaultTitle="Purkyňka Lockers"
+        titleTemplate="%s - Systém pro správu skříněk"
+        defaultTitle="Systém pro správu skříněk"
       >
         <meta name="description" content="Aplikace pro správu skříněk na Purkyňce." />
       </Helmet>
