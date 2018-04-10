@@ -97,6 +97,7 @@ class EditSchoolYear extends React.Component {
     this.save = this.save.bind(this);
     this.wheel = this.wheel.bind(this);
     this.changeLockerOccupation = this.changeLockerOccupation.bind(this);
+    this.changeLockerClass = this.changeLockerClass.bind(this);
     this.changeLockerNote = this.changeLockerNote.bind(this);
     this.printFullTable = this.printFullTable.bind(this);
     this.printClassesTable = this.printClassesTable.bind(this);
@@ -183,6 +184,16 @@ class EditSchoolYear extends React.Component {
       this.props.updateLockers(
         this.props.lockers
           .setIn([lockerId, 'occupation'], occupation)
+      );
+    };
+  }
+
+  changeLockerClass(lockerId) {
+    return (event) => {
+      const className = event.target.value;
+      this.props.updateLockers(
+        this.props.lockers
+          .setIn([lockerId, 'class'], className)
       );
     };
   }
@@ -587,6 +598,12 @@ class EditSchoolYear extends React.Component {
                     margin="normal"
                     value={activeLocker.occupation}
                     onChange={this.changeLockerOccupation(this.state.lastUsedLockerId)}
+                  />
+                  <TextField
+                    label="Třída"
+                    margin="normal"
+                    value={activeLocker.class}
+                    onChange={this.changeLockerClass(this.state.lastUsedLockerId)}
                   />
                   <TextField
                     margin="normal"

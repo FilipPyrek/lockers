@@ -28,7 +28,7 @@ module.exports = function addSchoolYear({ connectToMongo }) {
                     .map((locker) =>
                       locker.set('occupation', '')
                         .set('note', '')
-                        .set('classes', {})
+                        .set('class', '')
                     )
                     .toJS()
                 )
