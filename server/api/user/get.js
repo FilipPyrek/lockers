@@ -10,6 +10,7 @@ module.exports = function getUsers({ connectToMongo }) {
             email: 1,
             lastLogin: 1,
             lastUpdate: 1,
+            isApi: 1,
           })
           .toArray()
             .then((data) => res.json({

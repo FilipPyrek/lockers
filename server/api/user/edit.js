@@ -4,13 +4,14 @@ const bcrypt = require('bcrypt');
 const { handleError } = require('../helpers');
 
 const editUserSchema = Joi.object().keys({
-  email: Joi.string().min(1).error(() => ({ message: 'Tato položka musí být string o minimální délce 1.' })),
+  email: Joi.string().min(1).required().error(() => ({ message: 'Tato položka musí být string o minimální délce 1.' })),
   password: Joi.string().error(() => ({ message: 'Tato položka musí být string.' })),
+  isApi: Joi.boolean().required().error(() => ({ message: 'Tato položka musí být boolean.' })),
 });
 module.exports = function editUser({ connectToMongo }) {
   return (req, res) =>
     Joi.validate(req.body, editUserSchema)
-      .then(({ email, password }) =>
+      .then(({ email, password, isApi }) =>
         connectToMongo()
           .then((db) =>
             db.collection('users')
@@ -20,6 +21,7 @@ module.exports = function editUser({ connectToMongo }) {
                 $set: Object.assign(
                   {
                     email,
+                    isApi,
                     lastUpdate: new Date(),
                   },
                   password ? { password: bcrypt.hashSync(password, 12) } : {}

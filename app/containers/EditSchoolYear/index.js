@@ -683,19 +683,17 @@ class EditSchoolYear extends React.Component {
           aria-labelledby="manage-print"
         >
           <DialogTitle id="manage-print">Tisk:</DialogTitle>
-          <DialogContent>
-            <List component="nav">
-              <ListItem button divider onClick={this.printClassesTable}>
-                <ListItemText primary="Seznam skříněk po třídách" />
-              </ListItem>
-              <ListItem button divider onClick={this.printFullTable}>
-                <ListItemText primary="Seznam všech skříněk" />
-              </ListItem>
-              <ListItem button onClick={this.closePrintDialog}>
-                <ListItemText primary="Zavřít" />
-              </ListItem>
-            </List>
-          </DialogContent>
+          <List component="nav">
+            <ListItem button divider onClick={this.printClassesTable}>
+              <ListItemText primary="Seznam skříněk po třídách" />
+            </ListItem>
+            <ListItem button divider onClick={this.printFullTable}>
+              <ListItemText primary="Seznam všech skříněk" />
+            </ListItem>
+            <ListItem button onClick={this.closePrintDialog}>
+              <ListItemText primary="Zavřít" />
+            </ListItem>
+          </List>
         </Dialog>
       </ApplicationFrame>
     );

@@ -95,7 +95,7 @@ export function* create({ payload }) {
   }
 }
 
-export function* edit({ payload: { id, email, password } }) {
+export function* edit({ payload: { id, email, password, isApi } }) {
   const token = yield select((state) => state.getIn(['global', 'token']));
   try {
     const data = yield call(
@@ -108,6 +108,7 @@ export function* edit({ payload: { id, email, password } }) {
         },
         body: JSON.stringify({
           email,
+          isApi,
           ...(password ? { password } : {}),
         }),
       }

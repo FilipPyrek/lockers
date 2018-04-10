@@ -162,7 +162,7 @@ class MapsListScreen extends React.Component {
                     <TableCell>Vybráno</TableCell>
                     <TableCell>Název</TableCell>
                     <TableCell>Datum posledn úpravy</TableCell>
-                    <TableCell><Typography align="center">Akce</Typography></TableCell>
+                    <TableCell><div style={{ textAlign: 'center' }}>Akce</div></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>

@@ -16,6 +16,7 @@ import AddIcon from 'material-ui-icons/Add';
 import DeleteIcon from 'material-ui-icons/Delete';
 import EditIcon from 'material-ui-icons/Edit';
 import Checkbox from 'material-ui/Checkbox';
+import { FormControlLabel } from 'material-ui/Form';
 import Tooltip from 'material-ui/Tooltip';
 import { withStyles } from 'material-ui/styles';
 import ApplicationFrame from 'components/ApplicationFrame';
@@ -53,6 +54,7 @@ class UsersListScreen extends React.Component {
       isDialogOpen: false,
       editUserEmail: '',
       editUserPassword: '',
+      editIsApi: false,
       editUserId: null,
     };
 
@@ -64,6 +66,7 @@ class UsersListScreen extends React.Component {
     this.editUser = this.editUser.bind(this);
     this.changeEditUserEmail = this.changeEditUserEmail.bind(this);
     this.changeEditUserPassword = this.changeEditUserPassword.bind(this);
+    this.changeEditIsApi = this.changeEditIsApi.bind(this);
   }
 
   componentWillMount() {
@@ -111,6 +114,7 @@ class UsersListScreen extends React.Component {
       ...prevState,
       editUserEmail: '',
       editUserPassword: '',
+      editIsApi: false,
       isDialogOpen: false,
       editUserId: null,
     }));
@@ -132,6 +136,14 @@ class UsersListScreen extends React.Component {
     }));
   }
 
+  changeEditIsApi(event) {
+    const editIsApi = event.target.checked;
+    this.setState((prevState) => ({
+      ...prevState,
+      editIsApi,
+    }));
+  }
+
   canCreateUser() {
     return this.state.editUserEmail && this.state.editUserPassword;
   }
@@ -141,11 +153,13 @@ class UsersListScreen extends React.Component {
   }
 
   editRow(id) {
+    const selectedUser = this.props.users.reduce((acc, user) => user._id === id ? user : acc);
     this.setState((prevState) => ({
       ...prevState,
       isDialogOpen: true,
       editUserId: id,
-      editUserEmail: this.props.users.reduce((acc, user) => user._id === id ? user : acc).email,
+      editUserEmail: selectedUser.email,
+      editIsApi: selectedUser.isApi,
       editUserPassword: '',
     }));
   }
@@ -155,7 +169,7 @@ class UsersListScreen extends React.Component {
     if (!this.canCreateUser()) {
       return;
     }
-    this.props.create(this.state.editUserEmail, this.state.editUserPassword);
+    this.props.create(this.state.editUserEmail, this.state.editUserPassword, this.state.editIsApi);
     this.closeDialog();
   }
 
@@ -164,7 +178,7 @@ class UsersListScreen extends React.Component {
     if (!this.canEditUser()) {
       return;
     }
-    this.props.edit(this.state.editUserId, this.state.editUserEmail, this.state.editUserPassword);
+    this.props.edit(this.state.editUserId, this.state.editUserEmail, this.state.editUserPassword, this.state.editIsApi);
     this.closeDialog();
   }
 
@@ -221,7 +235,8 @@ class UsersListScreen extends React.Component {
                     <TableCell>Email</TableCell>
                     <TableCell>Datum posledního přihlášení</TableCell>
                     <TableCell>Datum poslední úpravy</TableCell>
-                    <TableCell><Typography align="center">Akce</Typography></TableCell>
+                    <TableCell><div style={{ textAlign: 'center' }}>Externí aplikace</div></TableCell>
+                    <TableCell><div style={{ textAlign: 'center' }}>Akce</div></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -229,7 +244,7 @@ class UsersListScreen extends React.Component {
                     this.props.error
                     ? (
                       <TableRow>
-                        <TableCell colSpan="5">
+                        <TableCell colSpan="6">
                           <Typography align="center" color="error">
                             Chyba: <span />
                             {
@@ -246,7 +261,7 @@ class UsersListScreen extends React.Component {
                     this.props.loading
                     ? (
                       <TableRow>
-                        <TableCell colSpan="5">
+                        <TableCell colSpan="6">
                           <Typography align="center">
                             Načítání...
                           </Typography>
@@ -277,6 +292,11 @@ class UsersListScreen extends React.Component {
                           </TableCell>
                           <TableCell>
                             {moment(user.lastUpdate).format('D.M.YYYY HH:mm')}
+                          </TableCell>
+                          <TableCell>
+                            <Typography align="center">
+                              {user.isApi ? 'Ano' : 'Ne'}
+                            </Typography>
                           </TableCell>
                           <TableCell>
                             <div style={{ textAlign: 'center' }}>
@@ -346,6 +366,15 @@ class UsersListScreen extends React.Component {
                     value={this.state.editUserPassword}
                     onChange={this.changeEditUserPassword}
                     fullWidth
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={this.state.editIsApi}
+                        onChange={this.changeEditIsApi}
+                      />
+                    }
+                    label="Účet pro externí aplikaci"
                   />
                 </DialogContent>
                 <DialogActions>

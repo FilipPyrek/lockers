@@ -15,12 +15,13 @@ export function remove(ids) {
   };
 }
 
-export function create(email, password) {
+export function create(email, password, isApi) {
   return {
     type: CREATE,
     payload: {
       email,
       password,
+      isApi,
     },
   };
 }
