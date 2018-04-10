@@ -1,21 +1,22 @@
 const { handleError } = require('../helpers');
 
-module.exports = function getMaps({ connectToMongo }) {
+module.exports = function getUsers({ connectToMongo }) {
   return (req, res) =>
     connectToMongo()
       .then((db) =>
-         db.collection('maps')
+         db.collection('users')
           .find()
           .project({
-            name: 1,
+            email: 1,
+            lastLogin: 1,
             lastUpdate: 1,
           })
           .toArray()
             .then((data) => res.json({
               code: 200,
-              message: 'Mapa získána úspěšně.',
+              message: 'Uživatelé získáni úspěšně.',
               response: {
-                maps: data,
+                users: data,
               },
             }))
     )

@@ -15,6 +15,7 @@ import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui-icons/Menu';
+import UsersIcon from 'material-ui-icons/People';
 import LayoutListIcon from 'material-ui-icons/GridOn';
 import SchoolYearListIcon from 'material-ui-icons/Folder';
 import LoginIcon from 'material-ui-icons/LockOpen';
@@ -114,20 +115,28 @@ class ApplicationFrame extends React.Component {
               <div>
                 <Divider />
                 <List>
-                  <Link to="/school-years" title="Seznam Školních roků">
+                  <Link to="/school-years" title="Školní roky">
                     <ListItem button className={classes.button}>
                       <ListItemIcon>
                         <SchoolYearListIcon />
                       </ListItemIcon>
-                      <ListItemText primary="Seznam Školních roků" />
+                      <ListItemText primary="Školní roky" />
                     </ListItem>
                   </Link>
-                  <Link to="/maps" title="Seznam Map">
+                  <Link to="/maps" title="Mapy">
                     <ListItem button className={classes.button}>
                       <ListItemIcon>
                         <LayoutListIcon />
                       </ListItemIcon>
-                      <ListItemText primary="Seznam Map" />
+                      <ListItemText primary="Mapy" />
+                    </ListItem>
+                  </Link>
+                  <Link to="/users" title="Uživatelé">
+                    <ListItem button className={classes.button}>
+                      <ListItemIcon>
+                        <UsersIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Uživatelé" />
                     </ListItem>
                   </Link>
                   <Link to="/logout" title="Odhlásit se">

@@ -163,7 +163,7 @@ class MapsListScreen extends React.Component {
                     <TableCell>Vybráno</TableCell>
                     <TableCell>Název</TableCell>
                     <TableCell>Datum posledn úpravy</TableCell>
-                    <TableCell>Akce</TableCell>
+                    <TableCell><Typography align="center">Akce</Typography></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -214,40 +214,42 @@ class MapsListScreen extends React.Component {
                             {moment(map.lastUpdate).format('D.M.YYYY HH:mm')}
                           </TableCell>
                           <TableCell>
-                            <Tooltip title="Smazat mapu" placement="top" id="remove-map">
-                              <IconButton
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  this.removeRow(map._id);
-                                }}
-                                aria-label="Smazat mapu"
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Duplikovat mapu" placement="top" id="duplicate-map">
-                              <IconButton
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  this.duplicateRow(map._id);
-                                }}
-                                aria-label="Duplikovat mapu"
-                              >
-                                <CopyIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Upravit mapu" placement="top" id="edit-map">
-                              <Link to={`/map/edit/${map._id}`}>
+                            <Typography align="center">
+                              <Tooltip title="Smazat mapu" placement="top" id="remove-map">
                                 <IconButton
                                   onClick={(event) => {
                                     event.stopPropagation();
+                                    this.removeRow(map._id);
                                   }}
-                                  aria-label="Upravit mapu"
+                                  aria-label="Smazat mapu"
                                 >
-                                  <EditIcon />
+                                  <DeleteIcon />
                                 </IconButton>
-                              </Link>
-                            </Tooltip>
+                              </Tooltip>
+                              <Tooltip title="Duplikovat mapu" placement="top" id="duplicate-map">
+                                <IconButton
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    this.duplicateRow(map._id);
+                                  }}
+                                  aria-label="Duplikovat mapu"
+                                >
+                                  <CopyIcon />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Upravit mapu" placement="top" id="edit-map">
+                                <Link to={`/map/edit/${map._id}`}>
+                                  <IconButton
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                    }}
+                                    aria-label="Upravit mapu"
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                </Link>
+                              </Tooltip>
+                            </Typography>
                           </TableCell>
                         </TableRow>
                       ))

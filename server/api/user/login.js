@@ -1,6 +1,7 @@
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const { ObjectId } = require('mongodb');
 const { handleError } = require('../helpers');
 
 const userLoginSchema = Joi.object().keys({
@@ -21,11 +22,17 @@ module.exports = function userLogin({ connectToMongo }) {
                 }
                 return data;
               })
-              .then(({ password: hashedPassword }) =>
+              .then(({ _id, password: hashedPassword }) =>
                 bcrypt.compare(password, hashedPassword)
                   .then((isMatching) => {
                     if (!isMatching) throw new AuthError('Passwords are not matching');
                   })
+                  .then(() =>
+                    db.collection('users').updateOne(
+                      { _id: ObjectId(_id) },
+                      { $set: { lastLogin: new Date() } }
+                    )
+                  )
                   .then(() =>
                     res.json({
                       code: 200,

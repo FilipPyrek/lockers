@@ -17,7 +17,11 @@ const dependencies = { connectToMongo };
 
 /* eslint-disable global-require */
 const handlers = Map({
+  user: require('./user/get'),
   userLogin: require('./user/login'),
+  userAdd: require('./user/add'),
+  userRemove: require('./user/remove'),
+  userEdit: require('./user/edit'),
   map: require('./map/get'),
   mapById: require('./map/byId'),
   mapAdd: require('./map/add'),
@@ -45,6 +49,11 @@ api.use(bodyParser.json(), (err, req, res, next) => {
 
 
 api.post('/user/login', handlers.userLogin);
+
+api.use(security).get('/user', handlers.user);
+api.use(security).post('/user/add', handlers.userAdd);
+api.use(security).post('/user/remove', handlers.userRemove);
+api.use(security).post('/user/edit/:id', handlers.userEdit);
 
 api.use(security).get('/map', handlers.map);
 api.use(security).get('/map/:id', handlers.mapById);

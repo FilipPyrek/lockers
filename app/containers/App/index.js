@@ -11,6 +11,7 @@ import EditMapScreen from 'containers/EditMapScreen';
 import MapsListScreen from 'containers/MapsListScreen';
 import SchoolYearsListScreen from 'containers/SchoolYearsListScreen';
 import EditSchoolYear from 'containers/EditSchoolYear';
+import UsersListScreen from 'containers/UsersListScreen';
 
 function App(props) {
   return (
@@ -28,6 +29,7 @@ function App(props) {
         <Route exact path="/map/edit/:id" component={EditMapScreen} />
         <Route exact path="/school-years" component={SchoolYearsListScreen} />
         <Route exact path="/school-year/edit/:id" component={EditSchoolYear} />
+        <Route exact path="/users" component={UsersListScreen} />
         <Route exact path="/login" component={(p) => props.isLoggenIn ? <Redirect to="/" /> : <LoginScreen {...p} />} />
         <Route exact path="/logout" component={LogoutScreen} />
         <Route component={() => <ApplicationFrame>not found</ApplicationFrame>} />

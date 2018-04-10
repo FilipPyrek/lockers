@@ -2,53 +2,39 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import styled from 'styled-components';
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog';
-import { FormControl } from 'material-ui/Form';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
-import Select from 'material-ui/Select';
-import { MenuItem } from 'material-ui/Menu';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import IconButton from 'material-ui/IconButton';
 import RefreshIcon from 'material-ui-icons/Refresh';
 import AddIcon from 'material-ui-icons/Add';
 import DeleteIcon from 'material-ui-icons/Delete';
-import CopyIcon from 'material-ui-icons/ContentCopy';
 import EditIcon from 'material-ui-icons/Edit';
 import Checkbox from 'material-ui/Checkbox';
 import Tooltip from 'material-ui/Tooltip';
 import { withStyles } from 'material-ui/styles';
-import { Link as RawLink } from 'react-router-dom';
 import ApplicationFrame from 'components/ApplicationFrame';
 import moment from 'moment';
 import { Set } from 'immutable';
-import { load as loadMapsList } from 'containers/MapsListScreen/actions';
 import * as actions from './actions';
 import saga from './saga';
 import reducer from './reducer';
 import styles from './styles';
 
-const Link = styled(RawLink)`
-  text-decoration: none;
-`;
-
-
-class SchoolYearsListScreen extends React.Component {
+class UsersListScreen extends React.Component {
 
   static propTypes = {
     classes: PropTypes.object.isRequired,
     load: PropTypes.func.isRequired,
     remove: PropTypes.func.isRequired,
-    duplicate: PropTypes.func.isRequired,
-    loadMapsList: PropTypes.func.isRequired,
     create: PropTypes.func.isRequired,
-    mapsList: PropTypes.array,
-    schoolYears: PropTypes.array,
+    edit: PropTypes.func.isRequired,
+    users: PropTypes.array,
     loading: PropTypes.bool.isRequired,
     error: PropTypes.oneOfType([
       PropTypes.object,
@@ -57,7 +43,7 @@ class SchoolYearsListScreen extends React.Component {
   }
 
   static defaultProps = {
-    schoolYears: [],
+    users: [],
   }
 
   constructor(props) {
@@ -65,17 +51,19 @@ class SchoolYearsListScreen extends React.Component {
     this.state = {
       selectedRows: Set(),
       isDialogOpen: false,
-      selectedMap: '_',
-      schoolYearName: '',
+      editUserEmail: '',
+      editUserPassword: '',
+      editUserId: null,
     };
 
     this.removeRows = this.removeRows.bind(this);
-    this.duplicateRows = this.duplicateRows.bind(this);
-    this.selectMap = this.selectMap.bind(this);
-    this.createSchoolYear = this.createSchoolYear.bind(this);
+    this.createUser = this.createUser.bind(this);
     this.openDialog = this.openDialog.bind(this);
     this.closeDialog = this.closeDialog.bind(this);
-    this.changeSchoolYearName = this.changeSchoolYearName.bind(this);
+    this.editRow = this.editRow.bind(this);
+    this.editUser = this.editUser.bind(this);
+    this.changeEditUserEmail = this.changeEditUserEmail.bind(this);
+    this.changeEditUserPassword = this.changeEditUserPassword.bind(this);
   }
 
   componentWillMount() {
@@ -111,20 +99,7 @@ class SchoolYearsListScreen extends React.Component {
     this.resetSelectedRows();
   }
 
-  duplicateRow(id) {
-    this.props.duplicate([id]);
-    this.resetSelectedRows();
-  }
-
-  duplicateRows() {
-    this.props.duplicate(
-      this.state.selectedRows.toArray()
-    );
-    this.resetSelectedRows();
-  }
-
   openDialog() {
-    this.props.loadMapsList();
     this.setState((prevState) => ({
       ...prevState,
       isDialogOpen: true,
@@ -134,52 +109,74 @@ class SchoolYearsListScreen extends React.Component {
   closeDialog() {
     this.setState((prevState) => ({
       ...prevState,
-      selectedMap: '_',
-      schoolYearName: '',
+      editUserEmail: '',
+      editUserPassword: '',
       isDialogOpen: false,
+      editUserId: null,
     }));
   }
 
-  changeSchoolYearName(event) {
-    const schoolYearName = event.target.value;
+  changeEditUserEmail(event) {
+    const editUserEmail = event.target.value;
     this.setState((prevState) => ({
       ...prevState,
-      schoolYearName,
+      editUserEmail,
     }));
   }
 
-  selectMap(event) {
+  changeEditUserPassword(event) {
+    const editUserPassword = event.target.value;
     this.setState((prevState) => ({
       ...prevState,
-      selectedMap: event.target.value,
+      editUserPassword,
     }));
   }
 
-  canCreateSchoolYear() {
-    return this.state.selectedMap !== '_' && !!this.state.schoolYearName;
+  canCreateUser() {
+    return this.state.editUserEmail && this.state.editUserPassword;
   }
 
-  createSchoolYear(event) {
+  canEditUser() {
+    return this.state.editUserEmail;
+  }
+
+  editRow(id) {
+    this.setState((prevState) => ({
+      ...prevState,
+      isDialogOpen: true,
+      editUserId: id,
+      editUserEmail: this.props.users.reduce((acc, user) => user._id === id ? user : acc).email,
+      editUserPassword: '',
+    }));
+  }
+
+  createUser(event) {
     event.preventDefault();
-    if (!this.canCreateSchoolYear()) {
+    if (!this.canCreateUser()) {
       return;
     }
-    this.props.create(this.state.selectedMap, this.state.schoolYearName);
+    this.props.create(this.state.editUserEmail, this.state.editUserPassword);
+    this.closeDialog();
+  }
+
+  editUser(event) {
+    event.preventDefault();
+    if (!this.canEditUser()) {
+      return;
+    }
+    this.props.edit(this.state.editUserId, this.state.editUserEmail, this.state.editUserPassword);
     this.closeDialog();
   }
 
   render() {
     const { classes } = this.props;
     const { selectedRows } = this.state;
-    const schoolYears = this.props.schoolYears.sort((a, b) =>
-      new Date(b.lastUpdate) - new Date(a.lastUpdate)
-    );
-    const maps = this.props.mapsList.sort((a, b) =>
-      new Date(b.lastUpdate) - new Date(a.lastUpdate)
+    const users = this.props.users.sort((a, b) =>
+      [b.email, a.email].sort()[0] === b.email ? 1 : -1
     );
 
     return (
-      <ApplicationFrame title="Seznam školních roků">
+      <ApplicationFrame title="Seznam uživatelů">
         <div className={classes.wrapper}>
           <div className={classes.leftPanel}>
             <Paper className={classes.toolbar}>
@@ -187,30 +184,20 @@ class SchoolYearsListScreen extends React.Component {
                 {
                   this.state.selectedRows.size > 0
                   ? (
-                    <div>
-                      <Tooltip title="Smazat vybrané" placement="top" id="remove-school-year">
-                        <IconButton
-                          onClick={this.removeRows}
-                          aria-label="Smazat vybrané"
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Duplikovat vybrané" placement="top" id="duplicate-school-year">
-                        <IconButton
-                          onClick={this.duplicateRows}
-                          aria-label="Duplikovat vybrané"
-                        >
-                          <CopyIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </div>
+                    <Tooltip title="Smazat vybrané" placement="top" id="remove-users">
+                      <IconButton
+                        onClick={this.removeRows}
+                        aria-label="Smazat vybrané"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
                   )
                   : (
-                    <Tooltip title="Vytvořit nový školní rok" placement="top" id="create-new-school-year">
+                    <Tooltip title="Vytvořit nového uživatele" placement="top" id="create-new-user">
                       <IconButton
                         onClick={this.openDialog}
-                        aria-label="Vytvořit nový školní rok"
+                        aria-label="Vytvořit nového uživatele"
                       >
                         <AddIcon />
                       </IconButton>
@@ -231,8 +218,9 @@ class SchoolYearsListScreen extends React.Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Vybráno</TableCell>
-                    <TableCell>Název</TableCell>
-                    <TableCell>Datum posledn úpravy</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Datum posledního přihlášení</TableCell>
+                    <TableCell>Datum poslední úpravy</TableCell>
                     <TableCell><Typography align="center">Akce</Typography></TableCell>
                   </TableRow>
                 </TableHead>
@@ -241,7 +229,7 @@ class SchoolYearsListScreen extends React.Component {
                     this.props.error
                     ? (
                       <TableRow>
-                        <TableCell colSpan="4">
+                        <TableCell colSpan="5">
                           <Typography align="center" color="error">
                             Chyba: <span />
                             {
@@ -258,66 +246,61 @@ class SchoolYearsListScreen extends React.Component {
                     this.props.loading
                     ? (
                       <TableRow>
-                        <TableCell colSpan="4">
+                        <TableCell colSpan="5">
                           <Typography align="center">
                             Načítání...
                           </Typography>
                         </TableCell>
                       </TableRow>
                     ) : (
-                      schoolYears.map((schoolYear) => (
+                      users.map((user) => (
                         <TableRow
-                          key={schoolYear._id}
-                          data-id={schoolYear._id}
-                          onClick={() => this.clickRow(schoolYear._id)}
+                          key={user._id}
+                          data-id={user._id}
+                          onClick={() => this.clickRow(user._id)}
                           role="checkbox"
-                          aria-checked={selectedRows.contains(schoolYear._id)}
+                          aria-checked={selectedRows.contains(user._id)}
                           hover
                         >
                           <TableCell padding="checkbox">
-                            <Checkbox checked={selectedRows.contains(schoolYear._id)} />
+                            <Checkbox checked={selectedRows.contains(user._id)} />
                           </TableCell>
                           <TableCell>
-                            {schoolYear.name}
+                            {user.email}
                           </TableCell>
                           <TableCell>
-                            {moment(schoolYear.lastUpdate).format('D.M.YYYY HH:mm')}
+                            {
+                              user.lastLogin
+                                ? moment(user.lastLogin).format('D.M.YYYY HH:mm')
+                                : <i>Uživatel se zatím nepřihlásil</i>
+                              }
+                          </TableCell>
+                          <TableCell>
+                            {moment(user.lastUpdate).format('D.M.YYYY HH:mm')}
                           </TableCell>
                           <TableCell>
                             <Typography align="center">
-                              <Tooltip title="Smazat školní rok" placement="top" id="remove-school-year">
+                              <Tooltip title="Smazat uživatele" placement="top" id="remove-user">
                                 <IconButton
                                   onClick={(event) => {
                                     event.stopPropagation();
-                                    this.removeRow(schoolYear._id);
+                                    this.removeRow(user._id);
                                   }}
-                                  aria-label="Smazat školní rok"
+                                  aria-label="Smazat uživatele"
                                 >
                                   <DeleteIcon />
                                 </IconButton>
                               </Tooltip>
-                              <Tooltip title="Duplikovat školní rok" placement="top" id="duplicate-school-year">
+                              <Tooltip title="Upravit uživatele" placement="top" id="edit-user">
                                 <IconButton
                                   onClick={(event) => {
                                     event.stopPropagation();
-                                    this.duplicateRow(schoolYear._id);
+                                    this.editRow(user._id);
                                   }}
-                                  aria-label="Duplikovat školní rok"
+                                  aria-label="Upravit uživatele"
                                 >
-                                  <CopyIcon />
+                                  <EditIcon />
                                 </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Upravit školní rok" placement="top" id="edit-school-year">
-                                <Link to={`/school-year/edit/${schoolYear._id}`}>
-                                  <IconButton
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                    }}
-                                    aria-label="Upravit školní rok"
-                                  >
-                                    <EditIcon />
-                                  </IconButton>
-                                </Link>
                               </Tooltip>
                             </Typography>
                           </TableCell>
@@ -332,46 +315,42 @@ class SchoolYearsListScreen extends React.Component {
               open={this.state.isDialogOpen}
               onClose={this.closeDialog}
               fullWidth
-              aria-labelledby="create-school-year"
+              aria-labelledby="create-user"
             >
-              <form onSubmit={this.createSchoolYear}>
-                <DialogTitle id="create-school-year">Vytvořit školní rok</DialogTitle>
+              <form onSubmit={this.state.editUserId === null ? this.createUser : this.editUser}>
+                <DialogTitle id="create-user">
+                  {
+                    this.state.editUserId === null
+                      ? 'Vytvořit uživatele'
+                      : 'Updavit uživatele'
+                  }
+                </DialogTitle>
                 <DialogContent>
                   <TextField
                     margin="normal"
-                    label="Název školního roku"
-                    placeholder="2064/2065"
-                    value={this.state.schoolYearName}
-                    onChange={this.changeSchoolYearName}
+                    label="Email"
+                    type="email"
+                    placeholder="karel.polak@sspbrno.cz"
+                    value={this.state.editUserEmail}
+                    onChange={this.changeEditUserEmail}
                     autoFocus
                     fullWidth
                   />
-                  <FormControl fullWidth margin="normal">
-                    <Select
-                      value={this.state.selectedMap}
-                      onChange={this.selectMap}
-                    >
-                      <MenuItem value="_">
-                        <em>Zvolte mapu - šablonu</em>
-                      </MenuItem>
-                      {
-                        maps.map((map) => (
-                          <MenuItem
-                            key={map._id}
-                            value={map._id}
-                          >
-                            {map.name}
-                          </MenuItem>
-                        ))
-                      }
-                    </Select>
-                  </FormControl>
+                  <TextField
+                    margin="normal"
+                    label={this.state.editUserId === null ? 'Heslo' : 'Nové heslo'}
+                    type="password"
+                    placeholder="***********"
+                    value={this.state.editUserPassword}
+                    onChange={this.changeEditUserPassword}
+                    fullWidth
+                  />
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={this.closeDialog} color="primary">
                     Zrušit
                   </Button>
-                  <Button type="submit" color="primary" disabled={!this.canCreateSchoolYear()}>
+                  <Button type="submit" color="primary" disabled={this.state.editUserId === null ? !this.canCreateUser() : !this.canEditUser()}>
                     OK
                   </Button>
                 </DialogActions>
@@ -385,16 +364,12 @@ class SchoolYearsListScreen extends React.Component {
 
 }
 
-const withConnect = connect((state) =>
-    state.getIn(['schoolYearsList'])
-      .set('mapsList', state.getIn(['mapsList', 'maps']))
-      .toJS()
-, { ...actions, loadMapsList });
+const withConnect = connect((state) => state.getIn(['usersList']).toJS(), actions);
 
-const withReducer = injectReducer({ key: 'schoolYearsList', reducer });
+const withReducer = injectReducer({ key: 'usersList', reducer });
 
-const withSaga = injectSaga({ key: 'schoolYearsList', saga });
+const withSaga = injectSaga({ key: 'usersList', saga });
 
 const withStyle = withStyles(styles, { withTheme: true });
 
-export default compose(withStyle, withReducer, withSaga, withConnect)(SchoolYearsListScreen);
+export default compose(withStyle, withReducer, withSaga, withConnect)(UsersListScreen);

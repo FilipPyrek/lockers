@@ -1,6 +1,6 @@
 const { handleError } = require('../helpers');
 
-module.exports = function getSchoolYear({ connectToMongo }) {
+module.exports = function getSchoolYears({ connectToMongo }) {
   return (req, res) =>
     connectToMongo()
       .then((db) =>
@@ -13,7 +13,7 @@ module.exports = function getSchoolYear({ connectToMongo }) {
           .toArray()
             .then((data) => res.json({
               code: 200,
-              message: 'Školní rok získán úspěšně.',
+              message: 'Školní roky získány úspěšně.',
               response: {
                 schoolYears: data,
               },
