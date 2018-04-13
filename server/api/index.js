@@ -11,7 +11,7 @@ if (!process.env.API_KEY) {
   console.log('You have to set "API_KEY" environment variable!'); // eslint-disable-line no-console
 }
 
-const mongoClient = new MongoClient('mongodb://localhost:27017', { auth: { user: 'lockers', password: 'heslo123' } });
+const mongoClient = new MongoClient('mongodb://127.0.0.1:27017', { auth: { user: 'lockers', password: 'heslo123' }, authSource: 'lockers' });
 const connectToMongo = () => mongoClient.connect().then((client) => client.db('lockers'));
 const dependencies = { connectToMongo };
 

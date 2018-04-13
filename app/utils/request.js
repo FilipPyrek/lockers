@@ -32,10 +32,9 @@ function checkStatus(response) {
   throw error;
 }
 
-const API_PREFIX = 'http://localhost:3000/api';
-const absolutePathToUrl = (url) => {
-  return path.isAbsolute(url) ? API_PREFIX + url : url;
-};
+const API_PREFIX = '/api';
+const absolutePathToUrl = (url) =>
+  path.isAbsolute(url) ? API_PREFIX + url : url;
 
 /**
  * Requests a URL, returning a promise
