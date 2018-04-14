@@ -14,7 +14,6 @@ COPY ./ /app
 
 WORKDIR /app
 
-RUN rm -rf node_modules
 RUN npm i
 RUN npm test
 RUN npm run build
@@ -22,11 +21,14 @@ RUN npm run build
 ENV PORT 80
 ENV NODE_ENV production
 
-CMD ( \
-    service mongod start \
-    && mongo < initializeDatabase.mjs \
-  ) \
-  & npm run start:prod
+
+RUN service mongod start \
+  && mongo < initializeDatabase.mjs \
+  && mongo admin --eval "db.shutdownServer();"
+
+CMD service mongod start \
+  && mongo < initializeDatabase.mjs \
+  && npm run start:prod
 
 VOLUME /var/lib/mongodb
 
