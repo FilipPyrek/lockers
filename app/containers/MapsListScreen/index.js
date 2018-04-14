@@ -184,6 +184,18 @@ class MapsListScreen extends React.Component {
                     ) : null
                   }
                   {
+                    !this.props.loading && maps.length === 0
+                    ? (
+                      <TableRow>
+                        <TableCell colSpan="4">
+                          <Typography align="center">
+                            Prázdné
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    ) : null
+                  }
+                  {
                     this.props.loading
                     ? (
                       <TableRow>

@@ -7,25 +7,28 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+RUN mkdir -p /var/lib/mongodb \
+  && chown -R mongodb:mongodb /var/lib/mongodb
+
 COPY ./ /app
 
 WORKDIR /app
 
-RUN mkdir -p /var/lib/mongodb \
-  && chown -R mongodb:mongodb /var/lib/mongodb
-
-RUN service mongod start \
-  && mongo < initializeDatabase.mjs
-
 RUN rm -rf node_modules
 RUN npm i
+RUN npm test
 RUN npm run build
 
 ENV PORT 80
 ENV NODE_ENV production
 
-CMD service mongod start \
-  & npm run start:production
+CMD ( \
+    service mongod start \
+    && mongo < initializeDatabase.mjs \
+  ) \
+  & npm run start:prod
+
+VOLUME /var/lib/mongodb
 
 EXPOSE 80
 EXPOSE 27017
