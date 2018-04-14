@@ -14,6 +14,7 @@ import * as actions from './actions';
 import saga from './saga';
 import reducer from './reducer';
 import styles from './styles';
+import logo from '../../images/full_size_logo.png';
 
 class LoginScreen extends React.PureComponent {
 
@@ -73,6 +74,7 @@ class LoginScreen extends React.PureComponent {
     return (
       <ApplicationFrame title="Přihlášení">
         <div className={classes.wrapper}>
+          <img src={logo} className={classes.logo} alt="Systém pro správu skríněk - logo" />
           <Paper className={classes.paper}>
             <form onSubmit={this.handleLogin}>
               <Typography variant="headline">Přihlášení</Typography>

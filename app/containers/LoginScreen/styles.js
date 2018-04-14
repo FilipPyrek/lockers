@@ -5,6 +5,11 @@ export default (theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
+    flexFlow: 'column',
+  },
+  logo: {
+    height: '25vh',
+    marginBottom: '2.5vh',
   },
   paper: {
     width: '25%',
