@@ -26,7 +26,8 @@ RUN service mongod start \
   && mongo < initializeDatabase.mjs \
   && mongo admin --eval "db.shutdownServer();"
 
-CMD service mongod start \
+CMD chown -R mongodb:mongodb /var/lib/mongodb \
+  && service mongod start \
   && mongo < initializeDatabase.mjs \
   && npm run start:prod
 
