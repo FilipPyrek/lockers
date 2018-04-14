@@ -94,6 +94,7 @@ module.exports = (options) => ({
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+        API_PREFIX: JSON.stringify(process.env.API_PREFIX === undefined ? '/api' : process.env.API_PREFIX),
       },
     }),
     new webpack.NamedModulesPlugin(),

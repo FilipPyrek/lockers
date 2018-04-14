@@ -20,7 +20,11 @@ RUN npm run build
 
 ENV PORT 80
 ENV NODE_ENV production
-
+ENV API_PREFIX /api
+ENV MONGO_HOST mongodb://127.0.0.1:27017
+ENV MONGO_USER lockers
+ENV MONGO_PASSWORD heslo123
+ENV MONGO_AUTH_SOURCE lockers
 
 RUN service mongod start \
   && mongo < initializeDatabase.mjs \

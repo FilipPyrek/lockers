@@ -32,9 +32,8 @@ function checkStatus(response) {
   throw error;
 }
 
-const API_PREFIX = '/api';
 const absolutePathToUrl = (url) =>
-  path.isAbsolute(url) ? API_PREFIX + url : url;
+  path.isAbsolute(url) ? process.env.API_PREFIX + url : url;
 
 /**
  * Requests a URL, returning a promise
