@@ -28,6 +28,8 @@ export default (theme) => ({
   grid: {
     height: 'calc(87.5% - 2.5vmin)',
     boxSizing: 'border-box',
+    overflow: 'auto',
+    maxHeight: '60vh',
   },
   panel: {
     height: '70%',
@@ -53,5 +55,8 @@ export default (theme) => ({
   },
   addClassButton: {
     color: theme.palette.primary.main,
+  },
+  classInput: {
+    width: '100px',
   },
 });

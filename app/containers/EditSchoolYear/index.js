@@ -171,6 +171,9 @@ class EditSchoolYear extends React.Component {
   }
 
   wheel(event) {
+    if (this.state.isTable || this.state.isClassesDialogOpen || this.state.isPrintDialogOpen) {
+      return;
+    }
     if (event.nativeEvent.deltaY < 0) {
       this.zoomOut();
       return;
@@ -650,6 +653,7 @@ class EditSchoolYear extends React.Component {
                             placeholder="V3A"
                             value={classData.get('name')}
                             onChange={this.changeClassName(id)}
+                            className={classes.classInput}
                           />
                         </TableCell>
                         <TableCell>
@@ -657,6 +661,7 @@ class EditSchoolYear extends React.Component {
                             placeholder="23"
                             value={classData.get('size')}
                             onChange={this.changeClassSize(id)}
+                            className={classes.classInput}
                           />
                         </TableCell>
                         <TableCell>
