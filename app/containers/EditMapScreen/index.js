@@ -239,7 +239,7 @@ class EditMapScreen extends React.Component {
     const { value } = event.target;
     this.setState((prevState) => ({
       ...prevState,
-      mapName: value.trim(),
+      mapName: value,
     }));
   }
 
