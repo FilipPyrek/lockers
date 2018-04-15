@@ -8,7 +8,7 @@ module.exports = function schoolYearById({ connectToMongo }) {
          db.collection('schoolYears')
           .findOne(
             { _id: ObjectId(req.params.id) },
-            { projection: { _id: 1, lockers: 1, name: 1, classes: 1 } }
+            { projection: { _id: 1, lockers: 1, name: 1, classes: 1, lastUpdate: 1 } }
           )
           .then((data) => res.json({
             code: 200,

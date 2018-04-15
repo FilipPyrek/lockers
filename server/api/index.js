@@ -33,12 +33,12 @@ const handlers = Map({
   userEdit: require('./user/edit'),
   map: require('./map/get'),
   mapById: require('./map/byId'),
-  mapAdd: require('./map/add'),
+  mapCreate: require('./map/create'),
   mapDuplicate: require('./map/duplicate'),
   mapEdit: require('./map/edit'),
   mapRemove: require('./map/remove'),
   schoolYear: require('./schoolYear/get'),
-  schoolYearCreate: require('./schoolYear/add'),
+  schoolYearCreate: require('./schoolYear/create'),
   schoolYearDuplicate: require('./schoolYear/duplicate'),
   schoolYearById: require('./schoolYear/byId'),
   schoolYearRemove: require('./schoolYear/remove'),
@@ -67,7 +67,7 @@ api.use(security, onlyAdmin).post('/user/edit/:id', handlers.userEdit);
 api.use(security).get('/map', handlers.map);
 api.use(security).get('/map/:id', handlers.mapById);
 api.use(security).post('/map/edit/:id', handlers.mapEdit);
-api.use(security).post('/map/add', handlers.mapAdd);
+api.use(security).post('/map/create', handlers.mapCreate);
 api.use(security).post('/map/remove', handlers.mapRemove);
 api.use(security).post('/map/duplicate', handlers.mapDuplicate);
 api.use(security).get('/school-year', handlers.schoolYear);

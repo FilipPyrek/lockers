@@ -13,7 +13,7 @@ module.exports = function getMaps({ connectToMongo }) {
           .toArray()
             .then((data) => res.json({
               code: 200,
-              message: 'Mapa získána úspěšně.',
+              message: 'Mapy získány úspěšně.',
               response: {
                 maps: data,
               },

@@ -1,13 +1,13 @@
 const Joi = require('joi');
 const { handleError } = require('../helpers');
 
-const addMapSchema = Joi.object().keys({
+const createMapSchema = Joi.object().keys({
   lockers: Joi.object().required().error(() => ({ message: 'Musíte odeslat objekt se skříňkami.' })),
   name: Joi.string().required().error(() => ({ message: 'Musíte zadat název mapy.' })),
 });
-module.exports = function addMap({ connectToMongo }) {
+module.exports = function createMap({ connectToMongo }) {
   return (req, res) =>
-    Joi.validate(req.body, addMapSchema)
+    Joi.validate(req.body, createMapSchema)
       .then(({ lockers, name }) =>
         connectToMongo()
           .then((db) =>

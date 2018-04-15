@@ -1,0 +1,485 @@
+FORMAT: 1A
+HOST: https://lockers.pyrek.cz/api
+
+# Systém pro správu skříněk
+
+Více informací na: https://github.com/FilipPyrek/lockers
+
+## Mapa [/map]
+
+### Získat konrétní mapu [GET /map/{id}]
+
++ Parameters
+    + id: `5ad33d788782aa004319a9af` (string) - ID mapy
+
++ Response 200 (application/json)
+
+        {
+          "code": 200,
+          "message": "Mapa získána úspěšně",
+          "response": {
+            "_id": "5ad33d788782aa004319a9af",
+            "lockers": {
+              "7BSR5J": {
+                "x": -120,
+                "y": 0,
+                "color": "#7d6f5a",
+                "name": "S59"
+              },
+              "2XH3hQ": {
+                "x": -60,
+                "y": -120,
+                "color": "#00a9ff",
+                "name": "S35"
+              },
+              "awiF6s": {
+                "x": 120,
+                "y": -180,
+                "color": "#a31f20",
+                "name": "S30"
+              }
+            },
+            "name": "Budova"
+          }
+        }
+
+### Seznam všech map [GET /map]
+
++ Response 200 (application/json)
+
+        {
+          "code": 200,
+          "message": "Mapy získány úspěšně.",
+          "response": {
+            "maps": [
+              {
+                "_id": "5ad26d7f21c3fe00433f4924",
+                "lastUpdate": "2018-04-14T21:07:11.311Z",
+                "name": "Škola"
+              },
+              {
+                "_id": "5ad33ccd8782aa004319a9ae",
+                "lastUpdate": "2018-04-15T11:51:41.208Z",
+                "name": "Zahrada"
+              }
+            ]
+          }
+        }
+
+### Vytvořit novou mapu [POST /map/create]
+
++ Request (application/json)
+
+    + Body
+
+            {
+              "name": "Budova",
+              "lockers": {
+                "7BSR5J": {
+                  "x": -120,
+                  "y": -120,
+                  "color": "#ff9c00",
+                  "name": "S59"
+                },
+                "2XH3hQ": {
+                  "x": -60,
+                  "y": -120,
+                  "color": "#00a9ff",
+                  "name": "S35"
+                },
+                "awiF6s": {
+                  "x": 0,
+                  "y": -120,
+                  "color": "#ff0004",
+                  "name": "S29"
+                }
+              }
+            }
+
++ Response 200 (application/json)
+
+        {
+          "code": 201,
+          "message": "Mapa byla úspěšně vytvořena."
+        }
+
+### Upravit mapu [POST /map/edit/{id}]
+
++ Parameters
+    + id: `5ad33d788782aa004319a9af` (string) - ID mapy
+
++ Request (application/json)
+
+    + Body
+
+            {
+              "lockers": {
+                "7BSR5J": {
+                  "x": -120,
+                  "y": 0,
+                  "color": "#7d6f5a",
+                  "name": "S59"
+                },
+                "2XH3hQ": {
+                  "x": -60,
+                  "y": -120,
+                  "color": "#00a9ff",
+                  "name": "S35"
+                },
+                "awiF6s": {
+                  "x": 120,
+                  "y": -180,
+                  "color": "#a31f20",
+                  "name": "S30"
+                }
+              }
+            }
+
++ Response 200 (application/json)
+
+        {
+          "code": 200,
+          "message": "Změny v mapě byly úspěšně uloženy."
+        }
+
+### Smazat mapy [POST /map/remove]
+
++ Request (application/json)
+
+    + Attributes
+        + ids: `5ad33ccd8782aa004319a9ae`, `5ad33ccd8782aa004319a9ae` (array[string]) - pole s IDs map, které chcete smazat
+
+    + Body
+
+            {
+              "ids": [
+                "5ad33d788782aa004319a9af",
+                "5ad33ccd8782aa004319a9ae"
+              ]
+            }
+
++ Response 200 (application/json)
+
+        {
+          "code": 200,
+          "message": "Mapy byly úspěšně smazány.",
+          "response": {
+            "requestedCount": 2,
+            "removedCount": 2
+          }
+        }
+
+### Duplikovat mapy [POST /map/duplicate]
+
++ Request (application/json)
+
+    + Attributes
+        + ids: `5ad33ccd8782aa004319a9ae`, `5ad33ccd8782aa004319a9ae` (array[string]) - pole s IDs map, které chcete duplikovat
+
+    + Body
+
+            {
+              "ids": [
+                "5ad33d788782aa004319a9af",
+                "5ad33ccd8782aa004319a9ae"
+              ]
+            }
+
++ Response 200 (application/json)
+
+        {
+          "code": 200,
+          "message": "Mapy byly úspěšně duplikovány.",
+          "result": {
+            "newIdsIds": {
+              "0": "5ad3463a8782aa004319a9b1",
+              "1": "5ad3463a8782aa004319a9b2"
+            }
+          }
+        }
+
+## Školní rok [/school-year]
+
+### Získat konrétní školní rok [GET /school-year/{id}]
+
++ Parameters
+    + id: `5ad33d788782aa004319a9af` (string) - ID školního roku
+
++ Response 200 (application/json)
+
+        {
+          "code": 200,
+          "message": "Školní rok získán úspěšně",
+          "response": {
+            "_id": "5ad333b18782aa004319a9ab",
+            "lastUpdate": "2018-04-15T13:32:09.327Z",
+            "name": "2025/26",
+            "lockers": {
+              "NmNS51": {
+                "x": -240,
+                "y": 180,
+                "color": "#00a9ff",
+                "name": "S83",
+                "occupation": "Karel Párek",
+                "note": "",
+                "class": "V4A"
+              },
+              "UrStNq": {
+                "x": 300,
+                "y": 60,
+                "color": "#ff0004",
+                "name": "S90",
+                "occupation": "Jana Karlíkova",
+                "note": "Rozbitá skříňka",
+                "class": "V3B"
+              },
+              "9ZWmdn": {
+                "x": 120,
+                "y": -60,
+                "color": "#00a9ff",
+                "name": "S48",
+                "occupation": "Karel Polívka",
+                "note": "",
+                "class": "M2"
+              },
+              "F6ibsK": {
+                "x": -300,
+                "y": 180,
+                "color": "#00a9ff",
+                "name": "S42",
+                "occupation": "",
+                "note": "",
+                "class": ""
+              }
+            },
+            "classes": [
+              {
+                "name": "V4A",
+                "size": "5"
+              },
+              {
+                "name": "V3B",
+                "size": "12"
+              },
+              {
+                "name": "M2",
+                "size": "10"
+              }
+            ]
+          }
+        }
+
+### Seznam všech školních roků [GET /school-year]
+
++ Response 200 (application/json)
+
+        {
+          "code": 200,
+          "message": "Školní roky získány úspěšně.",
+          "response": {
+            "schoolYears": [
+              {
+                "_id": "5ad26d8721c3fe00433f4925",
+                "lastUpdate": "2018-04-14T21:07:19.980Z",
+                "name": "2018/19"
+              },
+              {
+                "_id": "5ad333818782aa004319a9a5",
+                "lastUpdate": "2018-04-15T11:12:02.577Z",
+                "name": "2019/20"
+              },
+              {
+                "_id": "5ad333878782aa004319a9a6",
+                "lastUpdate": "2018-04-15T11:12:08.995Z",
+                "name": "2020/21"
+              },
+              {
+                "_id": "5ad333938782aa004319a9a7",
+                "lastUpdate": "2018-04-15T11:12:20.267Z",
+                "name": "2021/22"
+              },
+              {
+                "_id": "5ad3339c8782aa004319a9a8",
+                "lastUpdate": "2018-04-15T11:12:29.495Z",
+                "name": "2022/23"
+              },
+              {
+                "_id": "5ad333a28782aa004319a9a9",
+                "lastUpdate": "2018-04-15T11:12:35.470Z",
+                "name": "2023/24"
+              },
+              {
+                "_id": "5ad333a98782aa004319a9aa",
+                "lastUpdate": "2018-04-15T11:12:43.501Z",
+                "name": "2024/25"
+              },
+              {
+                "_id": "5ad333b18782aa004319a9ab",
+                "lastUpdate": "2018-04-15T11:12:50.928Z",
+                "name": "2025/26"
+              }
+            ]
+          }
+        }
+
+### Vytvořit nový školní rok [POST /school-year/create]
+
++ Request (application/json)
+
+    + Body
+
+            {
+              "mapId": "5ad346358782aa004319a9b0",
+              "name": "2026/27"
+            }
+
++ Response 200 (application/json)
+
+        {
+          "code": 200,
+          "message": "Školní rok úspěšně vytvořen.",
+          "response": {
+            "lastUpdate": "2018-04-15T13:32:09.327Z",
+            "lockers": {
+              "H7ERGe": {
+                "x": 0,
+                "y": 0,
+                "color": "#00a9ff",
+                "name": "S56",
+                "occupation": "",
+                "note": "",
+                "class": ""
+              }
+            },
+            "name": "2026/27",
+            "classes": [],
+            "_id": "5ad354598782aa004319a9b3"
+          }
+        }
+
+### Upravit školní rok [POST /school-year/edit/{id}]
+
++ Parameters
+    + id: `5ad33d788782aa004319a9af` (string) - ID školního roku
+
++ Request (application/json)
+
+    + Body
+
+            {
+              "lockers": {
+                "NmNS51": {
+                    "x": -240,
+                    "y": 180,
+                    "color": "#00a9ff",
+                    "name": "S83",
+                    "occupation": "Karel Párek",
+                    "note": "",
+                    "class": "V4A"
+                  },
+                  "UrStNq": {
+                    "x": 300,
+                    "y": 60,
+                    "color": "#ff0004",
+                    "name": "S90",
+                    "occupation": "Jana Karlíkova",
+                    "note": "Rozbitá skříňka",
+                    "class": "V3B"
+                  },
+                  "9ZWmdn": {
+                    "x": 120,
+                    "y": -60,
+                    "color": "#00a9ff",
+                    "name": "S48",
+                    "occupation": "Karel Polívka",
+                    "note": "",
+                    "class": "M2"
+                  },
+                  "F6ibsK": {
+                    "x": -300,
+                    "y": 180,
+                    "color": "#00a9ff",
+                    "name": "S42",
+                    "occupation": "",
+                    "note": "",
+                    "class": ""
+                  }
+              },
+              "classes": [
+                {
+                  "name": "V4A",
+                  "size": "5"
+                },
+                {
+                  "name": "V3B",
+                  "size": "12"
+                },
+                {
+                  "name": "M2",
+                  "size": "10"
+                }
+              ]
+            }
+
++ Response 200 (application/json)
+
+        {
+          "code": 200,
+          "message": "Změny ve školním roce byly úspěšně uloženy."
+        }
+
+### Smazat školní roky [POST /school-year/remove]
+
++ Request (application/json)
+
+    + Attributes
+        + ids: `5ad33ccd8782aa004319a9ae`, `5ad33ccd8782aa004319a9ae` (array[string]) - pole s IDs školních roků, které chcete smazat
+
+    + Body
+
+            {
+              "ids": [
+                "5ad33d788782aa004319a9af",
+                "5ad33ccd8782aa004319a9ae"
+              ]
+            }
+
++ Response 200 (application/json)
+
+        {
+          "code": 200,
+          "message": "Školní roky byly úspěšně smazány.",
+          "response": {
+            "requestedCount": 1,
+            "removedCount": 1
+          }
+        }
+
+### Duplikovat školní roky [POST /school-year/duplicate]
+
++ Request (application/json)
+
+    + Attributes
+        + ids: `5ad33ccd8782aa004319a9ae`, `5ad33ccd8782aa004319a9ae` (array[string]) - pole s IDs školních roků, které chcete smazat
+
+    + Body
+
+            {
+              "ids": [
+                "5ad33d788782aa004319a9af",
+                "5ad33ccd8782aa004319a9ae"
+              ]
+            }
+
++ Response 200 (application/json)
+
+        {
+          "code": 200,
+          "message": "Školní roky byly úspěšně duplikovány.",
+          "result": {
+            "newIdsIds": {
+              "0": "5ad3463a8782aa004319a9b1",
+              "1": "5ad3463a8782aa004319a9b2"
+            }
+          }
+        }

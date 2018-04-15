@@ -18,7 +18,7 @@ module.exports = function editMap({ connectToMongo }) {
               )
               .then(() => res.json({
                 code: 200,
-                message: 'Změny v mapách byly úspěšně uloženy.',
+                message: 'Změny v mapě byly úspěšně uloženy.',
               }))
         )
     )

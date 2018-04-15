@@ -5,13 +5,13 @@ const { handleError } = require('../helpers');
 
 class MapNotFoundError extends Error {}
 
-const addSchoolYearSchema = Joi.object().keys({
+const createSchoolYearSchema = Joi.object().keys({
   mapId: Joi.string().required().error(() => ({ message: 'Musíte ID mateřské mapy.' })),
   name: Joi.string().required().error(() => ({ message: 'Musíte zadat školní rok.' })),
 });
-module.exports = function addSchoolYear({ connectToMongo }) {
+module.exports = function createSchoolYear({ connectToMongo }) {
   return (req, res) =>
-    Joi.validate(req.body, addSchoolYearSchema)
+    Joi.validate(req.body, createSchoolYearSchema)
       .then(({ mapId, name }) =>
         connectToMongo()
           .then((db) =>

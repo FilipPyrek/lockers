@@ -19,7 +19,7 @@ export function* sendData({ payload }) {
   try {
     const data = yield call(
       request,
-      `/map/add?token=${token}`,
+      `/map/create?token=${token}`,
       {
         method: 'POST',
         headers: {
