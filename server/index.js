@@ -1,6 +1,7 @@
 /* eslint consistent-return:0 */
 
 const express = require('express');
+const path = require('path');
 const logger = require('./logger');
 
 const api = require('./api');
@@ -9,6 +10,11 @@ const port = require('./port');
 const setup = require('./middlewares/frontendMiddleware');
 const resolve = require('path').resolve;
 const app = express();
+
+// Docs for API
+app.use('/docs/?(index.html)?', (req, res) =>
+  res.sendFile(path.join(__dirname, '../docs/index.html'))
+);
 
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 app.use('/api', api);

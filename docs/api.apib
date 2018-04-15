@@ -5,12 +5,38 @@ HOST: https://lockers.pyrek.cz/api
 
 Více informací na: https://github.com/FilipPyrek/lockers
 
+## Přihlášení [/user/login]
+
+### Přihlásit se [POST /user/login]
+
+Po přihlášení obdržítek *token*, který budete v každém dalším requestu na API přikládat jako query parametr.
+
++ Request (application/json)
+
+    + Body
+
+            {
+              "email": "test@test.cz",
+              "password": "testheslo"
+            }
+
++ Response 200 (application/json)
+
+            {
+              "code": 200,
+              "message": "Přihlášení proběhlo úspěšně",
+              "response": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc0FwaSI6dHJ1ZSwiaWF0IjoxNTIzODA3NjA3LCJleHAiOjE1MjM4MTEyMDd9.hkToxbDYLnOraBGN0ok_Pd1d-fAxDDO76h30rBXb4HE"
+              }
+            }
+
 ## Mapa [/map]
 
-### Získat konrétní mapu [GET /map/{id}]
+### Získat konrétní mapu [GET /map/{id}{?token}]
 
 + Parameters
     + id: `5ad33d788782aa004319a9af` (string) - ID mapy
+    + token (string) - JWT token získaný při přihlášení
 
 + Response 200 (application/json)
 
@@ -43,7 +69,10 @@ Více informací na: https://github.com/FilipPyrek/lockers
           }
         }
 
-### Seznam všech map [GET /map]
+### Seznam všech map [GET /map{?token}]
+
++ Parameters
+    + token (string) - JWT token získaný při přihlášení
 
 + Response 200 (application/json)
 
@@ -66,7 +95,10 @@ Více informací na: https://github.com/FilipPyrek/lockers
           }
         }
 
-### Vytvořit novou mapu [POST /map/create]
+### Vytvořit novou mapu [POST /map/create{?token}]
+
++ Parameters
+    + token (string) - JWT token získaný při přihlášení
 
 + Request (application/json)
 
@@ -103,10 +135,11 @@ Více informací na: https://github.com/FilipPyrek/lockers
           "message": "Mapa byla úspěšně vytvořena."
         }
 
-### Upravit mapu [POST /map/edit/{id}]
+### Upravit mapu [POST /map/edit/{id}{?token}]
 
 + Parameters
     + id: `5ad33d788782aa004319a9af` (string) - ID mapy
+    + token (string) - JWT token získaný při přihlášení
 
 + Request (application/json)
 
@@ -142,7 +175,10 @@ Více informací na: https://github.com/FilipPyrek/lockers
           "message": "Změny v mapě byly úspěšně uloženy."
         }
 
-### Smazat mapy [POST /map/remove]
+### Smazat mapy [POST /map/remove{?token}]
+
++ Parameters
+    + token (string) - JWT token získaný při přihlášení
 
 + Request (application/json)
 
@@ -169,7 +205,10 @@ Více informací na: https://github.com/FilipPyrek/lockers
           }
         }
 
-### Duplikovat mapy [POST /map/duplicate]
+### Duplikovat mapy [POST /map/duplicate{?token}]
+
++ Parameters
+    + token (string) - JWT token získaný při přihlášení
 
 + Request (application/json)
 
@@ -200,10 +239,11 @@ Více informací na: https://github.com/FilipPyrek/lockers
 
 ## Školní rok [/school-year]
 
-### Získat konrétní školní rok [GET /school-year/{id}]
+### Získat konrétní školní rok [GET /school-year/{id}{?token}]
 
 + Parameters
     + id: `5ad33d788782aa004319a9af` (string) - ID školního roku
+    + token (string) - JWT token získaný při přihlášení
 
 + Response 200 (application/json)
 
@@ -269,7 +309,10 @@ Více informací na: https://github.com/FilipPyrek/lockers
           }
         }
 
-### Seznam všech školních roků [GET /school-year]
+### Seznam všech školních roků [GET /school-year{?token}]
+
++ Parameters
+    + token (string) - JWT token získaný při přihlášení
 
 + Response 200 (application/json)
 
@@ -322,7 +365,10 @@ Více informací na: https://github.com/FilipPyrek/lockers
           }
         }
 
-### Vytvořit nový školní rok [POST /school-year/create]
+### Vytvořit nový školní rok [POST /school-year/create{?token}]
+
++ Parameters
+    + token (string) - JWT token získaný při přihlášení
 
 + Request (application/json)
 
@@ -357,10 +403,11 @@ Více informací na: https://github.com/FilipPyrek/lockers
           }
         }
 
-### Upravit školní rok [POST /school-year/edit/{id}]
+### Upravit školní rok [POST /school-year/edit/{id}{?token}]
 
 + Parameters
     + id: `5ad33d788782aa004319a9af` (string) - ID školního roku
+    + token (string) - JWT token získaný při přihlášení
 
 + Request (application/json)
 
@@ -428,7 +475,10 @@ Více informací na: https://github.com/FilipPyrek/lockers
           "message": "Změny ve školním roce byly úspěšně uloženy."
         }
 
-### Smazat školní roky [POST /school-year/remove]
+### Smazat školní roky [POST /school-year/remove{?token}]
+
++ Parameters
+    + token (string) - JWT token získaný při přihlášení
 
 + Request (application/json)
 
@@ -455,7 +505,10 @@ Více informací na: https://github.com/FilipPyrek/lockers
           }
         }
 
-### Duplikovat školní roky [POST /school-year/duplicate]
+### Duplikovat školní roky [POST /school-year/duplicate{?token}]
+
++ Parameters
+    + token (string) - JWT token získaný při přihlášení
 
 + Request (application/json)
 
