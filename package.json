@@ -41,7 +41,7 @@
   },
   "lint-staged": {
     "*.js": "lint:eslint",
-    "*.apib": "build:docs"
+    "*.apib": ["build:docs", "git add docs/index.html"]
   },
   "pre-commit": "lint:staged",
   "babel": {
