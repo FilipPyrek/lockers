@@ -184,7 +184,7 @@ class MapsListScreen extends React.Component {
                     ) : null
                   }
                   {
-                    !this.props.loading && maps.length === 0
+                    !this.props.loading && !this.props.error && maps.length === 0
                     ? (
                       <TableRow>
                         <TableCell colSpan="4">

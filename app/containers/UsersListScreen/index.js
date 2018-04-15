@@ -258,7 +258,7 @@ class UsersListScreen extends React.Component {
                     ) : null
                   }
                   {
-                    !this.props.loading && users.length === 0
+                    !this.props.loading && !this.props.error && users.length === 0
                     ? (
                       <TableRow>
                         <TableCell colSpan="6">

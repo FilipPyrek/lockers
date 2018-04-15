@@ -26,6 +26,8 @@ ENV MONGO_USER lockers
 ENV MONGO_PASSWORD heslo123
 ENV MONGO_AUTH_SOURCE lockers
 
+RUN npm prune
+
 RUN service mongod start \
   && mongo < initializeDatabase.mjs \
   && mongo admin --eval "db.shutdownServer();"
